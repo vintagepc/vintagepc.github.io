@@ -1,0 +1,416 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/3rdParty/TCLAP/include/tclap/UnlabeledValueArg.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">MK404/3rdParty/TCLAP/include/tclap</a> - UnlabeledValueArg.h<span style="font-size: 80%;"> (source / <a href="UnlabeledValueArg.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">25</td>
+            <td class="headerCovTableEntryLo">72.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryLo">62.5 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : </a>
+<span class="lineNum">       2 </span>            : /****************************************************************************** 
+<span class="lineNum">       3 </span>            :  * 
+<span class="lineNum">       4 </span>            :  *  file:  UnlabeledValueArg.h
+<span class="lineNum">       5 </span>            :  * 
+<span class="lineNum">       6 </span>            :  *  Copyright (c) 2003, Michael E. Smoot .
+<span class="lineNum">       7 </span>            :  *  Copyright (c) 2004, Michael E. Smoot, Daniel Aarno.
+<span class="lineNum">       8 </span>            :  *  All rights reserved.
+<span class="lineNum">       9 </span>            :  * 
+<span class="lineNum">      10 </span>            :  *  See the file COPYING in the top directory of this distribution for
+<span class="lineNum">      11 </span>            :  *  more information.
+<span class="lineNum">      12 </span>            :  *  
+<span class="lineNum">      13 </span>            :  *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+<span class="lineNum">      14 </span>            :  *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+<span class="lineNum">      15 </span>            :  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+<span class="lineNum">      16 </span>            :  *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+<span class="lineNum">      17 </span>            :  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+<span class="lineNum">      18 </span>            :  *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+<span class="lineNum">      19 </span>            :  *  DEALINGS IN THE SOFTWARE.  
+<span class="lineNum">      20 </span>            :  *  
+<span class="lineNum">      21 </span>            :  *****************************************************************************/ 
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #ifndef TCLAP_UNLABELED_VALUE_ARGUMENT_H
+<span class="lineNum">      25 </span>            : #define TCLAP_UNLABELED_VALUE_ARGUMENT_H
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : #include &lt;string&gt;
+<span class="lineNum">      28 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : #include &lt;tclap/ValueArg.h&gt;
+<span class="lineNum">      31 </span>            : #include &lt;tclap/OptionalUnlabeledTracker.h&gt;
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : namespace TCLAP {
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : /**
+<span class="lineNum">      37 </span>            :  * The basic unlabeled argument that parses a value.
+<span class="lineNum">      38 </span>            :  * This is a template class, which means the type T defines the type
+<span class="lineNum">      39 </span>            :  * that a given object will attempt to parse when an UnlabeledValueArg
+<span class="lineNum">      40 </span>            :  * is reached in the list of args that the CmdLine iterates over.
+<a name="41"><span class="lineNum">      41 </span>            :  */</a>
+<span class="lineNum">      42 </span>            : template&lt;class T&gt;
+<span class="lineNum">      43 </span><span class="lineCov">          5 : class UnlabeledValueArg : public ValueArg&lt;T&gt;</span>
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :         // If compiler has two stage name lookup (as gcc &gt;= 3.4 does)
+<span class="lineNum">      47 </span>            :         // this is required to prevent undef. symbols
+<span class="lineNum">      48 </span>            :         using ValueArg&lt;T&gt;::_ignoreable;
+<span class="lineNum">      49 </span>            :         using ValueArg&lt;T&gt;::_hasBlanks;
+<span class="lineNum">      50 </span>            :         using ValueArg&lt;T&gt;::_extractValue;
+<span class="lineNum">      51 </span>            :         using ValueArg&lt;T&gt;::_typeDesc;
+<span class="lineNum">      52 </span>            :         using ValueArg&lt;T&gt;::_name;
+<span class="lineNum">      53 </span>            :         using ValueArg&lt;T&gt;::_description;
+<span class="lineNum">      54 </span>            :         using ValueArg&lt;T&gt;::_alreadySet;
+<span class="lineNum">      55 </span>            :         using ValueArg&lt;T&gt;::toString;
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            :         public:
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :                 /**
+<span class="lineNum">      60 </span>            :                  * UnlabeledValueArg constructor.
+<span class="lineNum">      61 </span>            :                  * \param name - A one word name for the argument.  Note that this is used for
+<span class="lineNum">      62 </span>            :                  * identification, not as a long flag.
+<span class="lineNum">      63 </span>            :                  * \param desc - A description of what the argument is for or
+<span class="lineNum">      64 </span>            :                  * does.
+<span class="lineNum">      65 </span>            :                  * \param req - Whether the argument is required on the command
+<span class="lineNum">      66 </span>            :                  * line.
+<span class="lineNum">      67 </span>            :                  * \param value - The default value assigned to this argument if it
+<span class="lineNum">      68 </span>            :                  * is not present on the command line.
+<span class="lineNum">      69 </span>            :                  * \param typeDesc - A short, human readable description of the
+<span class="lineNum">      70 </span>            :                  * type that this object expects.  This is used in the generation
+<span class="lineNum">      71 </span>            :                  * of the USAGE statement.  The goal is to be helpful to the end user
+<span class="lineNum">      72 </span>            :                  * of the program.
+<span class="lineNum">      73 </span>            :                  * \param ignoreable - Allows you to specify that this argument can be
+<span class="lineNum">      74 </span>            :                  * ignored if the '--' flag is set.  This defaults to false (cannot
+<span class="lineNum">      75 </span>            :                  * be ignored) and should  generally stay that way unless you have 
+<span class="lineNum">      76 </span>            :                  * some special need for certain arguments to be ignored.
+<span class="lineNum">      77 </span>            :                  * \param v - Optional Visitor.  You should leave this blank unless
+<span class="lineNum">      78 </span>            :                  * you have a very good reason.
+<span class="lineNum">      79 </span>            :                  */
+<span class="lineNum">      80 </span>            :                 UnlabeledValueArg( const std::string&amp; name, 
+<span class="lineNum">      81 </span>            :                                        const std::string&amp; desc, 
+<span class="lineNum">      82 </span>            :                                                    bool req,
+<span class="lineNum">      83 </span>            :                                            T value,
+<span class="lineNum">      84 </span>            :                                            const std::string&amp; typeDesc,
+<span class="lineNum">      85 </span>            :                                                    bool ignoreable = false,
+<span class="lineNum">      86 </span>            :                                            Visitor* v = NULL); 
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            :                 /**
+<span class="lineNum">      89 </span>            :                  * UnlabeledValueArg constructor.
+<span class="lineNum">      90 </span>            :                  * \param name - A one word name for the argument.  Note that this is used for
+<span class="lineNum">      91 </span>            :                  * identification, not as a long flag.
+<span class="lineNum">      92 </span>            :                  * \param desc - A description of what the argument is for or
+<span class="lineNum">      93 </span>            :                  * does.
+<span class="lineNum">      94 </span>            :                  * \param req - Whether the argument is required on the command
+<span class="lineNum">      95 </span>            :                  * line.
+<span class="lineNum">      96 </span>            :                  * \param value - The default value assigned to this argument if it
+<span class="lineNum">      97 </span>            :                  * is not present on the command line.
+<span class="lineNum">      98 </span>            :                  * \param typeDesc - A short, human readable description of the
+<span class="lineNum">      99 </span>            :                  * type that this object expects.  This is used in the generation
+<span class="lineNum">     100 </span>            :                  * of the USAGE statement.  The goal is to be helpful to the end user
+<span class="lineNum">     101 </span>            :                  * of the program.
+<span class="lineNum">     102 </span>            :                  * \param parser - A CmdLine parser object to add this Arg to
+<span class="lineNum">     103 </span>            :                  * \param ignoreable - Allows you to specify that this argument can be
+<span class="lineNum">     104 </span>            :                  * ignored if the '--' flag is set.  This defaults to false (cannot
+<span class="lineNum">     105 </span>            :                  * be ignored) and should  generally stay that way unless you have 
+<span class="lineNum">     106 </span>            :                  * some special need for certain arguments to be ignored.
+<span class="lineNum">     107 </span>            :                  * \param v - Optional Visitor.  You should leave this blank unless
+<span class="lineNum">     108 </span>            :                  * you have a very good reason.
+<span class="lineNum">     109 </span>            :                  */
+<span class="lineNum">     110 </span>            :                 UnlabeledValueArg( const std::string&amp; name, 
+<span class="lineNum">     111 </span>            :                                        const std::string&amp; desc, 
+<span class="lineNum">     112 </span>            :                                                    bool req,
+<span class="lineNum">     113 </span>            :                                            T value,
+<span class="lineNum">     114 </span>            :                                            const std::string&amp; typeDesc,
+<span class="lineNum">     115 </span>            :                                                    CmdLineInterface&amp; parser,
+<span class="lineNum">     116 </span>            :                                                    bool ignoreable = false,
+<span class="lineNum">     117 </span>            :                                            Visitor* v = NULL );                                         
+<span class="lineNum">     118 </span>            :                                                 
+<span class="lineNum">     119 </span>            :                 /**
+<span class="lineNum">     120 </span>            :                  * UnlabeledValueArg constructor.
+<span class="lineNum">     121 </span>            :                  * \param name - A one word name for the argument.  Note that this is used for
+<span class="lineNum">     122 </span>            :                  * identification, not as a long flag.
+<span class="lineNum">     123 </span>            :                  * \param desc - A description of what the argument is for or
+<span class="lineNum">     124 </span>            :                  * does.
+<span class="lineNum">     125 </span>            :                  * \param req - Whether the argument is required on the command
+<span class="lineNum">     126 </span>            :                  * line.
+<span class="lineNum">     127 </span>            :                  * \param value - The default value assigned to this argument if it
+<span class="lineNum">     128 </span>            :                  * is not present on the command line.
+<span class="lineNum">     129 </span>            :                  * \param constraint - A pointer to a Constraint object used
+<span class="lineNum">     130 </span>            :                  * to constrain this Arg.
+<span class="lineNum">     131 </span>            :                  * \param ignoreable - Allows you to specify that this argument can be
+<span class="lineNum">     132 </span>            :                  * ignored if the '--' flag is set.  This defaults to false (cannot
+<span class="lineNum">     133 </span>            :                  * be ignored) and should  generally stay that way unless you have 
+<span class="lineNum">     134 </span>            :                  * some special need for certain arguments to be ignored.
+<span class="lineNum">     135 </span>            :                  * \param v - Optional Visitor.  You should leave this blank unless
+<span class="lineNum">     136 </span>            :                  * you have a very good reason.
+<span class="lineNum">     137 </span>            :                  */
+<span class="lineNum">     138 </span>            :                 UnlabeledValueArg( const std::string&amp; name, 
+<span class="lineNum">     139 </span>            :                                        const std::string&amp; desc, 
+<span class="lineNum">     140 </span>            :                                                    bool req,
+<span class="lineNum">     141 </span>            :                                            T value,
+<span class="lineNum">     142 </span>            :                                            Constraint&lt;T&gt;* constraint,
+<span class="lineNum">     143 </span>            :                                                    bool ignoreable = false,
+<span class="lineNum">     144 </span>            :                                            Visitor* v = NULL ); 
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span>            :                 
+<span class="lineNum">     147 </span>            :                 /**
+<span class="lineNum">     148 </span>            :                  * UnlabeledValueArg constructor.
+<span class="lineNum">     149 </span>            :                  * \param name - A one word name for the argument.  Note that this is used for
+<span class="lineNum">     150 </span>            :                  * identification, not as a long flag.
+<span class="lineNum">     151 </span>            :                  * \param desc - A description of what the argument is for or
+<span class="lineNum">     152 </span>            :                  * does.
+<span class="lineNum">     153 </span>            :                  * \param req - Whether the argument is required on the command
+<span class="lineNum">     154 </span>            :                  * line.
+<span class="lineNum">     155 </span>            :                  * \param value - The default value assigned to this argument if it
+<span class="lineNum">     156 </span>            :                  * is not present on the command line.
+<span class="lineNum">     157 </span>            :                  * \param constraint - A pointer to a Constraint object used
+<span class="lineNum">     158 </span>            :                  * to constrain this Arg.
+<span class="lineNum">     159 </span>            :                  * \param parser - A CmdLine parser object to add this Arg to
+<span class="lineNum">     160 </span>            :                  * \param ignoreable - Allows you to specify that this argument can be
+<span class="lineNum">     161 </span>            :                  * ignored if the '--' flag is set.  This defaults to false (cannot
+<span class="lineNum">     162 </span>            :                  * be ignored) and should  generally stay that way unless you have 
+<span class="lineNum">     163 </span>            :                  * some special need for certain arguments to be ignored.
+<span class="lineNum">     164 </span>            :                  * \param v - Optional Visitor.  You should leave this blank unless
+<span class="lineNum">     165 </span>            :                  * you have a very good reason.
+<span class="lineNum">     166 </span>            :                  */
+<span class="lineNum">     167 </span>            :                 UnlabeledValueArg( const std::string&amp; name, 
+<span class="lineNum">     168 </span>            :                                        const std::string&amp; desc, 
+<span class="lineNum">     169 </span>            :                                                    bool req,
+<span class="lineNum">     170 </span>            :                                            T value,
+<span class="lineNum">     171 </span>            :                                            Constraint&lt;T&gt;* constraint,
+<span class="lineNum">     172 </span>            :                                                    CmdLineInterface&amp; parser,
+<span class="lineNum">     173 </span>            :                                                    bool ignoreable = false,
+<span class="lineNum">     174 </span>            :                                            Visitor* v = NULL);
+<span class="lineNum">     175 </span>            :                                                 
+<span class="lineNum">     176 </span>            :                 /**
+<span class="lineNum">     177 </span>            :                  * Handles the processing of the argument.
+<span class="lineNum">     178 </span>            :                  * This re-implements the Arg version of this method to set the
+<span class="lineNum">     179 </span>            :                  * _value of the argument appropriately.  Handling specific to
+<span class="lineNum">     180 </span>            :                  * unlabeled arguments.
+<span class="lineNum">     181 </span>            :                  * \param i - Pointer the the current argument in the list.
+<span class="lineNum">     182 </span>            :                  * \param args - Mutable list of strings. 
+<span class="lineNum">     183 </span>            :                  */
+<span class="lineNum">     184 </span>            :                 virtual bool processArg(int* i, std::vector&lt;std::string&gt;&amp; args); 
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            :                 /**
+<span class="lineNum">     187 </span>            :                  * Overrides shortID for specific behavior.
+<span class="lineNum">     188 </span>            :                  */
+<span class="lineNum">     189 </span>            :                 virtual std::string shortID(const std::string&amp; val=&quot;val&quot;) const;
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span>            :                 /**
+<span class="lineNum">     192 </span>            :                  * Overrides longID for specific behavior.
+<span class="lineNum">     193 </span>            :                  */
+<span class="lineNum">     194 </span>            :                 virtual std::string longID(const std::string&amp; val=&quot;val&quot;) const;
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :                 /**
+<span class="lineNum">     197 </span>            :                  * Overrides operator== for specific behavior.
+<span class="lineNum">     198 </span>            :                  */
+<span class="lineNum">     199 </span>            :                 virtual bool operator==(const Arg&amp; a ) const;
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            :                 /**
+<span class="lineNum">     202 </span>            :                  * Instead of pushing to the front of list, push to the back.
+<span class="lineNum">     203 </span>            :                  * \param argList - The list to add this to.
+<span class="lineNum">     204 </span>            :                  */
+<span class="lineNum">     205 </span>            :                 virtual void addToList( std::list&lt;Arg*&gt;&amp; argList ) const;
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span>            : };
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span>            : /**
+<span class="lineNum">     210 </span>            :  * Constructor implementation.
+<span class="lineNum">     211 </span>            :  */
+<span class="lineNum">     212 </span>            : template&lt;class T&gt;
+<span class="lineNum">     213 </span>            : UnlabeledValueArg&lt;T&gt;::UnlabeledValueArg(const std::string&amp; name, 
+<span class="lineNum">     214 </span>            :                                                             const std::string&amp; desc, 
+<span class="lineNum">     215 </span>            :                                                                                 bool req,
+<span class="lineNum">     216 </span>            :                                                             T val,
+<span class="lineNum">     217 </span>            :                                                             const std::string&amp; typeDesc,
+<span class="lineNum">     218 </span>            :                                                             bool ignoreable,
+<span class="lineNum">     219 </span>            :                                                             Visitor* v)
+<span class="lineNum">     220 </span>            : : ValueArg&lt;T&gt;(&quot;&quot;, name, desc, req, val, typeDesc, v)
+<span class="lineNum">     221 </span>            : { 
+<span class="lineNum">     222 </span>            :         _ignoreable = ignoreable;
+<span class="lineNum">     223 </span>            : 
+<span class="lineNum">     224 </span>            :         OptionalUnlabeledTracker::check(req, toString());
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span>            : }
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span>            : template&lt;class T&gt;
+<span class="lineNum">     229 </span>            : UnlabeledValueArg&lt;T&gt;::UnlabeledValueArg(const std::string&amp; name, 
+<span class="lineNum">     230 </span>            :                                                             const std::string&amp; desc, 
+<span class="lineNum">     231 </span>            :                                                                                 bool req,
+<span class="lineNum">     232 </span>            :                                                             T val,
+<span class="lineNum">     233 </span>            :                                                             const std::string&amp; typeDesc,
+<span class="lineNum">     234 </span>            :                                                             CmdLineInterface&amp; parser,
+<span class="lineNum">     235 </span>            :                                                             bool ignoreable,
+<span class="lineNum">     236 </span>            :                                                             Visitor* v)
+<span class="lineNum">     237 </span>            : : ValueArg&lt;T&gt;(&quot;&quot;, name, desc, req, val, typeDesc, v)
+<span class="lineNum">     238 </span>            : { 
+<span class="lineNum">     239 </span>            :         _ignoreable = ignoreable;
+<span class="lineNum">     240 </span>            :         OptionalUnlabeledTracker::check(req, toString());
+<span class="lineNum">     241 </span>            :         parser.add( this );
+<span class="lineNum">     242 </span>            : }
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span>            : /**
+<span class="lineNum">     245 </span>            :  * Constructor implementation.
+<a name="246"><span class="lineNum">     246 </span>            :  */</a>
+<span class="lineNum">     247 </span>            : template&lt;class T&gt;
+<span class="lineNum">     248 </span><span class="lineCov">          5 : UnlabeledValueArg&lt;T&gt;::UnlabeledValueArg(const std::string&amp; name, </span>
+<span class="lineNum">     249 </span>            :                                         const std::string&amp; desc, 
+<span class="lineNum">     250 </span>            :                                                                                 bool req,
+<span class="lineNum">     251 </span>            :                                         T val,
+<span class="lineNum">     252 </span>            :                                         Constraint&lt;T&gt;* constraint,
+<span class="lineNum">     253 </span>            :                                         bool ignoreable,
+<span class="lineNum">     254 </span>            :                                         Visitor* v)
+<span class="lineNum">     255 </span><span class="lineCov">          5 : : ValueArg&lt;T&gt;(&quot;&quot;, name, desc, req, val, constraint, v)</span>
+<span class="lineNum">     256 </span>            : { 
+<span class="lineNum">     257 </span><span class="lineCov">          5 :         _ignoreable = ignoreable;</span>
+<span class="lineNum">     258 </span><span class="lineCov">          5 :         OptionalUnlabeledTracker::check(req, toString());</span>
+<span class="lineNum">     259 </span><span class="lineCov">          5 : }</span>
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span>            : template&lt;class T&gt;
+<span class="lineNum">     262 </span>            : UnlabeledValueArg&lt;T&gt;::UnlabeledValueArg(const std::string&amp; name, 
+<span class="lineNum">     263 </span>            :                                                             const std::string&amp; desc, 
+<span class="lineNum">     264 </span>            :                                                                                 bool req,
+<span class="lineNum">     265 </span>            :                                                             T val,
+<span class="lineNum">     266 </span>            :                                                             Constraint&lt;T&gt;* constraint,
+<span class="lineNum">     267 </span>            :                                                             CmdLineInterface&amp; parser,
+<span class="lineNum">     268 </span>            :                                                             bool ignoreable,
+<span class="lineNum">     269 </span>            :                                                             Visitor* v)
+<span class="lineNum">     270 </span>            : : ValueArg&lt;T&gt;(&quot;&quot;, name, desc, req, val, constraint,  v)
+<span class="lineNum">     271 </span>            : { 
+<span class="lineNum">     272 </span>            :         _ignoreable = ignoreable;
+<span class="lineNum">     273 </span>            :         OptionalUnlabeledTracker::check(req, toString());
+<span class="lineNum">     274 </span>            :         parser.add( this );
+<span class="lineNum">     275 </span>            : }
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span>            : /**
+<span class="lineNum">     278 </span>            :  * Implementation of processArg().
+<a name="279"><span class="lineNum">     279 </span>            :  */</a>
+<span class="lineNum">     280 </span>            : template&lt;class T&gt;
+<span class="lineNum">     281 </span><span class="lineCov">          5 : bool UnlabeledValueArg&lt;T&gt;::processArg(int *i, std::vector&lt;std::string&gt;&amp; args) </span>
+<span class="lineNum">     282 </span>            : {
+<span class="lineNum">     283 </span>            :         
+<span class="lineNum">     284 </span><span class="lineCov">          5 :         if ( _alreadySet )</span>
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">     286 </span>            :         
+<span class="lineNum">     287 </span><span class="lineCov">          5 :         if ( _hasBlanks( args[*i] ) )</span>
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span>            :         // never ignore an unlabeled arg
+<span class="lineNum">     291 </span>            :         
+<span class="lineNum">     292 </span><span class="lineCov">          5 :         _extractValue( args[*i] );</span>
+<span class="lineNum">     293 </span><span class="lineCov">          5 :         _alreadySet = true;</span>
+<span class="lineNum">     294 </span><span class="lineCov">          5 :         return true;</span>
+<span class="lineNum">     295 </span>            : }
+<span class="lineNum">     296 </span>            : 
+<span class="lineNum">     297 </span>            : /**
+<span class="lineNum">     298 </span>            :  * Overriding shortID for specific output.
+<a name="299"><span class="lineNum">     299 </span>            :  */</a>
+<span class="lineNum">     300 </span>            : template&lt;class T&gt;
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 : std::string UnlabeledValueArg&lt;T&gt;::shortID(const std::string&amp; val) const</span>
+<span class="lineNum">     302 </span>            : {
+<span class="lineNum">     303 </span>            :         static_cast&lt;void&gt;(val); // Ignore input, don't warn
+<span class="lineNum">     304 </span><span class="lineNoCov">          0 :         return std::string(&quot;&lt;&quot;) + _typeDesc + &quot;&gt;&quot;;</span>
+<span class="lineNum">     305 </span>            : }
+<span class="lineNum">     306 </span>            : 
+<span class="lineNum">     307 </span>            : /**
+<span class="lineNum">     308 </span>            :  * Overriding longID for specific output.
+<a name="309"><span class="lineNum">     309 </span>            :  */</a>
+<span class="lineNum">     310 </span>            : template&lt;class T&gt;
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 : std::string UnlabeledValueArg&lt;T&gt;::longID(const std::string&amp; val) const</span>
+<span class="lineNum">     312 </span>            : {
+<span class="lineNum">     313 </span>            :         static_cast&lt;void&gt;(val); // Ignore input, don't warn
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span>            :         // Ideally we would like to be able to use RTTI to return the name
+<span class="lineNum">     316 </span>            :         // of the type required for this argument.  However, g++ at least, 
+<span class="lineNum">     317 </span>            :         // doesn't appear to return terribly useful &quot;names&quot; of the types.  
+<span class="lineNum">     318 </span><span class="lineNoCov">          0 :         return std::string(&quot;&lt;&quot;) + _typeDesc + &quot;&gt;&quot;;</span>
+<span class="lineNum">     319 </span>            : }
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span>            : /**
+<span class="lineNum">     322 </span>            :  * Overriding operator== for specific behavior.
+<a name="323"><span class="lineNum">     323 </span>            :  */</a>
+<span class="lineNum">     324 </span>            : template&lt;class T&gt;
+<span class="lineNum">     325 </span><span class="lineCov">        105 : bool UnlabeledValueArg&lt;T&gt;::operator==(const Arg&amp; a ) const</span>
+<span class="lineNum">     326 </span>            : {
+<span class="lineNum">     327 </span><span class="lineCov">        105 :         if ( _name == a.getName() || _description == a.getDescription() )</span>
+<span class="lineNum">     328 </span><span class="lineNoCov">          0 :                 return true;</span>
+<span class="lineNum">     329 </span>            :         else
+<span class="lineNum">     330 </span><span class="lineCov">        105 :                 return false;</span>
+<span class="lineNum">     331 </span>            : }
+<a name="332"><span class="lineNum">     332 </span>            : </a>
+<span class="lineNum">     333 </span>            : template&lt;class T&gt;
+<span class="lineNum">     334 </span><span class="lineCov">          5 : void UnlabeledValueArg&lt;T&gt;::addToList( std::list&lt;Arg*&gt;&amp; argList ) const</span>
+<span class="lineNum">     335 </span>            : {
+<span class="lineNum">     336 </span><span class="lineCov">          5 :         argList.push_back( const_cast&lt;Arg*&gt;(static_cast&lt;const Arg* const&gt;(this)) );</span>
+<span class="lineNum">     337 </span><span class="lineCov">          5 : }</span>
+<span class="lineNum">     338 </span>            : 
+<span class="lineNum">     339 </span>            : }
+<span class="lineNum">     340 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

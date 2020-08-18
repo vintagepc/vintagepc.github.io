@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/components/EEPROM.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/components</a> - EEPROM.cpp<span style="font-size: 80%;"> (source / <a href="EEPROM.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">50</td>
+            <td class="headerCovTableEntry">78</td>
+            <td class="headerCovTableEntryLo">64.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntryMed">77.8 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         EEPROM.cpp - helper to persist the AVR eeprom (and let us poke about in its internals...)
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         This file is part of MK404
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         MK404is free software: you can redistribute it and/or modify
+<span class="lineNum">       9 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      10 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            :         (at your option) any later version.
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            :         MK404is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            :         along with MK404  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      20 </span>            :  */
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #include &quot;EEPROM.h&quot;
+<span class="lineNum">      23 </span>            : #include &lt;avr_eeprom.h&gt;  // for avr_eeprom_desc_t, AVR_IOCTL_EEPROM_GET, AVR...
+<span class="lineNum">      24 </span>            : #include &lt;fcntl.h&gt;       // for open, O_CREAT, O_RDWR, SEEK_SET
+<span class="lineNum">      25 </span>            : #include &lt;stdlib.h&gt;      // for malloc, exit, free, size_t
+<span class="lineNum">      26 </span>            : #include &lt;sys/types.h&gt;   // for ssize_t
+<span class="lineNum">      27 </span>            : #include &quot;assert.h&quot;      // for assert
+<span class="lineNum">      28 </span>            : #include &quot;sim_avr.h&quot;     // for avr_t
+<span class="lineNum">      29 </span>            : #include &quot;sim_io.h&quot;      // for avr_ioctl
+<span class="lineNum">      30 </span>            : #include &quot;stdio.h&quot;       // for perror, printf, fprintf, stderr
+<span class="lineNum">      31 </span>            : #include &quot;unistd.h&quot;      // for close, ftruncate, lseek, read, write
+<a name="32"><span class="lineNum">      32 </span>            : </a>
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span><span class="lineCov">          5 : void EEPROM::Load(struct avr_t *avr, const string &amp;strFile)</span>
+<span class="lineNum">      35 </span>            : {
+<span class="lineNum">      36 </span><span class="lineCov">          5 :         m_strFile = strFile;</span>
+<span class="lineNum">      37 </span><span class="lineCov">          5 :         m_pAVR = avr;</span>
+<span class="lineNum">      38 </span><span class="lineCov">          5 :         Load();</span>
+<a name="39"><span class="lineNum">      39 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineCov">          6 : void EEPROM::Load()</span>
+<span class="lineNum">      42 </span>            : {
+<span class="lineNum">      43 </span><span class="lineCov">          6 :         m_uiSize = m_pAVR-&gt;e2end + 1;</span>
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span><span class="lineCov">          6 :         m_fdEEPROM = open(m_strFile.c_str(), O_RDWR | O_CREAT, 0644);</span>
+<span class="lineNum">      46 </span><span class="lineCov">          6 :         if (m_fdEEPROM &lt; 0) {</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :                 perror(m_strFile.c_str());</span>
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :                 exit(1);</span>
+<span class="lineNum">      49 </span>            :         }
+<span class="lineNum">      50 </span><span class="lineCov">          6 :         printf(&quot;Loading %u bytes of EEPROM\n&quot;, m_uiSize);</span>
+<span class="lineNum">      51 </span><span class="lineCov">          6 :         avr_eeprom_desc_t io {.ee= (uint8_t*)malloc(m_uiSize), .offset = 0, .size = m_uiSize};</span>
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span><span class="lineCov">          6 :         if (ftruncate(m_fdEEPROM, m_uiSize) &lt; 0) {</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :                 perror(m_strFile.c_str());</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :                 exit(1);</span>
+<span class="lineNum">      56 </span>            :         }
+<span class="lineNum">      57 </span><span class="lineCov">          6 :         ssize_t r = read(m_fdEEPROM, io.ee, m_uiSize);</span>
+<span class="lineNum">      58 </span><span class="lineCov">          6 :         printf(&quot;Read %d bytes\n&quot;,(int)r);</span>
+<span class="lineNum">      59 </span><span class="lineCov">          6 :         if (r !=  io.size) {</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                 fprintf(stderr, &quot;unable to load EEPROM\n&quot;);</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :                 perror(m_strFile.c_str());</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                 exit(1);</span>
+<span class="lineNum">      63 </span>            :         }
+<span class="lineNum">      64 </span><span class="lineCov">          6 :         uint8_t bEmpty = 1;</span>
+<span class="lineNum">      65 </span><span class="lineCov">      24582 :         for (size_t i=0; i&lt;io.size; i++)</span>
+<span class="lineNum">      66 </span>            :         {
+<span class="lineNum">      67 </span><span class="lineCov">      24576 :                 bEmpty &amp;= io.ee[i]==0;</span>
+<span class="lineNum">      68 </span>            :         }
+<span class="lineNum">      69 </span><span class="lineCov">          6 :         if (!bEmpty) // If the file was newly created (all null) this leaves the internal eeprom as full of 0xFFs.</span>
+<span class="lineNum">      70 </span><span class="lineCov">          5 :                 avr_ioctl(m_pAVR, AVR_IOCTL_EEPROM_SET,&amp;io);</span>
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span><span class="lineCov">          6 :     free(io.ee);</span>
+<a name="73"><span class="lineNum">      73 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span><span class="lineCov">          2 : void EEPROM::Clear()</span>
+<span class="lineNum">      76 </span>            : {
+<span class="lineNum">      77 </span><span class="lineCov">          4 :         std::vector&lt;uint8_t&gt; vE;</span>
+<span class="lineNum">      78 </span><span class="lineCov">          2 :         vE.resize(m_uiSize,0xFF);</span>
+<span class="lineNum">      79 </span><span class="lineCov">          2 :         avr_eeprom_desc_t io {.ee= vE.data(), .offset = 0, .size = m_uiSize};</span>
+<span class="lineNum">      80 </span><span class="lineCov">          2 :         avr_ioctl(m_pAVR, AVR_IOCTL_EEPROM_SET,&amp;io);</span>
+<a name="81"><span class="lineNum">      81 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineCov">          6 : void EEPROM::Save()</span>
+<span class="lineNum">      84 </span>            : {
+<span class="lineNum">      85 </span>            :         // Write out the EEPROM contents:
+<span class="lineNum">      86 </span><span class="lineCov">          6 :         lseek(m_fdEEPROM, SEEK_SET, 0);</span>
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineCov">          6 :         avr_eeprom_desc_t io {.ee= (uint8_t*)malloc(m_uiSize), .offset = 0, .size = m_uiSize};</span>
+<span class="lineNum">      89 </span><span class="lineCov">          6 :         avr_ioctl(m_pAVR,AVR_IOCTL_EEPROM_GET,&amp;io); // Should net a pointer to eeprom[0]</span>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineCov">          6 :         ssize_t r = write(m_fdEEPROM, io.ee, m_uiSize);</span>
+<span class="lineNum">      92 </span><span class="lineCov">          6 :         printf(&quot;Wrote %zd bytes of EEPROM to %s\n&quot;,r, m_strFile.c_str());</span>
+<span class="lineNum">      93 </span><span class="lineCov">          6 :         if (r != m_uiSize) {</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                 fprintf(stderr, &quot;unable to write EEPROM memory\n&quot;);</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                 perror(m_strFile.c_str());</span>
+<span class="lineNum">      96 </span>            :         }
+<span class="lineNum">      97 </span><span class="lineCov">          6 :         close(m_fdEEPROM);</span>
+<span class="lineNum">      98 </span><span class="lineCov">          6 :         free(io.ee);</span>
+<a name="99"><span class="lineNum">      99 </span><span class="lineCov">          6 : }</span></a>
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span><span class="lineCov">          4 : Scriptable::LineStatus EEPROM::ProcessAction(unsigned int uiAct, const vector&lt;string&gt; &amp;vArgs)</span>
+<span class="lineNum">     102 </span>            : {
+<span class="lineNum">     103 </span><span class="lineCov">          4 :         switch (uiAct)</span>
+<span class="lineNum">     104 </span>            :         {
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :                 case ActPoke:</span>
+<span class="lineNum">     106 </span>            :                 {
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :                         unsigned int uiAddr = stoi(vArgs.at(0));</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                         uint8_t uiVal = stoi(vArgs.at(1));</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :                         if (uiAddr&gt;=m_uiSize)</span>
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :                                 return IssueLineError(string(&quot;Address &quot;) + to_string(uiAddr) + &quot; is out of range [0,&quot; + to_string(m_uiSize-1) + &quot;]&quot;);</span>
+<span class="lineNum">     111 </span>            :                         else
+<span class="lineNum">     112 </span>            :                         {
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 :                                 Poke(uiAddr, uiVal);</span>
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :                                 return LineStatus::Finished;</span>
+<span class="lineNum">     115 </span>            :                         }
+<span class="lineNum">     116 </span>            :                 }
+<span class="lineNum">     117 </span>            :                 break;
+<span class="lineNum">     118 </span><span class="lineCov">          2 :                 case ActClear:</span>
+<span class="lineNum">     119 </span>            :                 {
+<span class="lineNum">     120 </span><span class="lineCov">          2 :                         Clear();</span>
+<span class="lineNum">     121 </span><span class="lineCov">          2 :                         return LineStatus::Finished;</span>
+<span class="lineNum">     122 </span>            :                 }
+<span class="lineNum">     123 </span>            :                 break;
+<span class="lineNum">     124 </span><span class="lineCov">          1 :                 case ActSave:</span>
+<span class="lineNum">     125 </span>            :                 {
+<span class="lineNum">     126 </span><span class="lineCov">          1 :                         Save();</span>
+<span class="lineNum">     127 </span><span class="lineCov">          1 :                         return LineStatus::Finished;</span>
+<span class="lineNum">     128 </span>            :                 }
+<span class="lineNum">     129 </span>            :                 break;
+<span class="lineNum">     130 </span><span class="lineCov">          1 :                 case ActLoad:</span>
+<span class="lineNum">     131 </span>            :                 {
+<span class="lineNum">     132 </span><span class="lineCov">          1 :                         Load();</span>
+<span class="lineNum">     133 </span><span class="lineCov">          1 :                         return LineStatus::Finished;</span>
+<span class="lineNum">     134 </span>            :                 }
+<span class="lineNum">     135 </span>            :                 break;
+<span class="lineNum">     136 </span>            :         }
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :         return LineStatus::Unhandled;</span>
+<span class="lineNum">     138 </span>            : }
+<a name="139"><span class="lineNum">     139 </span>            : </a>
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 : void EEPROM::Poke(uint16_t address, uint8_t value)</span>
+<span class="lineNum">     142 </span>            : {
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :         avr_eeprom_desc_t io {.ee = &amp;value, .offset = address, .size = 1};</span>
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :         assert(address&lt;m_uiSize);</span>
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :         avr_ioctl(m_pAVR,AVR_IOCTL_EEPROM_SET,&amp;io);</span>
+<a name="146"><span class="lineNum">     146 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 : uint8_t EEPROM::Peek(uint16_t address)</span>
+<span class="lineNum">     149 </span>            : {
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :         uint8_t uiRet = 0;</span>
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :         avr_eeprom_desc_t io {.ee = &amp;uiRet, .offset = address, .size = 1};</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :         assert(address&lt;m_uiSize);</span>
+<a name="153"><span class="lineNum">     153 </span><span class="lineNoCov">          0 :         avr_ioctl(m_pAVR,AVR_IOCTL_EEPROM_GET,&amp;io);</span></a>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :         return uiRet;</span>
+<span class="lineNum">     155 </span><span class="lineCov">         15 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

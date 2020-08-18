@@ -1,0 +1,405 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/components/PAT9125.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/components</a> - PAT9125.h<span style="font-size: 80%;"> (source / <a href="PAT9125.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">147</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         PAT9125.h - Simulator for the MK3 optical filament sensor.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         This file is part of MK404.
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">       9 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      10 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            :         (at your option) any later version.
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      20 </span>            :  */
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #pragma once
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #include &lt;stdint.h&gt;            // for uint8_t, uint32_t, int32_t, uint16_t
+<span class="lineNum">      25 </span>            : #include &lt;string&gt;              // for string
+<span class="lineNum">      26 </span>            : #include &lt;vector&gt;              // for vector
+<span class="lineNum">      27 </span>            : #include &lt;map&gt;
+<span class="lineNum">      28 </span>            : #include &quot;BasePeripheral.h&quot;    // for MAKE_C_TIMER_CALLBACK
+<span class="lineNum">      29 </span>            : #include &quot;IScriptable.h&quot;       // for IScriptable::LineStatus
+<span class="lineNum">      30 </span>            : #include &quot;I2CPeripheral.h&quot;     // for I2CPeripheral
+<span class="lineNum">      31 </span>            : #include &quot;Scriptable.h&quot;        // for Scriptable
+<span class="lineNum">      32 </span>            : #include &quot;sim_avr.h&quot;           // for avr_t
+<span class="lineNum">      33 </span>            : #include &quot;sim_avr_types.h&quot;     // for avr_cycle_count_t
+<span class="lineNum">      34 </span>            : #include &quot;sim_cycle_timers.h&quot;  // for avr_cycle_timer_t
+<a name="35"><span class="lineNum">      35 </span>            : #include &quot;sim_irq.h&quot;           // for avr_irq_t</a>
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 : class PAT9125: public I2CPeripheral, public Scriptable</span>
+<span class="lineNum">      38 </span>            : {
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            :         public:
+<span class="lineNum">      41 </span>            :                 #define IRQPAIRS \
+<span class="lineNum">      42 </span>            :                 _IRQ(TX_IN,       &quot;32&lt;PAT9125.i2c_in&quot;) \
+<span class="lineNum">      43 </span>            :                 _IRQ(TX_REPLY,          &quot;8&gt;PAT9125.byte_out&quot;) \
+<span class="lineNum">      44 </span>            :                         _IRQ(E_IN, &quot;f&lt;e_distance.in&quot;) \
+<span class="lineNum">      45 </span>            :                         _IRQ(P_IN, &quot;p_distance.in&quot;) \
+<span class="lineNum">      46 </span>            :                         _IRQ(LED_OUT, &quot;&lt;presence.out&quot;)
+<span class="lineNum">      47 </span>            :                 #include &quot;IRQHelper.h&quot;
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :                 typedef enum FSState {
+<span class="lineNum">      50 </span>            :                         FS_MIN = -1,
+<span class="lineNum">      51 </span>            :                         FS_NO_FILAMENT,
+<span class="lineNum">      52 </span>            :                         FS_FILAMENT_PRESENT,
+<span class="lineNum">      53 </span>            :                         FS_JAM,
+<span class="lineNum">      54 </span>            :                         FS_AUTO, // Special state that only respects the auto value.
+<span class="lineNum">      55 </span>            :                         FS_MAX
+<a name="56"><span class="lineNum">      56 </span>            :                 }FSState_t;</a>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :                 PAT9125():I2CPeripheral(0x75),Scriptable(&quot;PAT9125&quot;)</span>
+<span class="lineNum">      59 </span>            :                 {
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                         RegisterActionAndMenu(&quot;Toggle&quot;,&quot;Toggles the IR sensor state&quot;,ActToggle);</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :                         RegisterAction(&quot;Set&quot;,&quot;Sets the sensor state to a specific enum entry. (int value)&quot;,ActSet,{ArgType::Int});</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                         RegisterMenu(&quot;Toggle Filament jam&quot;,ActToggleJam);</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :                         RegisterMenu(&quot;Resume Auto&quot;,ActResumeAuto);</span>
+<a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :                 };</span></a>
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :                 void Init(avr_t *pAVR, avr_irq_t *pSCL, avr_irq_t *pSDA)</span>
+<span class="lineNum">      67 </span>            :                 {
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :                         _Init(pAVR, pSDA, pSCL, this);</span>
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 :                         printf(&quot;\n\n--------- Your attention please! ----------\n&quot;);</span>
+<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :                         printf(&quot;NOTE: PAT9125 is minimally functional. If you encounter issues or need advanced functionality \n feel free to contribute or open an issue.\n&quot;);</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :                         printf(&quot;--------- Your attention please! ----------\n\n\n&quot;);</span></a>
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :                         RegisterNotify(E_IN, MAKE_C_CALLBACK(PAT9125,OnEMotion),this);</span>
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :                         RegisterNotify(P_IN, MAKE_C_CALLBACK(PAT9125,OnPMotion),this);</span>
+<a name="74"><span class="lineNum">      74 </span><span class="lineNoCov">          0 :                 }</span></a>
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :                 inline void Set(FSState eVal)</span>
+<span class="lineNum">      77 </span>            :                 {
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :                         m_state = eVal;</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :                         UpdateSensorState();</span>
+<a name="80"><span class="lineNum">      80 </span><span class="lineNoCov">          0 :                 }</span></a>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                 inline void ToggleJam()</span>
+<span class="lineNum">      83 </span>            :                 {
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :                         if (m_state == FS_JAM)</span>
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :                                 m_state = FS_FILAMENT_PRESENT;</span>
+<span class="lineNum">      86 </span>            :                         else
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :                                 m_state = FS_JAM;</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :                         printf(&quot;PAT9125 Jam: %u\n&quot;, m_state == FS_JAM);</span>
+<span class="lineNum">      89 </span>            : 
+<a name="90"><span class="lineNum">      90 </span><span class="lineNoCov">          0 :                 }</span></a>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :                 void Toggle()</span>
+<span class="lineNum">      93 </span>            :                 {
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                         switch (m_state)</span>
+<span class="lineNum">      95 </span>            :                         {
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                         case FS_AUTO:</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :                                 printf(&quot;Leaving PAT9125 Auto mode\n&quot;);</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :                                 m_state = m_bFilament ? FS_FILAMENT_PRESENT : FS_NO_FILAMENT;</span>
+<span class="lineNum">      99 </span>            :                                 /* FALLTHRU */  // Deliberate fallthrough - will toggle from current.
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :                         case FS_NO_FILAMENT:</span>
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :                                 m_bLoading = true; // Load from no filament only.</span>
+<span class="lineNum">     102 </span>            :                                 /* FALLTHRU */
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :                         case FS_JAM:</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :                                 m_state = FS_FILAMENT_PRESENT;</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :                                 UpdateSensorState();</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :                         case FS_FILAMENT_PRESENT:</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                                 m_state = FS_NO_FILAMENT;</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :                                 UpdateSensorState();</span>
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :                         default: // No action</span>
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     113 </span>            :                         }
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :                 }</span>
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span>            : 
+<a name="117"><span class="lineNum">     117 </span>            :         protected:</a>
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :                 void UpdateSensorState()</span>
+<span class="lineNum">     120 </span>            :                 {
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 :                         if (m_state != FS_AUTO)</span>
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :                                 m_bFilament = m_state == FS_FILAMENT_PRESENT || m_state == FS_JAM;</span>
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :                         printf(&quot;Filament Present: %u\n&quot;,m_bFilament);</span>
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :                         RaiseIRQ(LED_OUT,!m_bFilament); // LED is inverted.</span>
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :                         if (m_bFilament)</span>
+<span class="lineNum">     126 </span>            :                         {
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :                                 m_regs.Shutter = 5; // Restore shutter/brightness.</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :                                 m_regs.FrameAvg = 100;</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :                                 m_uiNudgeCt = 0;</span>
+<span class="lineNum">     130 </span>            :                         }
+<span class="lineNum">     131 </span>            :                         else
+<span class="lineNum">     132 </span>            :                         {
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                                 m_regs.Shutter = 20; // drop shutter as if underexposed.</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :                                 m_regs.FrameAvg = 40; // and brightness.</span>
+<span class="lineNum">     135 </span>            :                         }
+<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :                 }</span></a>
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :                 void OnPMotion(avr_irq_t *pIRQ, uint32_t value)</span>
+<span class="lineNum">     139 </span>            :                 {
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :                         m_bLoading=false; // clear loading flag once E move started.</span>
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :                         auto fVal = reinterpret_cast&lt;float*&gt;(&amp;value);</span>
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :                         bool bLoaded = fVal[0]&gt;370.f;</span>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :                         if (m_state == FS_AUTO) // Set filament state if auto.</span>
+<span class="lineNum">     144 </span>            :                         {
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :                                 if (m_bFilament != bLoaded)</span>
+<span class="lineNum">     146 </span>            :                                 {
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 :                                         m_bFilament = bLoaded; // default length is 380, trip a few mm earlier because that's where the sensor is vs gears.</span>
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :                                         UpdateSensorState();</span>
+<span class="lineNum">     149 </span>            :                                 }
+<span class="lineNum">     150 </span>            :                         }
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :                         if (bLoaded) // Pass through if fed enough to reach.</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :                                 SetYMotion(m_fEPos,fVal[0]-370.f);</span>
+<span class="lineNum">     153 </span>            : 
+<a name="154"><span class="lineNum">     154 </span>            : </a>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :                 }</span>
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :                 void OnEMotion(avr_irq_t *pIRQ, uint32_t value)</span>
+<span class="lineNum">     157 </span>            :                 {
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :                         m_bLoading=false; // clear loading flag once E move started.</span>
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :                         if (m_bFilament)</span>
+<span class="lineNum">     160 </span>            :                         {
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :                                 float *fV = reinterpret_cast&lt;float*&gt;(&amp;value);</span>
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :                                 SetYMotion(fV[0], m_fPPos);</span>
+<span class="lineNum">     163 </span>            :                         }
+<span class="lineNum">     164 </span>            :                         else // Clear motion and regs.
+<span class="lineNum">     165 </span>            :                         {
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :                                 m_regs.MStatus = 0;</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :                                 m_regs.DeltaXYHi &amp;= 0xF0;</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :                                 m_regs.DYLow = 0;</span>
+<span class="lineNum">     169 </span>            :                         }
+<a name="170"><span class="lineNum">     170 </span><span class="lineNoCov">          0 :                 }</span></a>
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :                 void SetYMotion(const float &amp;fEVal, const float &amp;fPVal)</span>
+<span class="lineNum">     173 </span>            :                 {
+<span class="lineNum">     174 </span>            :                                 //printf(&quot;YMotion update: %f %f\n&quot;,fEVal, fPVal);
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                                 float fDelta = (fEVal+fPVal)-m_fYPos;</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :                                 int16_t iCounts  = fDelta*(5.f*(float)m_regs.Res_Y/25.4f);</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :                                 iCounts = -iCounts;</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                                 if (fDelta&gt;0 &amp;&amp; iCounts==0) // Enforce minimum motion of at least 1 count.</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :                                         iCounts = -1;</span>
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :                                 else if (fDelta&lt;0 &amp;&amp; iCounts==0)</span>
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :                                         iCounts = 1;</span>
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :                                 m_fEPos = fEVal;</span>
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :                                 m_fPPos = fPVal;</span>
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :                                 m_fCurY = fEVal+fPVal;</span>
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :                                 m_regs.DeltaXYHi = (iCounts &gt;&gt; 8) &amp; 0b1111;</span>
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :                                 m_regs.DYLow = iCounts &amp; 0xFF;</span>
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :                                 if (m_state != FS_JAM)</span>
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :                                         m_regs.MStatus = 0x80;</span>
+<span class="lineNum">     189 </span>            : 
+<a name="190"><span class="lineNum">     190 </span><span class="lineNoCov">          0 :                 }</span></a>
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :                 virtual uint8_t GetRegVal(uint8_t uiAddr) override</span>
+<span class="lineNum">     193 </span>            :                 {
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                         switch (uiAddr)</span>
+<span class="lineNum">     195 </span>            :                         {
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :                                 case 0x02:</span>
+<span class="lineNum">     197 </span>            :                                 {
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :                                         uint8_t val = m_regs.MStatus;</span>
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                                         if (!m_bLoading)</span>
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :                                                 m_regs.MStatus = 0; // clear motion flag.</span>
+<span class="lineNum">     201 </span>            :                                         else
+<span class="lineNum">     202 </span>            :                                         {
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :                                                 SetYMotion(m_fCurY += 1.f,m_fPPos);</span>
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :                                                 m_uiNudgeCt++;</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                                                 if (m_uiNudgeCt&gt;4)</span>
+<span class="lineNum">     206 </span>            :                                                 {
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                                                         m_uiNudgeCt = 0;</span>
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :                                                         m_bLoading = false;</span>
+<span class="lineNum">     209 </span>            :                                                 }
+<span class="lineNum">     210 </span>            :                                         }
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :                                         return val;</span>
+<span class="lineNum">     212 </span>            :                                 }
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                                 case 0x04:</span>
+<span class="lineNum">     214 </span>            :                                 {
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :                                         printf(&quot;Read DY: %d (%f) \n&quot;,m_regs.raw[uiAddr], (m_fYPos-m_fCurY));</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                                         m_fYPos = m_fCurY;</span>
+<span class="lineNum">     217 </span>            :                                 }
+<span class="lineNum">     218 </span>            :                                 /* FALLTHRU */
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 :                                 default:</span>
+<span class="lineNum">     220 </span>            :                                         //printf(&quot;Read: %02x, %02x\n&quot;,uiAddr, m_regs.raw[uiAddr]);
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :                                         return m_regs.raw[uiAddr];</span>
+<span class="lineNum">     222 </span>            :                         }
+<a name="223"><span class="lineNum">     223 </span>            :                 };</a>
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                 virtual bool SetRegVal(uint8_t uiAddr, uint32_t uiData) override</span>
+<span class="lineNum">     226 </span>            :                 {
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :                         if (!(m_uiRW  &amp; (0x01&lt;&lt;uiAddr)))</span>
+<span class="lineNum">     228 </span>            :                         {
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :                                 printf(&quot;PAT9125: tried to write Read-only register\n&quot;);</span>
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 :                                 return false; // RO register.</span>
+<span class="lineNum">     231 </span>            :                         }
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 :                         m_regs.raw[uiAddr] = uiData &amp; 0xFF;</span>
+<span class="lineNum">     233 </span>            :                         //printf(&quot;Wrote: %02x = %02x (%02x)\n&quot;,uiAddr,uiData, m_regs.raw[uiAddr]);
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 :                         return true;</span>
+<a name="235"><span class="lineNum">     235 </span>            :                 };</a>
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span><span class="lineNoCov">          0 :                 LineStatus ProcessAction(unsigned int iAct, const vector&lt;string&gt; &amp;vArgs) override</span>
+<span class="lineNum">     238 </span>            :                 {
+<span class="lineNum">     239 </span><span class="lineNoCov">          0 :                         switch (iAct)</span>
+<span class="lineNum">     240 </span>            :                         {
+<span class="lineNum">     241 </span><span class="lineNoCov">          0 :                                 case ActToggle:</span>
+<span class="lineNum">     242 </span><span class="lineNoCov">          0 :                                         Toggle();</span>
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :                                         return LineStatus::Finished;</span>
+<span class="lineNum">     244 </span><span class="lineNoCov">          0 :                                 case ActSet:</span>
+<span class="lineNum">     245 </span>            :                                 {
+<span class="lineNum">     246 </span><span class="lineNoCov">          0 :                                         int iVal = stoi(vArgs.at(0));</span>
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :                                         if (iVal&lt;0 || iVal &gt;= FSState::FS_MAX)</span>
+<span class="lineNum">     248 </span><span class="lineNoCov">          0 :                                                 return IssueLineError(string(&quot;Set value &quot;) + to_string(iVal) + &quot; is out of the range [0,3]&quot; );</span>
+<span class="lineNum">     249 </span><span class="lineNoCov">          0 :                                         Set((FSState)iVal);</span>
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 :                                         return LineStatus::Finished;</span>
+<span class="lineNum">     251 </span>            :                                 }
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :                                 case ActToggleJam:</span>
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :                                         ToggleJam();</span>
+<span class="lineNum">     254 </span><span class="lineNoCov">          0 :                                         return LineStatus::Finished;</span>
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :                                 case ActResumeAuto:</span>
+<span class="lineNum">     256 </span><span class="lineNoCov">          0 :                                         Set(FS_AUTO);</span>
+<span class="lineNum">     257 </span><span class="lineNoCov">          0 :                                         return LineStatus::Finished;</span>
+<span class="lineNum">     258 </span>            :                         }
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 :                         return LineStatus::Unhandled;</span>
+<span class="lineNum">     260 </span>            :                 }
+<span class="lineNum">     261 </span>            : 
+<span class="lineNum">     262 </span>            :         private:
+<span class="lineNum">     263 </span>            : 
+<span class="lineNum">     264 </span>            :         enum Actions
+<span class="lineNum">     265 </span>            :         {
+<span class="lineNum">     266 </span>            :                 ActToggle,
+<span class="lineNum">     267 </span>            :                 ActSet,
+<span class="lineNum">     268 </span>            :                 ActToggleJam,
+<span class="lineNum">     269 </span>            :                 ActResumeAuto
+<span class="lineNum">     270 </span>            :         };
+<span class="lineNum">     271 </span>            : 
+<span class="lineNum">     272 </span>            :                 float m_fYPos = 0.f, m_fPPos = 0.f, m_fEPos = 0.f;
+<span class="lineNum">     273 </span>            :                 float m_fCurY = 0.f;
+<a name="274"><span class="lineNum">     274 </span>            :                 union m_regs</a>
+<span class="lineNum">     275 </span>            :                 {
+<span class="lineNum">     276 </span><span class="lineNoCov">          0 :                         m_regs()</span>
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :                         {</span>
+<span class="lineNum">     278 </span><span class="lineNoCov">          0 :                                 for (int i=0; i&lt;32; i++)</span>
+<span class="lineNum">     279 </span><span class="lineNoCov">          0 :                                         raw[i] = 0;</span>
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :                                 PID1 = 0x31;</span>
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :                                 PID2 = 0x91;</span>
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :                                 Mode = 0xA0;</span>
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :                                 Config = 0x17;</span>
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :                                 Sleep1 = 0x77;</span>
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 :                                 Sleep2 = 0x10;</span>
+<span class="lineNum">     286 </span><span class="lineNoCov">          0 :                                 Res_X = Res_Y = 0x14;</span>
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :                                 Orientation = 0x04;</span>
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 :                                 FrameAvg = 40; // &quot;no filament&quot; default.</span>
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 :                                 Shutter = 20;// 5;</span>
+<span class="lineNum">     290 </span><span class="lineNoCov">          0 :                         };</span>
+<span class="lineNum">     291 </span>            :                         uint8_t raw[32];
+<span class="lineNum">     292 </span>            :                         struct {
+<span class="lineNum">     293 </span>            :                                 uint8_t PID1;
+<span class="lineNum">     294 </span>            :                                 uint8_t PID2;
+<span class="lineNum">     295 </span>            :                                 uint8_t MStatus;
+<span class="lineNum">     296 </span>            :                                 uint8_t DXLow;
+<span class="lineNum">     297 </span>            :                                 uint8_t DYLow;
+<span class="lineNum">     298 </span>            :                                 uint8_t Mode;
+<span class="lineNum">     299 </span>            :                                 uint8_t Config;
+<span class="lineNum">     300 </span>            :                                 uint8_t :8;
+<span class="lineNum">     301 </span>            :                                 uint8_t :8;
+<span class="lineNum">     302 </span>            :                                 uint8_t WriteProtect;
+<span class="lineNum">     303 </span>            :                                 uint8_t Sleep1;
+<span class="lineNum">     304 </span>            :                                 uint8_t Sleep2;
+<span class="lineNum">     305 </span>            :                                 uint8_t :8;
+<span class="lineNum">     306 </span>            :                                 uint8_t Res_X;
+<span class="lineNum">     307 </span>            :                                 uint8_t Res_Y;
+<span class="lineNum">     308 </span>            :                                 uint8_t :8;
+<span class="lineNum">     309 </span>            :                                 uint8_t :8;
+<span class="lineNum">     310 </span>            :                                 uint8_t :8;
+<span class="lineNum">     311 </span>            :                                 uint8_t DeltaXYHi;
+<span class="lineNum">     312 </span>            :                                 uint8_t :8;
+<span class="lineNum">     313 </span>            :                                 uint8_t Shutter;
+<span class="lineNum">     314 </span>            :                                 uint8_t :8;
+<span class="lineNum">     315 </span>            :                                 uint8_t :8;
+<span class="lineNum">     316 </span>            :                                 uint8_t FrameAvg;
+<span class="lineNum">     317 </span>            :                                 uint8_t :8;
+<span class="lineNum">     318 </span>            :                                 uint8_t Orientation;
+<span class="lineNum">     319 </span>            :                         };
+<span class="lineNum">     320 </span>            :                 }m_regs;
+<span class="lineNum">     321 </span>            :                 uint32_t m_uiRW = 0x2006E60; //1&lt;&lt;addr if RW.
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span>            :                 bool m_bFilament = false, m_bLoading = false;
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span>            :                 FSState m_state = FS_NO_FILAMENT;
+<span class="lineNum">     326 </span>            : 
+<span class="lineNum">     327 </span>            :                 uint8_t m_uiNudgeCt = 0;
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

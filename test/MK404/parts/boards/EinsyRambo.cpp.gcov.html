@@ -1,0 +1,318 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/boards/EinsyRambo.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/boards</a> - EinsyRambo.cpp<span style="font-size: 80%;"> (source / <a href="EinsyRambo.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">125</td>
+            <td class="headerCovTableEntryLo">0.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryLo">28.6 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         EinsyRambo.cpp - Board definition for the Prusa EinsyRambo
+<span class="lineNum">       3 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            :         This file is part of MK404
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            :         MK404is free software: you can redistribute it and/or modify
+<span class="lineNum">       8 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">       9 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      10 </span>            :         (at your option) any later version.
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            :         MK404is distributed in the hope that it will be useful,
+<span class="lineNum">      13 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      14 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      15 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      18 </span>            :         along with MK404  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      19 </span>            :  */
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #include &quot;EinsyRambo.h&quot;
+<span class="lineNum">      22 </span>            : #include &lt;stdio.h&gt;             // for fprintf, printf, stderr
+<span class="lineNum">      23 </span>            : #include &quot;thermistortables.h&quot;  // for OVERSAMPLENR, temptable_1, temptable_2000
+<span class="lineNum">      24 </span>            : #include &quot;Einsy_1_1a.h&quot;        // for Einsy_1_1a
+<span class="lineNum">      25 </span>            : #include &quot;HD44780.h&quot;           // for HD44780
+<span class="lineNum">      26 </span>            : #include &quot;PinNames.h&quot;          // for Pin, Pin::BTN_ENC, Pin::W25X20CL_PIN_CS
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : #define TEMP_SENSOR_0 5
+<span class="lineNum">      29 </span>            : #define TEMP_SENSOR_BED 1
+<span class="lineNum">      30 </span>            : #define TEMP_SENSOR_AMBIENT 2000
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : #define _TERMISTOR_TABLE(num) \
+<span class="lineNum">      33 </span>            :                 temptable_##num
+<span class="lineNum">      34 </span>            : #define TERMISTOR_TABLE(num) \
+<span class="lineNum">      35 </span>            :                 _TERMISTOR_TABLE(num)
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : 
+<a name="38"><span class="lineNum">      38 </span>            : namespace Boards</a>
+<span class="lineNum">      39 </span>            : {
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :         void EinsyRambo::SetupHardware()</span>
+<span class="lineNum">      41 </span>            :         {
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :                 DisableInterruptLevelPoll(8);</span>
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :                 AddSerialPty(UART2,'2');</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                 AddHardware(UART0);</span>
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :                 AddHardware(m_Mon0,'0');</span>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :                 // SD card
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :                 string strSD = GetSDCardFile();</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :                 sd_card.SetImage(strSD);</span>
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :                 AddHardware(sd_card);</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :                 TryConnect(PinNames::Pin::SDSS, sd_card, SDCard::SPI_CSEL);</span>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            :                 // wire up the SD present signal.
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :                 TryConnect(sd_card, SDCard::CARD_PRESENT, SDCARDDETECT);</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :                 // Add indicator first so it captures the mount IRQ
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                 AddHardware(lSD);</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                 TryConnect(SDCARDDETECT, lSD, LED::LED_IN);</span>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                 int mount_error = sd_card.Mount();</span>
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :                 if (mount_error != 0) {</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :                         fprintf (stderr, &quot;SD card image ‘%s’ could not be mounted (error %i).\n&quot;, strSD.c_str(), mount_error);</span>
+<span class="lineNum">      66 </span>            :                 }
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :                 // Heaters
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 :                 AddHardware(tExtruder,GetPinNumber(TEMP_0_PIN));</span>
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :                 tExtruder.SetTable((short*)TERMISTOR_TABLE(TEMP_SENSOR_0),</span>
+<span class="lineNum">      71 </span>            :                                                                 sizeof(TERMISTOR_TABLE(TEMP_SENSOR_0)) / sizeof(short) / 2,
+<span class="lineNum">      72 </span>            :                                                                 OVERSAMPLENR);
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :                 AddHardware(tBed,GetPinNumber(TEMP_BED_PIN));</span>
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :                 tBed.SetTable((short*)TERMISTOR_TABLE(TEMP_SENSOR_BED),</span>
+<span class="lineNum">      76 </span>            :                                                         sizeof(TERMISTOR_TABLE(TEMP_SENSOR_BED)) / sizeof(short) / 2,
+<span class="lineNum">      77 </span>            :                                                         OVERSAMPLENR);
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            :                 // same table as bed.
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :                 AddHardware(tPinda, GetPinNumber(TEMP_PINDA_PIN));</span>
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :                 tPinda.SetTable((short*)TERMISTOR_TABLE(TEMP_SENSOR_BED),</span>
+<span class="lineNum">      82 </span>            :                                                         sizeof(TERMISTOR_TABLE(TEMP_SENSOR_BED)) / sizeof(short) / 2,
+<span class="lineNum">      83 </span>            :                                                         OVERSAMPLENR);
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :                 AddHardware(tAmbient,  GetPinNumber(TEMP_AMBIENT_PIN));</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :                 tAmbient.SetTable((short*)TERMISTOR_TABLE(TEMP_SENSOR_AMBIENT),</span>
+<span class="lineNum">      87 </span>            :                                                                 sizeof(TERMISTOR_TABLE(TEMP_SENSOR_AMBIENT)) / sizeof(short) / 2,
+<span class="lineNum">      88 </span>            :                                                                 OVERSAMPLENR);
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :                 AddHardware(fExtruder, GetDIRQ(TACH_0), GetDIRQ(E0_FAN), GetPWMIRQ(E0_FAN));</span>
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :                 AddHardware(fPrint, GetDIRQ(TACH_1), GetDIRQ(FAN_PIN), GetPWMIRQ(FAN_PIN));</span>
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :                 AddHardware(hBed, nullptr, GetDIRQ(HEATER_BED_PIN));</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                 hBed.ConnectTo(Heater::TEMP_OUT, tBed.GetIRQ(Thermistor::TEMP_IN));</span>
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                 AddHardware(hExtruder, nullptr, GetDIRQ(HEATER_0_PIN));</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :                 hExtruder.ConnectTo(Heater::TEMP_OUT, tExtruder.GetIRQ(Thermistor::TEMP_IN));</span>
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :                 AddHardware(m_buzzer);</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :                 m_buzzer.ConnectFrom(GetDIRQ(BEEPER),Beeper::DIGITAL_IN);</span>
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :                 AddHardware(lcd);</span>
+<span class="lineNum">     103 </span>            :                 // D4-D7,
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :                 PinNames::Pin ePins[4] = {LCD_PINS_D4,LCD_PINS_D5,LCD_PINS_D6,LCD_PINS_D7};</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :                 for (int i = 0; i &lt; 4; i++) {</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :                         TryConnect(ePins[i],lcd, HD44780::D4+i);</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :                         TryConnect(lcd, HD44780::D4+i,ePins[i]);</span>
+<span class="lineNum">     108 </span>            :                 }
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :                 TryConnect(LCD_PINS_RS,lcd, HD44780::RS);</span>
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :                 TryConnect(LCD_PINS_ENABLE, lcd,HD44780::E);</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :                 TryConnect(LCD_BL_PIN, lcd, HD44780::BRIGHTNESS_IN);</span>
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :                 lcd.ConnectFrom(GetPWMIRQ(LCD_BL_PIN), HD44780::BRIGHTNESS_PWM_IN);</span>
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :                 AddHardware(encoder);</span>
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :                 TryConnect(encoder, RotaryEncoder::OUT_A, BTN_EN2);</span>
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :                 TryConnect(encoder, RotaryEncoder::OUT_B, BTN_EN1);</span>
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :                 TryConnect(encoder, RotaryEncoder::OUT_BUTTON, BTN_ENC);</span>
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :                 TMC2130::TMC2130_cfg_t cfg;</span>
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :                 cfg.iMaxMM = 255;</span>
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :                 X.SetConfig(cfg);</span>
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :                 AddHardware(X);</span>
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :                 TryConnect(X_TMC2130_CS, X, TMC2130::SPI_CSEL);</span>
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :                 TryConnect(X_DIR_PIN,   X, TMC2130::DIR_IN);</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :                 TryConnect(X_STEP_PIN,  X, TMC2130::STEP_IN);</span>
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :                 TryConnect(X_ENABLE_PIN,        X, TMC2130::ENABLE_IN);</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :                 TryConnect(X,TMC2130::DIAG_OUT, X_TMC2130_DIAG);</span>
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :                 cfg.uiStepsPerMM = 400;</span>
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :                 cfg.iMaxMM = 219;</span>
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                 Z.SetConfig(cfg);</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :                 AddHardware(Z);</span>
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :                 TryConnect(Z_TMC2130_CS ,       Z, TMC2130::SPI_CSEL);</span>
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :                 TryConnect(Z_DIR_PIN ,          Z, TMC2130::DIR_IN);</span>
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :                 TryConnect(Z_STEP_PIN ,         Z, TMC2130::STEP_IN);</span>
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :                 TryConnect(Z_ENABLE_PIN ,       Z, TMC2130::ENABLE_IN);</span>
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :                 TryConnect(Z, TMC2130::DIAG_OUT, Z_TMC2130_DIAG);</span>
+<span class="lineNum">     140 </span>            : 
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :                 cfg.bInverted = true;</span>
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :                 cfg.uiStepsPerMM = 100;</span>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :                 cfg.iMaxMM = 220;</span>
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :                 Y.SetConfig(cfg);</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :                 AddHardware(Y);</span>
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 :                 TryConnect(Y_TMC2130_CS,        Y,TMC2130::SPI_CSEL);</span>
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :                 TryConnect(Y_DIR_PIN,           Y,TMC2130::DIR_IN);</span>
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :                 TryConnect(Y_STEP_PIN,          Y,TMC2130::STEP_IN);</span>
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :                 TryConnect(Y_ENABLE_PIN,                Y,TMC2130::ENABLE_IN);</span>
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :                 TryConnect(Y,TMC2130::DIAG_OUT,Y_TMC2130_DIAG);</span>
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :                 cfg.bHasNoEndStops = true;</span>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :                 cfg.fStartPos = 0;</span>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :                 cfg.uiStepsPerMM = 280;</span>
+<span class="lineNum">     156 </span>            : 
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :                 E.SetConfig(cfg);</span>
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :                 AddHardware(E);</span>
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :                 TryConnect(E0_TMC2130_CS,       E, TMC2130::SPI_CSEL);</span>
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :                 TryConnect(E0_DIR_PIN,          E, TMC2130::DIR_IN);</span>
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :                 TryConnect(E0_STEP_PIN,         E, TMC2130::STEP_IN);</span>
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :                 TryConnect(E0_ENABLE_PIN,       E, TMC2130::ENABLE_IN);</span>
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :                 TryConnect(E, TMC2130::DIAG_OUT, E0_TMC2130_DIAG);</span>
+<span class="lineNum">     164 </span>            : 
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :                 AddHardware(pinda, X.GetIRQ(TMC2130::POSITION_OUT),  Y.GetIRQ(TMC2130::POSITION_OUT),  Z.GetIRQ(TMC2130::POSITION_OUT));</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :                 TryConnect(pinda, PINDA::TRIGGER_OUT ,Z_MIN_PIN);</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :                 AddHardware(lPINDA);</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :                 lPINDA.ConnectFrom(pinda.GetIRQ(PINDA::TRIGGER_OUT), LED::LED_IN);</span>
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :                 AddHardware(lIR);</span>
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :                 AddHardware(vBed, GetPinNumber(VOLT_BED_PIN));</span>
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :                 AddHardware(vMain, GetPinNumber(VOLT_PWR_PIN));</span>
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :                 AddHardware(PowerPanic);</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                 TryConnect(PowerPanic, Button::BUTTON_OUT, UVLO_PIN);</span>
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :                 if (m_wiring.IsPin(W25X20CL_PIN_CS))</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                         AddHardware(spiFlash,GetDIRQ(W25X20CL_PIN_CS));</span>
+<span class="lineNum">     179 </span>            : 
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :                 AddUARTTrace('0'); // External</span>
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :                 AddUARTTrace('2'); // MMU/internal/P3</span>
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            :                 //avr_irq_register_notify(GetDIRQ(PAT_INT_PIN), MAKE_C_CALLBACK(EinsyRambo, DebugPin),this);
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :         }</span>
+<a name="186"><span class="lineNum">     186 </span>            : </a>
+<span class="lineNum">     187 </span>            :         // Convenience function for debug printing a particular pin.
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :         void EinsyRambo::DebugPin(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     189 </span>            :         {
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :                 printf(&quot;Pin DBG: change to %8x\n&quot;,value);</span>
+<a name="191"><span class="lineNum">     191 </span><span class="lineNoCov">          0 :         }</span></a>
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :         void EinsyRambo::OnAVRInit()</span>
+<span class="lineNum">     194 </span>            :         {
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :                 std::string strSPI = GetStorageFileName(&quot;xflash&quot;);</span>
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :                 spiFlash.Load(strSPI.c_str());</span>
+<a name="197"><span class="lineNum">     197 </span><span class="lineNoCov">          0 :         }</span></a>
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :         void EinsyRambo::OnAVRDeinit()</span>
+<span class="lineNum">     200 </span>            :         {
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :                 spiFlash.Save();</span>
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :                 sd_card.Unmount();</span>
+<a name="203"><span class="lineNum">     203 </span><span class="lineNoCov">          0 :         }</span></a>
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :         void EinsyRambo::OnAVRReset()</span>
+<span class="lineNum">     206 </span>            :         {
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                 printf(&quot;RESET\n&quot;);</span>
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :                 DisableInterruptLevelPoll(8);</span>
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span>            :                 // Restore powerpanic to high
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :                 PowerPanic.Press(1);</span>
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                 UART0.Reset();</span>
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span>            :                 //depress encoder knob
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                 if (!m_bFactoryReset)</span>
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :                         SetPin(BTN_ENC,1);</span>
+<span class="lineNum">     218 </span>            :                 else
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 :                         SetPin(BTN_ENC,0);</span>
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :                 m_bFactoryReset = false;</span>
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span>            :                 // TIMSK2 hack for stock prusa firmware.
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :                 if (!GetDisableWorkarounds())</span>
+<span class="lineNum">     225 </span>            :                 {
+<span class="lineNum">     226 </span>            :                         // Sweet, this is no longer necessary, it seems!
+<span class="lineNum">     227 </span>            :                         //avr_regbit_t rb = AVR_IO_REGBITS(0x70, 0, 0b111);
+<span class="lineNum">     228 </span>            :                         //      avr_regbit_setto(m_pAVR,rb,0x01);
+<span class="lineNum">     229 </span>            :                 }
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span>            :                 //Reset all SPI SS lines
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 :                 SetPin(W25X20CL_PIN_CS,1);</span>
+<span class="lineNum">     233 </span><span class="lineNoCov">          0 :                 SetPin(SDSS,1);</span>
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 :                 SetPin(X_TMC2130_CS,1);</span>
+<span class="lineNum">     235 </span><span class="lineNoCov">          0 :                 SetPin(Y_TMC2130_CS,1);</span>
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :                 SetPin(Z_TMC2130_CS,1);</span>
+<span class="lineNum">     237 </span><span class="lineNoCov">          0 :                 SetPin(E0_TMC2130_CS,1);</span>
+<span class="lineNum">     238 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">     239 </span>            : 
+<a name="240"><span class="lineNum">     240 </span>            : </a>
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span><span class="lineCov">         15 : };</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

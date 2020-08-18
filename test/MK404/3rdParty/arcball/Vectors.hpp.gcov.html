@@ -1,0 +1,435 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/3rdParty/arcball/Vectors.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/3rdParty/arcball</a> - Vectors.hpp<span style="font-size: 80%;"> (source / <a href="Vectors.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">58</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : //</a>
+<span class="lineNum">       2 </span>            : //    Copyright 2011 Nicholas Pleschko &lt;nicholas@nigi.li&gt;
+<span class="lineNum">       3 </span>            : //
+<span class="lineNum">       4 </span>            : //    ============================================
+<span class="lineNum">       5 </span>            : //
+<span class="lineNum">       6 </span>            : //    This file is part of SimpleArcballCamera.
+<span class="lineNum">       7 </span>            : //
+<span class="lineNum">       8 </span>            : //    SimpleArcballCamera is free software: you can redistribute it and/or 
+<span class="lineNum">       9 </span>            : //    modify it under the terms of the GNU General Public License as published
+<span class="lineNum">      10 </span>            : //    by the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            : //    (at your option) any later version.
+<span class="lineNum">      12 </span>            : //    
+<span class="lineNum">      13 </span>            : //    SimpleArcballCamera is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            : //    but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            : //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            : //    GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : //
+<span class="lineNum">      18 </span>            : //    You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            : //    along with SimpleArcballCamera.  If not, 
+<span class="lineNum">      20 </span>            : //    see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      21 </span>            : //
+<span class="lineNum">      22 </span>            : //    This file is based on the Arcball implementation of Mario Konrad
+<span class="lineNum">      23 </span>            : //                    &lt;http://www.mario-konrad.ch/index.php?page=20408&gt;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #ifndef SimpleArcballCamera_Vectors_hpp
+<span class="lineNum">      26 </span>            : #define SimpleArcballCamera_Vectors_hpp
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : #ifndef M_PI
+<span class="lineNum">      29 </span>            : #define M_PI (3.14159265358979323846)
+<span class="lineNum">      30 </span>            : #endif
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : #ifndef EPSILON
+<span class="lineNum">      33 </span>            : #define EPSILON (1.0e-9)
+<span class="lineNum">      34 </span>            : #endif
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : namespace math {
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : class vec2
+<span class="lineNum">      39 </span>            : {
+<span class="lineNum">      40 </span>            :         public:
+<span class="lineNum">      41 </span>            :                 enum AXIS { X = 0, Y };
+<a name="42"><span class="lineNum">      42 </span>            :                 enum ANGLE { PHI = 0 };</a>
+<span class="lineNum">      43 </span>            :         public:
+<a name="44"><span class="lineNum">      44 </span><span class="lineNoCov">          0 :                 vec2(float x = 0.0, float y = 0.0)</span></a>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                         { this-&gt;x[0]=x; this-&gt;x[1]=y; }</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :                 vec2(const vec2 &amp; v)</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :                         { *this = v; }</span>
+<a name="48"><span class="lineNum">      48 </span>            :                 vec2(float * v)</a>
+<span class="lineNum">      49 </span>            :                         { x[0]=v[0]; x[1]=v[1]; }
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :                 inline vec2 &amp; set(float a, float b)</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :                         { x[0]=a; x[1]=b; return *this; }</span>
+<span class="lineNum">      52 </span>            :                 inline vec2 &amp; setCircle(float r, float phi_deg)
+<span class="lineNum">      53 </span>            :                         {
+<span class="lineNum">      54 </span>            :                                 phi_deg *= (M_PI / 180.0);
+<span class="lineNum">      55 </span>            :                                 x[0] = r * cos(phi_deg);
+<span class="lineNum">      56 </span>            :                                 x[1] = r * sin(phi_deg);
+<span class="lineNum">      57 </span>            :                                 return *this;
+<span class="lineNum">      58 </span>            :                         }
+<span class="lineNum">      59 </span>            :                 inline float dot(const vec2 &amp; v) const
+<span class="lineNum">      60 </span>            :                         { return x[0]*v.x[0] + x[1]*v.x[1]; }
+<span class="lineNum">      61 </span>            :                 inline float length() const
+<span class="lineNum">      62 </span>            :                         { return sqrt(length2()); }
+<span class="lineNum">      63 </span>            :                 inline float length2() const
+<span class="lineNum">      64 </span>            :                         { return x[0]*x[0] + x[1]*x[1]; }
+<span class="lineNum">      65 </span>            :                 inline vec2 &amp; normalize(float len = 1.0)
+<span class="lineNum">      66 </span>            :                         {
+<span class="lineNum">      67 </span>            :                                 float l = length();
+<span class="lineNum">      68 </span>            :                                 return (l != 0.0) ? (*this *= (len / l)) : (*this);
+<span class="lineNum">      69 </span>            :                         }
+<span class="lineNum">      70 </span>            :                 inline vec2 &amp; rot(float angle_deg)
+<span class="lineNum">      71 </span>            :                         {
+<span class="lineNum">      72 </span>            :                                 angle_deg *= M_PI / 180.0;
+<span class="lineNum">      73 </span>            :                                 float c = cos(angle_deg);
+<span class="lineNum">      74 </span>            :                                 float s = sin(angle_deg);
+<a name="75"><span class="lineNum">      75 </span>            :                                 return *this = vec2(x[0] * c - x[1] * s, x[0] * s + x[1] * c);</a>
+<span class="lineNum">      76 </span>            :                         }
+<a name="77"><span class="lineNum">      77 </span><span class="lineNoCov">          0 :                 inline float operator [] (int idx) const</span></a>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :                         { return x[idx]; }</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :                 inline vec2 &amp; operator = (const vec2 &amp; v)</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :                         { x[0]=v.x[0]; x[1]=v.x[1]; return *this; }</span>
+<span class="lineNum">      81 </span>            :                 inline bool operator == (const vec2 &amp; v)
+<span class="lineNum">      82 </span>            :                         { return ((x[0]==v.x[0]) &amp;&amp; (x[1]==v.x[1])); }
+<a name="83"><span class="lineNum">      83 </span>            :                 inline vec2 &amp; operator += (const vec2 &amp; v)</a>
+<span class="lineNum">      84 </span>            :                         { x[0]+=v.x[0]; x[1]+=v.x[1]; return *this; }
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :                 inline vec2 &amp; operator -= (const vec2 &amp; v)</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :                         { x[0]-=v.x[0]; x[1]-=v.x[1]; return *this; }</span>
+<span class="lineNum">      87 </span>            :                 inline vec2 &amp; operator *= (float f)
+<span class="lineNum">      88 </span>            :                         { x[0]*=f; x[1]*=f; return *this; }
+<a name="89"><span class="lineNum">      89 </span>            :                 friend vec2 operator + (const vec2 &amp; w, const vec2 &amp; v)</a>
+<span class="lineNum">      90 </span>            :                         { return vec2(w) += v; }
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :                 friend vec2 operator - (const vec2 &amp; w, const vec2 &amp; v)</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :                         { return vec2(w) -= v; }</span>
+<span class="lineNum">      93 </span>            :                 friend vec2 operator * (const vec2 &amp; v, float f)
+<span class="lineNum">      94 </span>            :                         { return vec2(v) *= f; }
+<span class="lineNum">      95 </span>            :                 friend vec2 operator * (float f, const vec2 &amp; v)
+<span class="lineNum">      96 </span>            :                         { return vec2(v) *= f; }
+<span class="lineNum">      97 </span>            :                 friend float operator * (const vec2 &amp; a, const vec2 &amp; b)
+<span class="lineNum">      98 </span>            :                         { return a.dot(b); }
+<span class="lineNum">      99 </span>            :         private:
+<span class="lineNum">     100 </span>            :                 float x[2];
+<span class="lineNum">     101 </span>            : };
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : class vec3
+<span class="lineNum">     104 </span>            : {
+<span class="lineNum">     105 </span>            :         public:
+<span class="lineNum">     106 </span>            :                 enum AXIS { X = 0, Y, Z };
+<a name="107"><span class="lineNum">     107 </span>            :                 enum ANGLE { PHI = 0, RHO };</a>
+<span class="lineNum">     108 </span>            :         public:
+<a name="109"><span class="lineNum">     109 </span><span class="lineNoCov">          0 :                 vec3(float x = 0.0, float y = 0.0, float z = 0.0)</span></a>
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :                         { this-&gt;x[0]=x; this-&gt;x[1]=y; this-&gt;x[2]=z; }</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :                 vec3(const vec3 &amp; v)</span>
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :                         { *this = v; }</span>
+<a name="113"><span class="lineNum">     113 </span>            :                 vec3(float * v)</a>
+<span class="lineNum">     114 </span>            :                         { x[0]=v[0]; x[1]=v[1]; x[2]=v[2]; }
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :                 inline vec3 &amp; set(float a, float b, float c)</span>
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :                         { x[0]=a; x[1]=b; x[2]=c; return *this; }</span>
+<span class="lineNum">     117 </span>            :                 inline vec3 &amp; setSphere(float r, float phi_deg, float rho_deg)
+<span class="lineNum">     118 </span>            :                         {
+<span class="lineNum">     119 </span>            :                                 phi_deg *= (M_PI / 180.0);
+<span class="lineNum">     120 </span>            :                                 rho_deg *= (M_PI / 180.0);
+<span class="lineNum">     121 </span>            :                                 x[0] = r * cos(phi_deg) * cos(rho_deg);
+<span class="lineNum">     122 </span>            :                                 x[1] = r * cos(phi_deg) * sin(rho_deg);
+<span class="lineNum">     123 </span>            :                                 x[2] = r * sin(phi_deg);
+<span class="lineNum">     124 </span>            :                                 return *this;
+<span class="lineNum">     125 </span>            :                         }
+<a name="126"><span class="lineNum">     126 </span>            :                 inline float dot(const vec3 &amp; v) const</a>
+<span class="lineNum">     127 </span>            :                         { return x[0]*v.x[0] + x[1]*v.x[1] + x[2]*v.x[2]; }
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :                 inline vec3 cross(const vec3 &amp; v) const</span>
+<span class="lineNum">     129 </span>            :                         {
+<span class="lineNum">     130 </span>            :                                 return vec3(
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :                                         x[1] * v.x[2] - x[2] * v.x[1],</span>
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :                                         x[2] * v.x[0] - x[0] * v.x[2],</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                                         x[0] * v.x[1] - x[1] * v.x[0]);</span>
+<span class="lineNum">     134 </span>            :                         }
+<span class="lineNum">     135 </span>            :                 inline vec3 &amp; nullify(void)
+<span class="lineNum">     136 </span>            :                         {
+<span class="lineNum">     137 </span>            :                                 x[0] = ((x[0] &lt;= EPSILON) &amp;&amp; (x[0] &gt;= -EPSILON)) ? 0.0 : x[0];
+<span class="lineNum">     138 </span>            :                                 x[1] = ((x[1] &lt;= EPSILON) &amp;&amp; (x[1] &gt;= -EPSILON)) ? 0.0 : x[1];
+<span class="lineNum">     139 </span>            :                                 x[2] = ((x[2] &lt;= EPSILON) &amp;&amp; (x[2] &gt;= -EPSILON)) ? 0.0 : x[2];
+<a name="140"><span class="lineNum">     140 </span>            :                                 return *this;</a>
+<span class="lineNum">     141 </span>            :                         }
+<a name="142"><span class="lineNum">     142 </span><span class="lineNoCov">          0 :                 inline float length() const</span></a>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :                         { return sqrt(length2()); }</span>
+<a name="144"><span class="lineNum">     144 </span><span class="lineNoCov">          0 :                 inline float length2() const</span></a>
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :                         { return x[0]*x[0] + x[1]*x[1] + x[2]*x[2]; }</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :                 inline vec3 &amp; normalize(float len = 1.0)</span>
+<span class="lineNum">     147 </span>            :                         {
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :                                 float l = length();</span>
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :                                 if ((l &lt; 1.0e-7) &amp;&amp; (l &gt; -1.0e-7)) return *this;</span>
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :                                 l = len / l;</span>
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :                                 x[0]*=l; x[1]*=l; x[2]*=l;</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :                                 return *this;</span>
+<span class="lineNum">     153 </span>            :                         }
+<span class="lineNum">     154 </span>            :                 inline float getSphereR() const
+<span class="lineNum">     155 </span>            :                         { return length(); }
+<span class="lineNum">     156 </span>            :                 inline float getSpherePhi() const
+<span class="lineNum">     157 </span>            :                         {
+<span class="lineNum">     158 </span>            :                                 float a = sqrt(x[0]*x[0] + x[1]*x[1]);
+<span class="lineNum">     159 </span>            :                                 return (a != 0.0) ? (atan(x[2] / a) * 180.0 / M_PI) : 0.0;
+<span class="lineNum">     160 </span>            :                         }
+<span class="lineNum">     161 </span>            :                 inline float getSphereRho() const
+<span class="lineNum">     162 </span>            :                         {
+<span class="lineNum">     163 </span>            :                                 if (x[0] &gt;= -EPSILON &amp;&amp; x[0] &lt;= EPSILON)
+<span class="lineNum">     164 </span>            :                                 {
+<span class="lineNum">     165 </span>            :                                         if (x[1] &gt;= -EPSILON &amp;&amp; x[1] &lt;= EPSILON) return 0.0;
+<span class="lineNum">     166 </span>            :                                         else if (x[1] &gt; 0.0) return 90.0;
+<span class="lineNum">     167 </span>            :                                         else if (x[1] &lt; 0.0) return 270.0;
+<span class="lineNum">     168 </span>            :                                 }
+<span class="lineNum">     169 </span>            :                                 if (x[0] &gt; 0.0)
+<span class="lineNum">     170 </span>            :                                 {
+<span class="lineNum">     171 </span>            :                                         return atan(x[1] / x[0]) * 180.0 / M_PI;
+<span class="lineNum">     172 </span>            :                                 }
+<span class="lineNum">     173 </span>            :                                 else // (x[0] &lt; 0.0)
+<span class="lineNum">     174 </span>            :                                 {
+<span class="lineNum">     175 </span>            :                                         return 180.0 + atan(x[1] / x[0]) * 180.0 / M_PI;
+<span class="lineNum">     176 </span>            :                                 }
+<span class="lineNum">     177 </span>            :                         }
+<span class="lineNum">     178 </span>            :                 inline vec3 &amp; rot(AXIS axis, float angle_deg)
+<span class="lineNum">     179 </span>            :                         {
+<span class="lineNum">     180 </span>            :                                 switch (axis)
+<span class="lineNum">     181 </span>            :                                 {
+<span class="lineNum">     182 </span>            :                                         case X: return rotX(angle_deg);
+<span class="lineNum">     183 </span>            :                                         case Y: return rotY(angle_deg);
+<span class="lineNum">     184 </span>            :                                         case Z: return rotZ(angle_deg);
+<span class="lineNum">     185 </span>            :                                 }
+<span class="lineNum">     186 </span>            :                                 return *this;
+<span class="lineNum">     187 </span>            :                         }
+<span class="lineNum">     188 </span>            :                 inline vec3 &amp; rotX(float angle_deg)
+<span class="lineNum">     189 </span>            :                         {
+<span class="lineNum">     190 </span>            :                                 angle_deg *= M_PI / 180.0;
+<span class="lineNum">     191 </span>            :                                 float c = cos(angle_deg);
+<span class="lineNum">     192 </span>            :                                 float s = sin(angle_deg);
+<span class="lineNum">     193 </span>            :                                 return *this = vec3(x[0], x[1]*c - x[2]*s, x[1]*s + x[2]*c);
+<span class="lineNum">     194 </span>            :                         }
+<span class="lineNum">     195 </span>            :                 inline vec3 &amp; rotY(float angle_deg)
+<span class="lineNum">     196 </span>            :                         {
+<span class="lineNum">     197 </span>            :                                 angle_deg *= M_PI / 180.0;
+<span class="lineNum">     198 </span>            :                                 float c = cos(angle_deg);
+<span class="lineNum">     199 </span>            :                                 float s = sin(angle_deg);
+<span class="lineNum">     200 </span>            :                                 return *this = vec3(x[0]*c - x[2]*s, x[1], x[0]*s + x[2]*c);
+<span class="lineNum">     201 </span>            :                         }
+<span class="lineNum">     202 </span>            :                 inline vec3 &amp; rotZ(float angle_deg)
+<span class="lineNum">     203 </span>            :                         {
+<span class="lineNum">     204 </span>            :                                 angle_deg *= M_PI / 180.0;
+<span class="lineNum">     205 </span>            :                                 float c = cos(angle_deg);
+<span class="lineNum">     206 </span>            :                                 float s = sin(angle_deg);
+<span class="lineNum">     207 </span>            :                                 return *this = vec3(x[0]*c - x[1]*s, x[0]* s + x[1]*c, x[2]);
+<span class="lineNum">     208 </span>            :                         }
+<span class="lineNum">     209 </span>            :                 inline vec3 &amp; rotSphere(ANGLE angle, float angle_deg)
+<span class="lineNum">     210 </span>            :                         {
+<span class="lineNum">     211 </span>            :                                 switch (angle)
+<span class="lineNum">     212 </span>            :                                 {
+<span class="lineNum">     213 </span>            :                                         case PHI: return rotPhi(angle_deg);
+<span class="lineNum">     214 </span>            :                                         case RHO: return rotRho(angle_deg);
+<span class="lineNum">     215 </span>            :                                 }
+<span class="lineNum">     216 </span>            :                                 return *this;
+<span class="lineNum">     217 </span>            :                         }
+<span class="lineNum">     218 </span>            :                 inline vec3 &amp; rotPhi(float angle_deg)
+<span class="lineNum">     219 </span>            :                         {
+<span class="lineNum">     220 </span>            :                                 return setSphere(getSphereR(),
+<span class="lineNum">     221 </span>            :                                         getSpherePhi() + angle_deg, getSphereRho());
+<span class="lineNum">     222 </span>            :                         }
+<span class="lineNum">     223 </span>            :                 inline vec3 &amp; rotRho(float angle_deg)
+<span class="lineNum">     224 </span>            :                         {
+<span class="lineNum">     225 </span>            :                                 return setSphere(getSphereR(),
+<a name="226"><span class="lineNum">     226 </span>            :                                         getSpherePhi(), getSphereRho() + angle_deg);</a>
+<span class="lineNum">     227 </span>            :                         }
+<a name="228"><span class="lineNum">     228 </span><span class="lineNoCov">          0 :                 inline float operator [] (int idx) const</span></a>
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :                         { return x[idx]; }</span>
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 :                 inline float &amp; operator [] (int idx)</span>
+<span class="lineNum">     231 </span><span class="lineNoCov">          0 :                         { return x[idx]; }</span>
+<a name="232"><span class="lineNum">     232 </span>            :                 inline operator const float * (void) const</a>
+<span class="lineNum">     233 </span>            :                         { return x; }
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 :                 inline vec3 &amp; operator = (const vec3 &amp; v)</span>
+<span class="lineNum">     235 </span><span class="lineNoCov">          0 :                         { x[0]=v.x[0]; x[1]=v.x[1]; x[2]=v.x[2]; return *this; }</span>
+<a name="236"><span class="lineNum">     236 </span>            :                 inline bool operator == (const vec3 &amp; v)</a>
+<span class="lineNum">     237 </span>            :                         { return ((x[0]==v.x[0]) &amp;&amp; (x[1]==v.x[1]) &amp;&amp; (x[2]==v.x[2])); }
+<a name="238"><span class="lineNum">     238 </span><span class="lineNoCov">          0 :                 inline vec3 &amp; operator += (const vec3 &amp; v)</span></a>
+<span class="lineNum">     239 </span><span class="lineNoCov">          0 :                         { x[0]+=v.x[0]; x[1]+=v.x[1]; x[2]+=v.x[2]; return *this; }</span>
+<a name="240"><span class="lineNum">     240 </span><span class="lineNoCov">          0 :                 inline vec3 &amp; operator -= (const vec3 &amp; v)</span></a>
+<span class="lineNum">     241 </span><span class="lineNoCov">          0 :                         { x[0]-=v.x[0]; x[1]-=v.x[1]; x[2]-=v.x[2]; return *this; }</span>
+<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 :                 inline vec3 &amp; operator *= (float f)</span></a>
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :                         { x[0]*=f; x[1]*=f; x[2]*=f; return *this; }</span>
+<a name="244"><span class="lineNum">     244 </span><span class="lineNoCov">          0 :                 friend vec3 operator + (const vec3 &amp; w, const vec3 &amp; v)</span></a>
+<span class="lineNum">     245 </span><span class="lineNoCov">          0 :                         { return vec3(w) += v; }</span>
+<a name="246"><span class="lineNum">     246 </span><span class="lineNoCov">          0 :                 friend vec3 operator - (const vec3 &amp; w, const vec3 &amp; v)</span></a>
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :                         { return vec3(w) -= v; }</span>
+<a name="248"><span class="lineNum">     248 </span><span class="lineNoCov">          0 :                 friend vec3 operator * (const vec3 &amp; v, float f)</span></a>
+<span class="lineNum">     249 </span><span class="lineNoCov">          0 :                         { return vec3(v) *= f; }</span>
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 :                 friend vec3 operator * (float f, const vec3 &amp; v)</span>
+<span class="lineNum">     251 </span><span class="lineNoCov">          0 :                         { return vec3(v) *= f; }</span>
+<span class="lineNum">     252 </span>            :                 friend float operator * (const vec3 &amp; a, const vec3 &amp; b)
+<span class="lineNum">     253 </span>            :                         { return a.dot(b); }
+<span class="lineNum">     254 </span>            :         private:
+<span class="lineNum">     255 </span>            :                 float x[3];
+<span class="lineNum">     256 </span>            : };
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            : class vec4
+<span class="lineNum">     259 </span>            : {
+<span class="lineNum">     260 </span>            :         public:
+<span class="lineNum">     261 </span>            :                 enum AXIS { X = 0, Y, Z, W };
+<a name="262"><span class="lineNum">     262 </span>            :                 enum ANGLE { PHI = 0, RHO };</a>
+<span class="lineNum">     263 </span>            :         public:
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :                 vec4(float x = 0.0, float y = 0.0, float z = 0.0, float w = 0.0)</span>
+<span class="lineNum">     265 </span><span class="lineNoCov">          0 :                         { this-&gt;x[0]=x; this-&gt;x[1]=y; this-&gt;x[2]=z; this-&gt;x[3]=w; }</span>
+<span class="lineNum">     266 </span>            :                 vec4(const vec4 &amp; v)
+<span class="lineNum">     267 </span>            :                         { *this = v; }
+<span class="lineNum">     268 </span>            :                 vec4(float * v)
+<span class="lineNum">     269 </span>            :                         { x[0]=v[0]; x[1]=v[1]; x[2]=v[2]; x[3]=v[3]; }
+<span class="lineNum">     270 </span>            :                 inline vec4 &amp; set(float a, float b, float c, float d)
+<span class="lineNum">     271 </span>            :                         { x[0]=a; x[1]=b; x[2]=c; x[3]=d; return *this; }
+<span class="lineNum">     272 </span>            :                 inline float dot(const vec4 &amp; v) const
+<span class="lineNum">     273 </span>            :                         { return x[0]*v.x[0] + x[1]*v.x[1] + x[2]*v.x[2] + x[3]*v.x[3]; }
+<span class="lineNum">     274 </span>            :                 inline float length() const
+<span class="lineNum">     275 </span>            :                         { return sqrt(length2()); }
+<span class="lineNum">     276 </span>            :                 inline float length2() const
+<span class="lineNum">     277 </span>            :                         { return x[0]*x[0] + x[1]*x[1] + x[2]*x[2] + x[3]*x[3]; }
+<span class="lineNum">     278 </span>            :                 inline vec4 &amp; normalize(float len = 1.0)
+<span class="lineNum">     279 </span>            :                         {
+<span class="lineNum">     280 </span>            :                                 float l = length();
+<a name="281"><span class="lineNum">     281 </span>            :                                 return (l != 0.0) ? (*this *= (len / l)) : (*this);</a>
+<span class="lineNum">     282 </span>            :                         }
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :                 inline float operator [] (int idx) const</span>
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :                         { return x[idx]; }</span>
+<span class="lineNum">     285 </span>            :                 inline operator const float * (void) const
+<span class="lineNum">     286 </span>            :                         { return x; }
+<span class="lineNum">     287 </span>            :                 inline vec4 &amp; operator = (const vec4 &amp; v)
+<span class="lineNum">     288 </span>            :                         { x[0]=v.x[0]; x[1]=v.x[1]; x[2]=v.x[2]; x[3]=v.x[3]; return *this; }
+<span class="lineNum">     289 </span>            :                 inline bool operator == (const vec4 &amp; v)
+<span class="lineNum">     290 </span>            :                         { return ((x[0]==v.x[0]) &amp;&amp; (x[1]==v.x[1]) &amp;&amp; (x[2]==v.x[2]) &amp;&amp; (x[3]==v.x[3])); }
+<span class="lineNum">     291 </span>            :                 inline vec4 &amp; operator += (const vec4 &amp; v)
+<span class="lineNum">     292 </span>            :                         { x[0]+=v.x[0]; x[1]+=v.x[1]; x[2]+=v.x[2]; x[3]+=v.x[3]; return *this; }
+<span class="lineNum">     293 </span>            :                 inline vec4 &amp; operator -= (const vec4 &amp; v)
+<span class="lineNum">     294 </span>            :                         { x[0]-=v.x[0]; x[1]-=v.x[1]; x[2]-=v.x[2]; x[3]-=v.x[3]; return *this; }
+<span class="lineNum">     295 </span>            :                 inline vec4 &amp; operator *= (float f)
+<span class="lineNum">     296 </span>            :                         { x[0]*=f; x[1]*=f; x[2]*=f; x[3]*=f; return *this; }
+<span class="lineNum">     297 </span>            :                 friend vec4 operator + (const vec4 &amp; w, const vec4 &amp; v)
+<span class="lineNum">     298 </span>            :                         { return vec4(w) += v; }
+<span class="lineNum">     299 </span>            :                 friend vec4 operator - (const vec4 &amp; w, const vec4 &amp; v)
+<span class="lineNum">     300 </span>            :                         { return vec4(w) -= v; }
+<span class="lineNum">     301 </span>            :                 friend vec4 operator * (const vec4 &amp; v, float f)
+<span class="lineNum">     302 </span>            :                         { return vec4(v) *= f; }
+<span class="lineNum">     303 </span>            :                 friend vec4 operator * (float f, const vec4 &amp; v)
+<span class="lineNum">     304 </span>            :                         { return vec4(v) *= f; }
+<span class="lineNum">     305 </span>            :                 friend float operator * (const vec4 &amp; a, const vec4 &amp; b)
+<span class="lineNum">     306 </span>            :                         { return a.dot(b); }
+<span class="lineNum">     307 </span>            :         private:
+<span class="lineNum">     308 </span>            :                 float x[4];
+<span class="lineNum">     309 </span>            : };
+<span class="lineNum">     310 </span>            : 
+<span class="lineNum">     311 </span>            : template &lt;unsigned int N&gt; class vecn      // N &gt;= 1
+<span class="lineNum">     312 </span>            : {
+<span class="lineNum">     313 </span>            :         public:
+<span class="lineNum">     314 </span>            :                 vecn(void)
+<span class="lineNum">     315 </span>            :                         { for (unsigned int i=0; i&lt;N; ++i) x[i]=0.0; }
+<span class="lineNum">     316 </span>            :                 vecn(const vecn&lt;N&gt; &amp; v)
+<span class="lineNum">     317 </span>            :                         { for (unsigned int i=0; i&lt;N; ++i) x[i]=v.x[i]; }
+<span class="lineNum">     318 </span>            :                 vecn(float * v)
+<span class="lineNum">     319 </span>            :                         { for (unsigned int i=0; i&lt;N; ++i) x[i]=v[i]; }
+<span class="lineNum">     320 </span>            :                 inline float dot(const vecn&lt;N&gt; &amp; v) const
+<span class="lineNum">     321 </span>            :                         { float r=0.0; for (unsigned int i=0; i&lt;N; ++i) r+=(x[i]*v.x[i]); return r; }
+<span class="lineNum">     322 </span>            :                 inline float length() const
+<span class="lineNum">     323 </span>            :                         { return sqrt(length2()); }
+<span class="lineNum">     324 </span>            :                 inline float length2() const
+<span class="lineNum">     325 </span>            :                         { float r=0.0; for (unsigned int i=0; i&lt;N; ++i) r+=(x[i]*x[i]); return r; }
+<span class="lineNum">     326 </span>            :                 inline vecn&lt;N&gt; &amp; normalize(float len = 1.0)
+<span class="lineNum">     327 </span>            :                         {
+<span class="lineNum">     328 </span>            :                                 float l = length();
+<span class="lineNum">     329 </span>            :                                 return ((l &lt; 1.0e-7) &amp;&amp; (l &gt; -1.0e-7)) ? (*this *= (len / l)) : (*this);
+<span class="lineNum">     330 </span>            :                         }
+<span class="lineNum">     331 </span>            :                 inline float operator [] (int idx) const
+<span class="lineNum">     332 </span>            :                         { return x[idx]; }
+<span class="lineNum">     333 </span>            :                 inline vecn&lt;N&gt; &amp; operator = (const vecn&lt;N&gt; &amp; v)
+<span class="lineNum">     334 </span>            :                         { for (unsigned int i=0; i&lt;N; ++i) x[i]=v.x[i]; return *this; }
+<span class="lineNum">     335 </span>            :                 inline bool operator == (const vecn&lt;N&gt; &amp; v)
+<span class="lineNum">     336 </span>            :                         { for (unsigned int i=0; i&lt;N; ++i) if (x[i]!=v.x[i]) return false; return true; }
+<span class="lineNum">     337 </span>            :                 inline vecn&lt;N&gt; &amp; operator += (const vecn&lt;N&gt; &amp; v)
+<span class="lineNum">     338 </span>            :                         { for (unsigned int i=0; i&lt;N; ++i) x[i]+=v.x[i]; return *this; }
+<span class="lineNum">     339 </span>            :                 inline vecn&lt;N&gt; &amp; operator -= (const vecn&lt;N&gt; &amp; v)
+<span class="lineNum">     340 </span>            :                         { for (unsigned int i=0; i&lt;N; ++i) x[i]-=v.x[i]; return *this; }
+<span class="lineNum">     341 </span>            :                 inline vecn&lt;N&gt; &amp; operator *= (float f)
+<span class="lineNum">     342 </span>            :                         { for (unsigned int i=0; i&lt;N; ++i) x[i]*=f; return *this; }
+<span class="lineNum">     343 </span>            :                 friend vecn&lt;N&gt; operator + (const vecn&lt;N&gt; &amp; w, const vecn&lt;N&gt; &amp; v)
+<span class="lineNum">     344 </span>            :                         { return vecn&lt;N&gt;(w) += v; }
+<span class="lineNum">     345 </span>            :                 friend vecn&lt;N&gt; operator - (const vecn&lt;N&gt; &amp; w, const vecn&lt;N&gt; &amp; v)
+<span class="lineNum">     346 </span>            :                         { return vecn&lt;N&gt;(w) -= v; }
+<span class="lineNum">     347 </span>            :                 friend vecn&lt;N&gt; operator * (const vecn&lt;N&gt; &amp; v, float f)
+<span class="lineNum">     348 </span>            :                         { return vecn&lt;N&gt;(v) *= f; }
+<span class="lineNum">     349 </span>            :                 friend vecn&lt;N&gt; operator * (float f, const vecn&lt;N&gt; &amp; v)
+<span class="lineNum">     350 </span>            :                         { return vecn&lt;N&gt;(v) *= f; }
+<span class="lineNum">     351 </span>            :                 friend float operator * (const vecn&lt;N&gt; &amp; a, const vecn&lt;N&gt; &amp; b)
+<span class="lineNum">     352 </span>            :                         { return a.dot(b); }
+<span class="lineNum">     353 </span>            :         private:
+<span class="lineNum">     354 </span>            :                 float x[N];
+<span class="lineNum">     355 </span>            : };
+<span class="lineNum">     356 </span>            : 
+<span class="lineNum">     357 </span>            : }
+<span class="lineNum">     358 </span>            : 
+<span class="lineNum">     359 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

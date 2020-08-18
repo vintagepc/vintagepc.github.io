@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/utility/GLPrint.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">MK404/utility</a> - GLPrint.cpp<span style="font-size: 80%;"> (source / <a href="GLPrint.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">101</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         GLPrint.cpp - Object responsible for print visualization
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         This file is part of MK404.
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">       9 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      10 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            :         (at your option) any later version.
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      20 </span>            :  */
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #include &quot;GLPrint.h&quot;
+<span class="lineNum">      23 </span>            : #include &lt;stdlib.h&gt;    // for abs
+<span class="lineNum">      24 </span>            : #include &lt;algorithm&gt;   // for transform
+<span class="lineNum">      25 </span>            : #include &lt;functional&gt;  // for minus
+<span class="lineNum">      26 </span>            : #include &lt;GL/glew.h&gt;   // for glMaterialfv, GL_FRONT_AND_BACK, glDisableClie...
+<span class="lineNum">      27 </span>            : 
+<a name="28"><span class="lineNum">      28 </span>            : static constexpr int iPrintRes = 100000; //0.1mm (meters/this)</a>
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 : GLPrint::GLPrint(float fR, float fG, float fB):m_fColR(fR),m_fColG(fG),m_fColB(fB)</span>
+<span class="lineNum">      31 </span>            : {
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :         Clear();</span>
+<a name="33"><span class="lineNum">      33 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 : void GLPrint::Clear()</span>
+<span class="lineNum">      36 </span>            : {
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :         m_iExtrStart = m_iExtrEnd = {{0,0,0,0}};</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :         m_fExtrStart = m_fExtrEnd = {{0,0,0,0}};</span>
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :         m_ivCount.clear();</span>
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :         m_ivStart.clear();</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :         m_fvDraw.clear();</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :         m_fvNorms.clear();</span>
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :         m_bExtruding = false;</span>
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :         m_fEMax = -1;</span>
+<a name="45"><span class="lineNum">      45 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 : void GLPrint::NewCoord(float fX, float fY, float fZ, float fE)</span>
+<span class="lineNum">      48 </span>            : {
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :         if (m_fEMax&lt;0) // First cycle/extrusion.</span>
+<span class="lineNum">      50 </span>            :         {
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :                 std::lock_guard&lt;std::mutex&gt; lock(m_lock); // Lock out GL while updating vectors</span>
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :                 m_fEMax = fE;</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :                 m_fExtrEnd = m_fExtrStart = {{fX,fZ,fY,fE}};</span>
+<span class="lineNum">      54 </span>            :         }
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :         int iX = fX*iPrintRes,iY = fY*iPrintRes,iZ = fZ*iPrintRes;</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :         std::array&lt;float,3&gt; vfPos = {{fX,fZ,fY}};</span>
+<span class="lineNum">      57 </span>            :         // Test if the new coordinate is still collinear with the existing segment.
+<span class="lineNum">      58 </span>            :         // Triangle area method. Slopes have risks of zero/inf/nan for very small deltas.
+<span class="lineNum">      59 </span>            :         //Ax(By - Cy) + Bx(Cy - Ay) + Cx(Ay - By)
+<span class="lineNum">      60 </span>            :          // We don't bother with div by 2/abs since we only care if the area is 0.
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :         int iArea = (m_iExtrStart[0]* ( m_iExtrEnd[2] - iY)) + (m_iExtrEnd[0]*(iY - m_iExtrStart[2])) + (iX * (m_iExtrStart[2] - m_iExtrEnd[2]));</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :         float fArea = (m_fExtrStart[0]* ( m_fExtrEnd[2] - fY)) + (m_fExtrEnd[0]*(fY - m_fExtrStart[2])) + (fX * (m_fExtrStart[2] - m_fExtrEnd[2]));</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :         if (fArea&lt;0) fArea = -fArea;</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :         bool bColinear = (fArea/2)&lt;1e-10 || abs((iArea/2)) &lt;= 1;</span>
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         bool bSamePos = (iX == m_iExtrEnd[0]) &amp;&amp; (iY == m_iExtrEnd[2]);</span>
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :         bool bExtruding = fE&gt;(m_fEMax-5e-5); //-0.0002); // Extruding if we are &gt; than the highest E value previously observed</span>
+<span class="lineNum">      68 </span>            :         // Trailing 0.0002 is fudge factor for LA/retraction threshold to avoid gaps at E end.
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :         if ((bSamePos &amp;&amp; !bExtruding) || (bSamePos &amp;&amp; (iZ == m_iExtrEnd[1]))) //SamePos doesn't inculde Z so we don't get inf/zero slopes on hops.</span>
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :                 return;</span>
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :         if (fE&gt;m_fEMax)</span>
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :                 m_fEMax = fE;</span>
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :         else if (!m_bExtruding &amp;&amp; !bExtruding)</span>
+<span class="lineNum">      76 </span>            :         {
+<span class="lineNum">      77 </span>            :                 // Just update segment end if we are mid non-extrusion (travel)
+<span class="lineNum">      78 </span>            :                 // We don't need to track co-linearity if not extruding.
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :                 bColinear = true;</span>
+<span class="lineNum">      80 </span>            :         }
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :         if (bExtruding ^ m_bExtruding)</span>
+<span class="lineNum">      82 </span>            :         {
+<span class="lineNum">      83 </span>            :                 // Extruding condition has changed. Start a new segment.
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :                 if (bExtruding) // Just started extruding. Update the various pointers.</span>
+<span class="lineNum">      85 </span>            :                 {
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :                         m_ivTStart.push_back(m_fvTri.size()/3);</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :                         if (fZ&gt;m_fCurZ)</span>
+<span class="lineNum">      89 </span>            :                         {
+<span class="lineNum">      90 </span>            :                                 //printf(&quot;New Z layer: %.02f\n&quot;, fZ);
+<span class="lineNum">      91 </span>            :                                 //m_fLastZ = m_fCurZ;
+<span class="lineNum">      92 </span>            :                                 //m_fCurZ = fZ;
+<span class="lineNum">      93 </span>            :                         }
+<span class="lineNum">      94 </span>            :                         //printf(&quot;New extrusion %u at index %u\n&quot;,m_ivStart.size(),m_ivStart.back());
+<span class="lineNum">      95 </span>            :                         // Add a temporary normal vertex
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                         float fCross[3], fA[3],fB[3]= {0,-0.002,0};</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :                         std::transform(vfPos.begin(), vfPos.end(), m_fExtrEnd.data(), fA, std::minus&lt;float&gt;());</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :                         CrossProduct(fA,fB,fCross);</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :                         Normalize(fCross);</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :                         std::lock_guard&lt;std::mutex&gt; lock(m_lock); // Lock out GL while updating vectors</span>
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :                         for (int i=0; i&lt;4; i++)</span>
+<span class="lineNum">     102 </span>            :                         {
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :                                 m_iExtrStart = m_iExtrEnd;</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :                                 m_fExtrStart = m_fExtrEnd;</span>
+<span class="lineNum">     105 </span>            :                         }
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :                         m_ivStart.push_back(m_fvDraw.size()/3); // Index of what we're about to add...</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :                         m_fvDraw.insert(m_fvDraw.end(),m_fExtrEnd.data(), m_fExtrEnd.data()+3);</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                         m_fvNorms.insert(m_fvNorms.end(), fCross, fCross+3);</span>
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :                 }
+<span class="lineNum">     111 </span>            :                 // m_fvTri.push_back(m_fExtrEnd[0]);
+<span class="lineNum">     112 </span>            :                 // m_fvTri.push_back(m_fExtrEnd[1]-0.0002);
+<span class="lineNum">     113 </span>            :                 // m_fvTri.push_back(m_fExtrEnd[2]);
+<span class="lineNum">     114 </span>            :                 // m_fvTri.insert(m_fvTri.end(),m_fExtrEnd.data(), m_fExtrEnd.data()+3);
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :                 if (!bExtruding)</span>
+<span class="lineNum">     117 </span>            :                 {
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :                         std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :                         m_ivCount.push_back((m_fvDraw.size()/3) - m_ivStart.back());</span>
+<span class="lineNum">     120 </span>            :                         // m_ivTCount.push_back((m_fvTri.size()/3) - m_ivTStart.back());
+<span class="lineNum">     121 </span>            :                         //printf(&quot;Ended extrusion %u (%u vertices)\n&quot;, m_ivCount.size(), m_ivCount.back());
+<span class="lineNum">     122 </span>            :                 }
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :                 m_bExtruding = bExtruding;</span>
+<span class="lineNum">     124 </span>            :         }
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :         else if (!bColinear)</span>
+<span class="lineNum">     126 </span>            :         {
+<span class="lineNum">     127 </span>            :                 // First, update the previous normal with the new vertex info.
+<span class="lineNum">     128 </span>            :                 // TODO: fB really should be pointing at the nearest vertex on the layer below, but that's a lot of coordinate
+<span class="lineNum">     129 </span>            :                 // that's going to be disposable once this changes to a geometry or normal shader instead of the current implemetnation
+<span class="lineNum">     130 </span>            :                 // so I'm going to leave it as is for now.
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :                 float fCross[3], fA[3],fB[3]  = {0,-0.002,0};</span>
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :                 float *pfPrev = (&amp;m_fvNorms.back()) - 2;</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                 std::transform(pfPrev, pfPrev+3, vfPos.data(), fA, std::minus&lt;float&gt;()); // Length from p-&gt;curr</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :                 CrossProduct(fA,fB,fCross);</span>
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :                 Normalize(fCross);</span>
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :                 pfPrev[0] +=fCross[0]; pfPrev[1] += fCross[1]; pfPrev[2] += fCross[2];</span>
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :                 pfPrev[0]/=2.f; pfPrev[1]/=2.f; pfPrev[2]/=2.f;</span>
+<span class="lineNum">     138 </span>            :                 // And then append the new temporary end one.
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :                 std::transform(vfPos.begin(), vfPos.end(), m_fExtrEnd.data(), fA, std::minus&lt;float&gt;());</span>
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :                 CrossProduct(fA,fB,fCross);</span>
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :                 Normalize(fCross);</span>
+<span class="lineNum">     142 </span>            :                                 // New segment, push it onto the vertex list and update the segment count
+<span class="lineNum">     143 </span>            :                 //printf(&quot;New segment: %d\n&quot;,m_vCoords.size());
+<span class="lineNum">     144 </span>            :                 {
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :                         std::lock_guard&lt;std::mutex&gt; lock(m_lock); // Lock out GL while updating vectors</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :                         m_fvDraw.insert(m_fvDraw.end(),m_fExtrEnd.data(), m_fExtrEnd.data()+3);</span>
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 :                         m_fvNorms.insert(m_fvNorms.end(), fCross, fCross+3);</span>
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :                         m_iExtrStart = m_iExtrEnd;</span>
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :                         m_fExtrStart = m_fExtrEnd;</span>
+<span class="lineNum">     150 </span>            :                 }
+<span class="lineNum">     151 </span>            :                 // m_fvTri.push_back(m_fExtrEnd[0]);
+<span class="lineNum">     152 </span>            :                 // m_fvTri.push_back(m_fExtrEnd[1]-0.0002);
+<span class="lineNum">     153 </span>            :                 // m_fvTri.push_back(m_fExtrEnd[2]);.
+<span class="lineNum">     154 </span>            :                 // m_fvTri.insert(m_fvTri.end(),m_fExtrEnd.data(), m_fExtrEnd.data()+3);
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span>            :         }
+<span class="lineNum">     157 </span>            :         // Update the end we are tracking.
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :         m_fExtrEnd[0] = fX;</span>
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :         m_fExtrEnd[2] = fY;</span>
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :         m_fExtrEnd[1] = fZ;</span>
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :         m_iExtrEnd[0] = iX;</span>
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :         m_iExtrEnd[2] = iY;</span>
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :         m_iExtrEnd[1] = iZ;</span>
+<span class="lineNum">     164 </span>            :         //m_iExtrEnd[3] = iE;
+<span class="lineNum">     165 </span>            : 
+<a name="166"><span class="lineNum">     166 </span>            : }</a>
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 : void GLPrint::Draw()</span>
+<span class="lineNum">     169 </span>            : {
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :         float fColor[4] = {m_fColR,m_fColG,m_fColB,1};</span>
+<span class="lineNum">     171 </span>            :         //float fG[4] = {0,0.5,0,1};
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :         float fY[4] = {1,1,0,1};</span>
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :         float fK[4] = {0,0,0,1};</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :         float fSpec[4] = {1,1,1,1};</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :         glLineWidth(1.0);</span>
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :         glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,fSpec);</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :         glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,64);</span>
+<span class="lineNum">     179 </span>            :         //glEnable(GL_AUTO_NORMAL);
+<span class="lineNum">     180 </span>            :         //glEnable(GL_NORMALIZE);
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :         glEnableClientState(GL_VERTEX_ARRAY);</span>
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :         glEnableClientState(GL_NORMAL_ARRAY);</span>
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :                 glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,fK);</span>
+<span class="lineNum">     184 </span>            :                 //glVertexPointer(3, GL_FLOAT, 3*sizeof(float), m_fvTri.data());
+<span class="lineNum">     185 </span>            :                 // glMultiDrawArrays(GL_TRIANGLE_STRIP,m_ivTStart.data(),m_ivTCount.data(), m_ivTCount.size());
+<span class="lineNum">     186 </span>            :                 //glNormal3f(0,1,0);
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :                 glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,fColor);</span>
+<span class="lineNum">     188 </span>            :                 {
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :                         std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :                         glVertexPointer(3, GL_FLOAT, 3*sizeof(float), m_fvDraw.data());</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :                         glNormalPointer(GL_FLOAT, 3*sizeof(float), m_fvNorms.data());</span>
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :                         glMultiDrawArrays(GL_LINE_STRIP,m_ivStart.data(),m_ivCount.data(), m_ivCount.size());</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                         glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,fSpec);</span>
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                         if (m_ivCount.size()&gt;0)</span>
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :                                 glDrawArrays(GL_LINE_STRIP,m_ivStart.back(),((m_fvDraw.size()/3)-m_ivStart.back())-1);</span>
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :                         if (m_bExtruding &amp;&amp; m_fvDraw.size() &gt;0)</span>
+<span class="lineNum">     197 </span>            :                         {
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :                                 glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,fY);</span>
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                                 glBegin(GL_LINES);</span>
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :                                         glVertex3fv((&amp;m_fvDraw.back())-2);</span>
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :                                         glVertex3fv(m_fExtrEnd.data());</span>
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :                                 glEnd();</span>
+<span class="lineNum">     203 </span>            :                         }
+<span class="lineNum">     204 </span>            :                 }
+<span class="lineNum">     205 </span>            :                 // Uncomment for vertex debugging.
+<span class="lineNum">     206 </span>            :                  //glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE,fG);
+<span class="lineNum">     207 </span>            :                 // glPointSize(1.0);
+<span class="lineNum">     208 </span>            :                 // glDrawArrays(GL_POINTS,0,m_fvDraw.size()/3);
+<span class="lineNum">     209 </span><span class="lineNoCov">          0 :         glDisableClientState(GL_VERTEX_ARRAY);</span>
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 :         glDisableClientState(GL_NORMAL_ARRAY);</span>
+<span class="lineNum">     211 </span>            :         // Normal visualization for debugging, draws the last 10.
+<span class="lineNum">     212 </span>            :         // glBegin(GL_LINES);
+<span class="lineNum">     213 </span>            :         //      int iStart = 0;
+<span class="lineNum">     214 </span>            :         //      if (m_fvNorms.size()&gt;30)
+<span class="lineNum">     215 </span>            :         //              iStart = m_fvNorms.size() - 30;
+<span class="lineNum">     216 </span>            :         //      for (int i=iStart; i&lt;m_fvNorms.size(); i+=3)
+<span class="lineNum">     217 </span>            :         //      {
+<span class="lineNum">     218 </span>            :         //              glVertex3fv(m_fvDraw.data()+i);
+<span class="lineNum">     219 </span>            :         //              glVertex3fv(m_fvNorms.data()+i);
+<span class="lineNum">     220 </span>            :         //      }
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span>            :         // glEnd();
+<span class="lineNum">     223 </span>            :         //glDisable(GL_AUTO_NORMAL);
+<span class="lineNum">     224 </span>            :         //glDisable(GL_NORMALIZE);
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

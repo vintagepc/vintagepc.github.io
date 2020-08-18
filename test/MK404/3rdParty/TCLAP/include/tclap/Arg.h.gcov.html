@@ -1,0 +1,769 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/3rdParty/TCLAP/include/tclap/Arg.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">MK404/3rdParty/TCLAP/include/tclap</a> - Arg.h<span style="font-size: 80%;"> (source / <a href="Arg.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">65</td>
+            <td class="headerCovTableEntry">137</td>
+            <td class="headerCovTableEntryLo">47.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntry">35</td>
+            <td class="headerCovTableEntryLo">65.7 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // -*- Mode: c++; c-basic-offset: 4; tab-width: 4; -*-</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : /******************************************************************************
+<span class="lineNum">       4 </span>            :  *
+<span class="lineNum">       5 </span>            :  *  file:  Arg.h
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  *  Copyright (c) 2003, Michael E. Smoot .
+<span class="lineNum">       8 </span>            :  *  Copyright (c) 2004, Michael E. Smoot, Daniel Aarno .
+<span class="lineNum">       9 </span>            :  *  Copyright (c) 2017 Google Inc.
+<span class="lineNum">      10 </span>            :  *  All rights reserved.
+<span class="lineNum">      11 </span>            :  *
+<span class="lineNum">      12 </span>            :  *  See the file COPYING in the top directory of this distribution for
+<span class="lineNum">      13 </span>            :  *  more information.
+<span class="lineNum">      14 </span>            :  *
+<span class="lineNum">      15 </span>            :  *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS
+<span class="lineNum">      16 </span>            :  *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+<span class="lineNum">      17 </span>            :  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+<span class="lineNum">      18 </span>            :  *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+<span class="lineNum">      19 </span>            :  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+<span class="lineNum">      20 </span>            :  *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+<span class="lineNum">      21 </span>            :  *  DEALINGS IN THE SOFTWARE.
+<span class="lineNum">      22 </span>            :  *
+<span class="lineNum">      23 </span>            :  *****************************************************************************/
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : #ifndef TCLAP_ARGUMENT_H
+<span class="lineNum">      27 </span>            : #define TCLAP_ARGUMENT_H
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : #ifdef HAVE_CONFIG_H
+<span class="lineNum">      30 </span>            : #include &lt;config.h&gt;
+<span class="lineNum">      31 </span>            : #endif
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : #include &lt;string&gt;
+<span class="lineNum">      34 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      35 </span>            : #include &lt;list&gt;
+<span class="lineNum">      36 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">      37 </span>            : #include &lt;iomanip&gt;
+<span class="lineNum">      38 </span>            : #include &lt;cstdio&gt;
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : #include &lt;tclap/sstream.h&gt;
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : #if defined(HAVE_SSTREAM)
+<span class="lineNum">      43 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">      44 </span>            : typedef std::istringstream istringstream;
+<span class="lineNum">      45 </span>            : #elif defined(HAVE_STRSTREAM)
+<span class="lineNum">      46 </span>            : #include &lt;strstream&gt;
+<span class="lineNum">      47 </span>            : typedef std::istrstream istringstream;
+<span class="lineNum">      48 </span>            : #else
+<span class="lineNum">      49 </span>            : #error &quot;Need a stringstream (sstream or strstream) to compile!&quot;
+<span class="lineNum">      50 </span>            : #endif
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : #include &lt;tclap/ArgException.h&gt;
+<span class="lineNum">      53 </span>            : #include &lt;tclap/Visitor.h&gt;
+<span class="lineNum">      54 </span>            : #include &lt;tclap/CmdLineInterface.h&gt;
+<span class="lineNum">      55 </span>            : #include &lt;tclap/ArgTraits.h&gt;
+<span class="lineNum">      56 </span>            : #include &lt;tclap/StandardTraits.h&gt;
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            : namespace TCLAP {
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : /**
+<span class="lineNum">      61 </span>            :  * A virtual base class that defines the essential data for all arguments.
+<span class="lineNum">      62 </span>            :  * This class, or one of its existing children, must be subclassed to do
+<span class="lineNum">      63 </span>            :  * anything.
+<span class="lineNum">      64 </span>            :  */
+<span class="lineNum">      65 </span>            : class Arg
+<span class="lineNum">      66 </span>            : {
+<span class="lineNum">      67 </span>            :         private:
+<span class="lineNum">      68 </span>            :                 /**
+<span class="lineNum">      69 </span>            :                  * Prevent accidental copying.
+<span class="lineNum">      70 </span>            :                  */
+<span class="lineNum">      71 </span>            :                 Arg(const Arg&amp; rhs);
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :                 /**
+<span class="lineNum">      74 </span>            :                  * Prevent accidental copying.
+<span class="lineNum">      75 </span>            :                  */
+<span class="lineNum">      76 </span>            :                 Arg&amp; operator=(const Arg&amp; rhs);
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :                 /**
+<a name="79"><span class="lineNum">      79 </span>            :                  * Indicates whether the rest of the arguments should be ignored.</a>
+<span class="lineNum">      80 </span>            :                  */
+<span class="lineNum">      81 </span><span class="lineCov">        180 :                 static bool&amp; ignoreRestRef() { static bool ign = false; return ign; }</span>
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            :                 /**
+<span class="lineNum">      84 </span>            :                  * The delimiter that separates an argument flag/name from the
+<a name="85"><span class="lineNum">      85 </span>            :                  * value.</a>
+<span class="lineNum">      86 </span>            :                  */
+<span class="lineNum">      87 </span><span class="lineCov">        620 :                 static char&amp; delimiterRef() { static char delim = ' '; return delim; }</span>
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            :         protected:
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            :                 /**
+<span class="lineNum">      92 </span>            :                  * The single char flag used to identify the argument.
+<span class="lineNum">      93 </span>            :                  * This value (preceded by a dash {-}), can be used to identify
+<span class="lineNum">      94 </span>            :                  * an argument on the command line.  The _flag can be blank,
+<span class="lineNum">      95 </span>            :                  * in fact this is how unlabeled args work.  Unlabeled args must
+<span class="lineNum">      96 </span>            :                  * override appropriate functions to get correct handling. Note
+<span class="lineNum">      97 </span>            :                  * that the _flag does NOT include the dash as part of the flag.
+<span class="lineNum">      98 </span>            :                  */
+<span class="lineNum">      99 </span>            :                 std::string _flag;
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            :                 /**
+<span class="lineNum">     102 </span>            :                  * A single word namd identifying the argument.
+<span class="lineNum">     103 </span>            :                  * This value (preceded by two dashed {--}) can also be used
+<span class="lineNum">     104 </span>            :                  * to identify an argument on the command line.  Note that the
+<span class="lineNum">     105 </span>            :                  * _name does NOT include the two dashes as part of the _name. The
+<span class="lineNum">     106 </span>            :                  * _name cannot be blank.
+<span class="lineNum">     107 </span>            :                  */
+<span class="lineNum">     108 </span>            :                 std::string _name;
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :                 /**
+<span class="lineNum">     111 </span>            :                  * Description of the argument.
+<span class="lineNum">     112 </span>            :                  */
+<span class="lineNum">     113 </span>            :                 std::string _description;
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span>            :                 /**
+<span class="lineNum">     116 </span>            :                  * Indicating whether the argument is required.
+<span class="lineNum">     117 </span>            :                  */
+<span class="lineNum">     118 </span>            :                 bool _required;
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            :                 /**
+<span class="lineNum">     121 </span>            :                  * Label to be used in usage description.  Normally set to
+<span class="lineNum">     122 </span>            :                  * &quot;required&quot;, but can be changed when necessary.
+<span class="lineNum">     123 </span>            :                  */
+<span class="lineNum">     124 </span>            :                 std::string _requireLabel;
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :                 /**
+<span class="lineNum">     127 </span>            :                  * Indicates whether a value is required for the argument.
+<span class="lineNum">     128 </span>            :                  * Note that the value may be required but the argument/value
+<span class="lineNum">     129 </span>            :                  * combination may not be, as specified by _required.
+<span class="lineNum">     130 </span>            :                  */
+<span class="lineNum">     131 </span>            :                 bool _valueRequired;
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            :                 /**
+<span class="lineNum">     134 </span>            :                  * Indicates whether the argument has been set.
+<span class="lineNum">     135 </span>            :                  * Indicates that a value on the command line has matched the
+<span class="lineNum">     136 </span>            :                  * name/flag of this argument and the values have been set accordingly.
+<span class="lineNum">     137 </span>            :                  */
+<span class="lineNum">     138 </span>            :                 bool _alreadySet;
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            :                 /**
+<span class="lineNum">     141 </span>            :                  * A pointer to a visitor object.
+<span class="lineNum">     142 </span>            :                  * The visitor allows special handling to occur as soon as the
+<span class="lineNum">     143 </span>            :                  * argument is matched.  This defaults to NULL and should not
+<span class="lineNum">     144 </span>            :                  * be used unless absolutely necessary.
+<span class="lineNum">     145 </span>            :                  */
+<span class="lineNum">     146 </span>            :                 Visitor* _visitor;
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :                 /**
+<span class="lineNum">     149 </span>            :                  * Whether this argument can be ignored, if desired.
+<span class="lineNum">     150 </span>            :                  */
+<span class="lineNum">     151 </span>            :                 bool _ignoreable;
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            :                 /**
+<span class="lineNum">     154 </span>            :                  * Indicates that the arg was set as part of an XOR and not on the
+<span class="lineNum">     155 </span>            :                  * command line.
+<span class="lineNum">     156 </span>            :                  */
+<span class="lineNum">     157 </span>            :                 bool _xorSet;
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            :                 bool _acceptsMultipleValues;
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            :                 /**
+<span class="lineNum">     162 </span>            :                  * Performs the special handling described by the Visitor.
+<span class="lineNum">     163 </span>            :                  */
+<span class="lineNum">     164 </span>            :                 void _checkWithVisitor() const;
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span>            :                 /**
+<span class="lineNum">     167 </span>            :                  * Primary constructor. YOU (yes you) should NEVER construct an Arg
+<span class="lineNum">     168 </span>            :                  * directly, this is a base class that is extended by various children
+<span class="lineNum">     169 </span>            :                  * that are meant to be used.  Use SwitchArg, ValueArg, MultiArg,
+<span class="lineNum">     170 </span>            :                  * UnlabeledValueArg, or UnlabeledMultiArg instead.
+<span class="lineNum">     171 </span>            :                  *
+<span class="lineNum">     172 </span>            :                  * \param flag - The flag identifying the argument.
+<span class="lineNum">     173 </span>            :                  * \param name - The name identifying the argument.
+<span class="lineNum">     174 </span>            :                  * \param desc - The description of the argument, used in the usage.
+<span class="lineNum">     175 </span>            :                  * \param req - Whether the argument is required.
+<span class="lineNum">     176 </span>            :                  * \param valreq - Whether the a value is required for the argument.
+<span class="lineNum">     177 </span>            :                  * \param v - The visitor checked by the argument. Defaults to NULL.
+<span class="lineNum">     178 </span>            :                  */
+<span class="lineNum">     179 </span>            :                 Arg( const std::string&amp; flag,
+<span class="lineNum">     180 </span>            :                          const std::string&amp; name,
+<span class="lineNum">     181 </span>            :                          const std::string&amp; desc,
+<span class="lineNum">     182 </span>            :                          bool req,
+<span class="lineNum">     183 </span>            :                          bool valreq,
+<span class="lineNum">     184 </span>            :                          Visitor* v = NULL );
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span>            :         public:
+<span class="lineNum">     187 </span>            :                 /**
+<span class="lineNum">     188 </span>            :                  * Destructor.
+<span class="lineNum">     189 </span>            :                  */
+<span class="lineNum">     190 </span>            :                 virtual ~Arg();
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            :                 /**
+<span class="lineNum">     193 </span>            :                  * Adds this to the specified list of Args.
+<span class="lineNum">     194 </span>            :                  * \param argList - The list to add this to.
+<span class="lineNum">     195 </span>            :                  */
+<span class="lineNum">     196 </span>            :                 virtual void addToList( std::list&lt;Arg*&gt;&amp; argList ) const;
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span>            :                 /**
+<a name="199"><span class="lineNum">     199 </span>            :                  * Begin ignoring arguments since the &quot;--&quot; argument was specified.</a>
+<span class="lineNum">     200 </span>            :                  */
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :                 static void beginIgnoring() { ignoreRestRef() = true; }</span>
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            :                 /**
+<a name="204"><span class="lineNum">     204 </span>            :                  * Whether to ignore the rest.</a>
+<span class="lineNum">     205 </span>            :                  */
+<span class="lineNum">     206 </span><span class="lineCov">        180 :                 static bool ignoreRest() { return ignoreRestRef(); }</span>
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span>            :                 /**
+<span class="lineNum">     209 </span>            :                  * The delimiter that separates an argument flag/name from the
+<a name="210"><span class="lineNum">     210 </span>            :                  * value.</a>
+<span class="lineNum">     211 </span>            :                  */
+<span class="lineNum">     212 </span><span class="lineCov">        615 :                 static char delimiter() { return delimiterRef(); }</span>
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span>            :                 /**
+<span class="lineNum">     215 </span>            :                  * The char used as a place holder when SwitchArgs are combined.
+<a name="216"><span class="lineNum">     216 </span>            :                  * Currently set to the bell char (ASCII 7).</a>
+<span class="lineNum">     217 </span>            :                  */
+<span class="lineNum">     218 </span><span class="lineCov">        585 :                 static char blankChar() { return (char)7; }</span>
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span>            :                 /**
+<span class="lineNum">     221 </span>            :                  * The char that indicates the beginning of a flag.  Defaults to '-', but
+<span class="lineNum">     222 </span>            :                  * clients can define TCLAP_FLAGSTARTCHAR to override.
+<span class="lineNum">     223 </span>            :                  */
+<span class="lineNum">     224 </span>            : #ifndef TCLAP_FLAGSTARTCHAR
+<a name="225"><span class="lineNum">     225 </span>            : #define TCLAP_FLAGSTARTCHAR '-'</a>
+<span class="lineNum">     226 </span>            : #endif
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :                 static char flagStartChar() { return TCLAP_FLAGSTARTCHAR; }</span>
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span>            :                 /**
+<span class="lineNum">     230 </span>            :                  * The sting that indicates the beginning of a flag.  Defaults to &quot;-&quot;, but
+<span class="lineNum">     231 </span>            :                  * clients can define TCLAP_FLAGSTARTSTRING to override. Should be the same
+<span class="lineNum">     232 </span>            :                  * as TCLAP_FLAGSTARTCHAR.
+<span class="lineNum">     233 </span>            :                  */
+<span class="lineNum">     234 </span>            : #ifndef TCLAP_FLAGSTARTSTRING
+<a name="235"><span class="lineNum">     235 </span>            : #define TCLAP_FLAGSTARTSTRING &quot;-&quot;</a>
+<span class="lineNum">     236 </span>            : #endif
+<span class="lineNum">     237 </span><span class="lineCov">        630 :                 static const std::string flagStartString() { return TCLAP_FLAGSTARTSTRING; }</span>
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span>            :                 /**
+<span class="lineNum">     240 </span>            :                  * The sting that indicates the beginning of a name.  Defaults to &quot;--&quot;, but
+<span class="lineNum">     241 </span>            :                  *  clients can define TCLAP_NAMESTARTSTRING to override.
+<span class="lineNum">     242 </span>            :                  */
+<span class="lineNum">     243 </span>            : #ifndef TCLAP_NAMESTARTSTRING
+<a name="244"><span class="lineNum">     244 </span>            : #define TCLAP_NAMESTARTSTRING &quot;--&quot;</a>
+<span class="lineNum">     245 </span>            : #endif
+<span class="lineNum">     246 </span><span class="lineCov">        605 :                 static const std::string nameStartString() { return TCLAP_NAMESTARTSTRING; }</span>
+<span class="lineNum">     247 </span>            : 
+<span class="lineNum">     248 </span>            :                 /**
+<a name="249"><span class="lineNum">     249 </span>            :                  * The name used to identify the ignore rest argument.</a>
+<span class="lineNum">     250 </span>            :                  */
+<span class="lineNum">     251 </span><span class="lineCov">        115 :                 static const std::string ignoreNameString() { return &quot;ignore_rest&quot;; }</span>
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            :                 /**
+<span class="lineNum">     254 </span>            :                  * Sets the delimiter for all arguments.
+<a name="255"><span class="lineNum">     255 </span>            :                  * \param c - The character that delimits flags/names from values.</a>
+<span class="lineNum">     256 </span>            :                  */
+<span class="lineNum">     257 </span><span class="lineCov">          5 :                 static void setDelimiter( char c ) { delimiterRef() = c; }</span>
+<span class="lineNum">     258 </span>            : 
+<span class="lineNum">     259 </span>            :                 /**
+<span class="lineNum">     260 </span>            :                  * Pure virtual method meant to handle the parsing and value assignment
+<span class="lineNum">     261 </span>            :                  * of the string on the command line.
+<span class="lineNum">     262 </span>            :                  * \param i - Pointer the the current argument in the list.
+<span class="lineNum">     263 </span>            :                  * \param args - Mutable list of strings. What is
+<span class="lineNum">     264 </span>            :                  * passed in from main.
+<span class="lineNum">     265 </span>            :                  */
+<span class="lineNum">     266 </span>            :                 virtual bool processArg(int *i, std::vector&lt;std::string&gt;&amp; args) = 0;
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            :                 /**
+<span class="lineNum">     269 </span>            :                  * Operator ==.
+<span class="lineNum">     270 </span>            :                  * Equality operator. Must be virtual to handle unlabeled args.
+<span class="lineNum">     271 </span>            :                  * \param a - The Arg to be compared to this.
+<span class="lineNum">     272 </span>            :                  */
+<span class="lineNum">     273 </span>            :                 virtual bool operator==(const Arg&amp; a) const;
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span>            :                 /**
+<span class="lineNum">     276 </span>            :                  * Returns the argument flag.
+<span class="lineNum">     277 </span>            :                  */
+<span class="lineNum">     278 </span>            :                 const std::string&amp; getFlag() const;
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span>            :                 /**
+<span class="lineNum">     281 </span>            :                  * Returns the argument name.
+<span class="lineNum">     282 </span>            :                  */
+<span class="lineNum">     283 </span>            :                 const std::string&amp; getName() const;
+<span class="lineNum">     284 </span>            : 
+<span class="lineNum">     285 </span>            :                 /**
+<span class="lineNum">     286 </span>            :                  * Returns the argument description.
+<span class="lineNum">     287 </span>            :                  */
+<span class="lineNum">     288 </span>            :                 std::string getDescription() const;
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span>            :                 /**
+<span class="lineNum">     291 </span>            :                  * Indicates whether the argument is required.
+<span class="lineNum">     292 </span>            :                  */
+<span class="lineNum">     293 </span>            :                 virtual bool isRequired() const;
+<span class="lineNum">     294 </span>            : 
+<span class="lineNum">     295 </span>            :                 /**
+<span class="lineNum">     296 </span>            :                  * Sets _required to true. This is used by the XorHandler.
+<span class="lineNum">     297 </span>            :                  * You really have no reason to ever use it.
+<span class="lineNum">     298 </span>            :                  */
+<span class="lineNum">     299 </span>            :                 void forceRequired();
+<span class="lineNum">     300 </span>            : 
+<span class="lineNum">     301 </span>            :                 /**
+<span class="lineNum">     302 </span>            :                  * Sets the _alreadySet value to true.  This is used by the XorHandler.
+<span class="lineNum">     303 </span>            :                  * You really have no reason to ever use it.
+<span class="lineNum">     304 </span>            :                  */
+<span class="lineNum">     305 </span>            :                 void xorSet();
+<span class="lineNum">     306 </span>            : 
+<span class="lineNum">     307 </span>            :                 /**
+<span class="lineNum">     308 </span>            :                  * Indicates whether a value must be specified for argument.
+<span class="lineNum">     309 </span>            :                  */
+<span class="lineNum">     310 </span>            :                 bool isValueRequired() const;
+<span class="lineNum">     311 </span>            : 
+<span class="lineNum">     312 </span>            :                 /**
+<span class="lineNum">     313 </span>            :                  * Indicates whether the argument has already been set.  Only true
+<span class="lineNum">     314 </span>            :                  * if the arg has been matched on the command line.
+<span class="lineNum">     315 </span>            :                  */
+<span class="lineNum">     316 </span>            :                 bool isSet() const;
+<span class="lineNum">     317 </span>            : 
+<span class="lineNum">     318 </span>            :                 /**
+<span class="lineNum">     319 </span>            :                  * Indicates whether the argument can be ignored, if desired.
+<span class="lineNum">     320 </span>            :                  */
+<span class="lineNum">     321 </span>            :                 bool isIgnoreable() const;
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span>            :                 /**
+<span class="lineNum">     324 </span>            :                  * A method that tests whether a string matches this argument.
+<span class="lineNum">     325 </span>            :                  * This is generally called by the processArg() method.  This
+<span class="lineNum">     326 </span>            :                  * method could be re-implemented by a child to change how
+<span class="lineNum">     327 </span>            :                  * arguments are specified on the command line.
+<span class="lineNum">     328 </span>            :                  * \param s - The string to be compared to the flag/name to determine
+<span class="lineNum">     329 </span>            :                  * whether the arg matches.
+<span class="lineNum">     330 </span>            :                  */
+<span class="lineNum">     331 </span>            :                 virtual bool argMatches( const std::string&amp; s ) const;
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span>            :                 /**
+<span class="lineNum">     334 </span>            :                  * Returns a simple string representation of the argument.
+<span class="lineNum">     335 </span>            :                  * Primarily for debugging.
+<span class="lineNum">     336 </span>            :                  */
+<span class="lineNum">     337 </span>            :                 virtual std::string toString() const;
+<span class="lineNum">     338 </span>            : 
+<span class="lineNum">     339 </span>            :                 /**
+<span class="lineNum">     340 </span>            :                  * Returns a short ID for the usage.
+<span class="lineNum">     341 </span>            :                  * \param valueId - The value used in the id.
+<span class="lineNum">     342 </span>            :                  */
+<span class="lineNum">     343 </span>            :                 virtual std::string shortID( const std::string&amp; valueId = &quot;val&quot; ) const;
+<span class="lineNum">     344 </span>            : 
+<span class="lineNum">     345 </span>            :                 /**
+<span class="lineNum">     346 </span>            :                  * Returns a long ID for the usage.
+<span class="lineNum">     347 </span>            :                  * \param valueId - The value used in the id.
+<span class="lineNum">     348 </span>            :                  */
+<span class="lineNum">     349 </span>            :                 virtual std::string longID( const std::string&amp; valueId = &quot;val&quot; ) const;
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span>            :                 /**
+<span class="lineNum">     352 </span>            :                  * Trims a value off of the flag.
+<span class="lineNum">     353 </span>            :                  * \param flag - The string from which the flag and value will be
+<span class="lineNum">     354 </span>            :                  * trimmed. Contains the flag once the value has been trimmed.
+<span class="lineNum">     355 </span>            :                  * \param value - Where the value trimmed from the string will
+<span class="lineNum">     356 </span>            :                  * be stored.
+<span class="lineNum">     357 </span>            :                  */
+<span class="lineNum">     358 </span>            :                 virtual void trimFlag( std::string&amp; flag, std::string&amp; value ) const;
+<span class="lineNum">     359 </span>            : 
+<span class="lineNum">     360 </span>            :                 /**
+<span class="lineNum">     361 </span>            :                  * Checks whether a given string has blank chars, indicating that
+<span class="lineNum">     362 </span>            :                  * it is a combined SwitchArg.  If so, return true, otherwise return
+<span class="lineNum">     363 </span>            :                  * false.
+<span class="lineNum">     364 </span>            :                  * \param s - string to be checked.
+<span class="lineNum">     365 </span>            :                  */
+<span class="lineNum">     366 </span>            :                 bool _hasBlanks( const std::string&amp; s ) const;
+<span class="lineNum">     367 </span>            : 
+<span class="lineNum">     368 </span>            :                 /**
+<span class="lineNum">     369 </span>            :                  * Sets the requireLabel. Used by XorHandler.  You shouldn't ever
+<span class="lineNum">     370 </span>            :                  * use this.
+<span class="lineNum">     371 </span>            :                  * \param s - Set the requireLabel to this value.
+<span class="lineNum">     372 </span>            :                  */
+<span class="lineNum">     373 </span>            :                 void setRequireLabel( const std::string&amp; s );
+<span class="lineNum">     374 </span>            : 
+<span class="lineNum">     375 </span>            :                 /**
+<span class="lineNum">     376 </span>            :                  * Used for MultiArgs and XorHandler to determine whether args
+<span class="lineNum">     377 </span>            :                  * can still be set.
+<span class="lineNum">     378 </span>            :                  */
+<span class="lineNum">     379 </span>            :                 virtual bool allowMore();
+<span class="lineNum">     380 </span>            : 
+<span class="lineNum">     381 </span>            :                 /**
+<span class="lineNum">     382 </span>            :                  * Use by output classes to determine whether an Arg accepts
+<span class="lineNum">     383 </span>            :                  * multiple values.
+<span class="lineNum">     384 </span>            :                  */
+<span class="lineNum">     385 </span>            :                 virtual bool acceptsMultipleValues();
+<span class="lineNum">     386 </span>            : 
+<span class="lineNum">     387 </span>            :                 /**
+<span class="lineNum">     388 </span>            :                  * Clears the Arg object and allows it to be reused by new
+<span class="lineNum">     389 </span>            :                  * command lines.
+<span class="lineNum">     390 </span>            :                  */
+<span class="lineNum">     391 </span>            :                  virtual void reset();
+<span class="lineNum">     392 </span>            : };
+<span class="lineNum">     393 </span>            : 
+<span class="lineNum">     394 </span>            : /**
+<span class="lineNum">     395 </span>            :  * Typedef of an Arg list iterator.
+<span class="lineNum">     396 </span>            :  */
+<span class="lineNum">     397 </span>            : typedef std::list&lt;Arg*&gt;::iterator ArgListIterator;
+<span class="lineNum">     398 </span>            : 
+<span class="lineNum">     399 </span>            : /**
+<span class="lineNum">     400 </span>            :  * Typedef of an Arg vector iterator.
+<span class="lineNum">     401 </span>            :  */
+<span class="lineNum">     402 </span>            : typedef std::vector&lt;Arg*&gt;::iterator ArgVectorIterator;
+<span class="lineNum">     403 </span>            : 
+<span class="lineNum">     404 </span>            : /**
+<span class="lineNum">     405 </span>            :  * Typedef of a Visitor list iterator.
+<span class="lineNum">     406 </span>            :  */
+<span class="lineNum">     407 </span>            : typedef std::list&lt;Visitor*&gt;::iterator VisitorListIterator;
+<span class="lineNum">     408 </span>            : 
+<span class="lineNum">     409 </span>            : /*
+<span class="lineNum">     410 </span>            :  * Extract a value of type T from it's string representation contained
+<span class="lineNum">     411 </span>            :  * in strVal. The ValueLike parameter used to select the correct
+<span class="lineNum">     412 </span>            :  * specialization of ExtractValue depending on the value traits of T.
+<span class="lineNum">     413 </span>            :  * ValueLike traits use operator&gt;&gt; to assign the value from strVal.
+<a name="414"><span class="lineNum">     414 </span>            :  */</a>
+<span class="lineNum">     415 </span>            : template&lt;typename T&gt; void
+<span class="lineNum">     416 </span><span class="lineNoCov">          0 : ExtractValue(T &amp;destVal, const std::string&amp; strVal, ValueLike vl)</span>
+<span class="lineNum">     417 </span>            : {
+<span class="lineNum">     418 </span>            :     static_cast&lt;void&gt;(vl); // Avoid warning about unused vl
+<span class="lineNum">     419 </span><span class="lineNoCov">          0 :     istringstream is(strVal.c_str());</span>
+<span class="lineNum">     420 </span>            : 
+<span class="lineNum">     421 </span><span class="lineNoCov">          0 :     int valuesRead = 0;</span>
+<span class="lineNum">     422 </span><span class="lineNoCov">          0 :     while ( is.good() ) {</span>
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 :         if ( is.peek() != EOF )</span>
+<span class="lineNum">     424 </span>            : #ifdef TCLAP_SETBASE_ZERO
+<span class="lineNum">     425 </span>            :             is &gt;&gt; std::setbase(0) &gt;&gt; destVal;
+<span class="lineNum">     426 </span>            : #else
+<span class="lineNum">     427 </span><span class="lineNoCov">          0 :             is &gt;&gt; destVal;</span>
+<span class="lineNum">     428 </span>            : #endif
+<span class="lineNum">     429 </span>            :         else
+<span class="lineNum">     430 </span><span class="lineNoCov">          0 :             break;</span>
+<span class="lineNum">     431 </span>            : 
+<span class="lineNum">     432 </span><span class="lineNoCov">          0 :         valuesRead++;</span>
+<span class="lineNum">     433 </span>            :     }
+<span class="lineNum">     434 </span>            : 
+<span class="lineNum">     435 </span><span class="lineNoCov">          0 :     if ( is.fail() )</span>
+<span class="lineNum">     436 </span>            :         throw( ArgParseException(&quot;Couldn't read argument value &quot;
+<span class="lineNum">     437 </span><span class="lineNoCov">          0 :                                  &quot;from string '&quot; + strVal + &quot;'&quot;));</span>
+<span class="lineNum">     438 </span>            : 
+<span class="lineNum">     439 </span>            : 
+<span class="lineNum">     440 </span><span class="lineNoCov">          0 :     if ( valuesRead &gt; 1 )</span>
+<span class="lineNum">     441 </span>            :         throw( ArgParseException(&quot;More than one valid value parsed from &quot;
+<span class="lineNum">     442 </span><span class="lineNoCov">          0 :                                  &quot;string '&quot; + strVal + &quot;'&quot;));</span>
+<span class="lineNum">     443 </span>            : 
+<span class="lineNum">     444 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     445 </span>            : 
+<span class="lineNum">     446 </span>            : /*
+<span class="lineNum">     447 </span>            :  * Extract a value of type T from it's string representation contained
+<span class="lineNum">     448 </span>            :  * in strVal. The ValueLike parameter used to select the correct
+<span class="lineNum">     449 </span>            :  * specialization of ExtractValue depending on the value traits of T.
+<span class="lineNum">     450 </span>            :  * StringLike uses assignment (operator=) to assign from strVal.
+<a name="451"><span class="lineNum">     451 </span>            :  */</a>
+<span class="lineNum">     452 </span>            : template&lt;typename T&gt; void
+<span class="lineNum">     453 </span><span class="lineCov">         15 : ExtractValue(T &amp;destVal, const std::string&amp; strVal, StringLike sl)</span>
+<span class="lineNum">     454 </span>            : {
+<span class="lineNum">     455 </span>            :     static_cast&lt;void&gt;(sl); // Avoid warning about unused sl
+<span class="lineNum">     456 </span><span class="lineCov">         15 :     SetString(destVal, strVal);</span>
+<span class="lineNum">     457 </span><span class="lineCov">         15 : }</span>
+<span class="lineNum">     458 </span>            : 
+<span class="lineNum">     459 </span>            : //////////////////////////////////////////////////////////////////////
+<span class="lineNum">     460 </span>            : //BEGIN Arg.cpp
+<a name="461"><span class="lineNum">     461 </span>            : //////////////////////////////////////////////////////////////////////</a>
+<span class="lineNum">     462 </span>            : 
+<span class="lineNum">     463 </span><span class="lineCov">        110 : inline Arg::Arg(const std::string&amp; flag,</span>
+<span class="lineNum">     464 </span>            :          const std::string&amp; name,
+<span class="lineNum">     465 </span>            :          const std::string&amp; desc,
+<span class="lineNum">     466 </span>            :          bool req,
+<span class="lineNum">     467 </span>            :          bool valreq,
+<span class="lineNum">     468 </span><span class="lineCov">        110 :          Visitor* v) :</span>
+<span class="lineNum">     469 </span>            :   _flag(flag),
+<span class="lineNum">     470 </span>            :   _name(name),
+<span class="lineNum">     471 </span>            :   _description(desc),
+<span class="lineNum">     472 </span>            :   _required(req),
+<span class="lineNum">     473 </span>            :   _requireLabel(&quot;required&quot;),
+<span class="lineNum">     474 </span>            :   _valueRequired(valreq),
+<span class="lineNum">     475 </span>            :   _alreadySet(false),
+<span class="lineNum">     476 </span>            :   _visitor( v ),
+<span class="lineNum">     477 </span>            :   _ignoreable(true),
+<span class="lineNum">     478 </span>            :   _xorSet(false),
+<span class="lineNum">     479 </span><span class="lineCov">        110 :   _acceptsMultipleValues(false)</span>
+<span class="lineNum">     480 </span>            : {
+<span class="lineNum">     481 </span><span class="lineCov">        110 :         if ( _flag.length() &gt; 1 )</span>
+<span class="lineNum">     482 </span>            :                 throw(SpecificationException(
+<span class="lineNum">     483 </span><span class="lineNoCov">          0 :                                 &quot;Argument flag can only be one character long&quot;, toString() ) );</span>
+<span class="lineNum">     484 </span>            : 
+<span class="lineNum">     485 </span><span class="lineCov">        430 :         if ( _name != ignoreNameString() &amp;&amp;</span>
+<span class="lineNum">     486 </span><span class="lineCov">        530 :                  ( _flag == Arg::flagStartString() ||</span>
+<span class="lineNum">     487 </span><span class="lineCov">        425 :                    _flag == Arg::nameStartString() ||</span>
+<span class="lineNum">     488 </span><span class="lineCov">        105 :                    _flag == &quot; &quot; ) )</span>
+<span class="lineNum">     489 </span><span class="lineNoCov">          0 :                 throw(SpecificationException(&quot;Argument flag cannot be either '&quot; +</span>
+<span class="lineNum">     490 </span><span class="lineNoCov">          0 :                                                         Arg::flagStartString() + &quot;' or '&quot; +</span>
+<span class="lineNum">     491 </span><span class="lineNoCov">          0 :                                                         Arg::nameStartString() + &quot;' or a space.&quot;,</span>
+<span class="lineNum">     492 </span><span class="lineNoCov">          0 :                                                         toString() ) );</span>
+<span class="lineNum">     493 </span>            : 
+<span class="lineNum">     494 </span><span class="lineCov">        770 :         if ( ( _name.substr( 0, Arg::flagStartString().length() ) == Arg::flagStartString() ) ||</span>
+<span class="lineNum">     495 </span><span class="lineCov">        770 :                  ( _name.substr( 0, Arg::nameStartString().length() ) == Arg::nameStartString() ) ||</span>
+<span class="lineNum">     496 </span><span class="lineCov">        110 :                  ( _name.find( &quot; &quot;, 0 ) != std::string::npos ) )</span>
+<span class="lineNum">     497 </span><span class="lineNoCov">          0 :                 throw(SpecificationException(&quot;Argument name begin with either '&quot; +</span>
+<span class="lineNum">     498 </span><span class="lineNoCov">          0 :                                                         Arg::flagStartString() + &quot;' or '&quot; +</span>
+<span class="lineNum">     499 </span><span class="lineNoCov">          0 :                                                         Arg::nameStartString() + &quot;' or space.&quot;,</span>
+<span class="lineNum">     500 </span><span class="lineNoCov">          0 :                                                         toString() ) );</span>
+<span class="lineNum">     501 </span>            : 
+<a name="502"><span class="lineNum">     502 </span><span class="lineCov">        110 : }</span></a>
+<span class="lineNum">     503 </span>            : 
+<a name="504"><span class="lineNum">     504 </span><span class="lineCov">        110 : inline Arg::~Arg() { }</span></a>
+<span class="lineNum">     505 </span>            : 
+<span class="lineNum">     506 </span><span class="lineNoCov">          0 : inline std::string Arg::shortID( const std::string&amp; valueId ) const</span>
+<span class="lineNum">     507 </span>            : {
+<span class="lineNum">     508 </span><span class="lineNoCov">          0 :         std::string id = &quot;&quot;;</span>
+<span class="lineNum">     509 </span>            : 
+<span class="lineNum">     510 </span><span class="lineNoCov">          0 :         if ( _flag != &quot;&quot; )</span>
+<span class="lineNum">     511 </span><span class="lineNoCov">          0 :                 id = Arg::flagStartString() + _flag;</span>
+<span class="lineNum">     512 </span>            :         else
+<span class="lineNum">     513 </span><span class="lineNoCov">          0 :                 id = Arg::nameStartString() + _name;</span>
+<span class="lineNum">     514 </span>            : 
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 :         if ( _valueRequired )</span>
+<span class="lineNum">     516 </span><span class="lineNoCov">          0 :                 id += std::string( 1, Arg::delimiter() ) + &quot;&lt;&quot; + valueId  + &quot;&gt;&quot;;</span>
+<span class="lineNum">     517 </span>            : 
+<span class="lineNum">     518 </span><span class="lineNoCov">          0 :         if ( !_required )</span>
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 :                 id = &quot;[&quot; + id + &quot;]&quot;;</span>
+<span class="lineNum">     520 </span>            : 
+<span class="lineNum">     521 </span><span class="lineNoCov">          0 :         return id;</span>
+<a name="522"><span class="lineNum">     522 </span>            : }</a>
+<span class="lineNum">     523 </span>            : 
+<span class="lineNum">     524 </span><span class="lineNoCov">          0 : inline std::string Arg::longID( const std::string&amp; valueId ) const</span>
+<span class="lineNum">     525 </span>            : {
+<span class="lineNum">     526 </span><span class="lineNoCov">          0 :         std::string id = &quot;&quot;;</span>
+<span class="lineNum">     527 </span>            : 
+<span class="lineNum">     528 </span><span class="lineNoCov">          0 :         if ( _flag != &quot;&quot; )</span>
+<span class="lineNum">     529 </span>            :         {
+<span class="lineNum">     530 </span><span class="lineNoCov">          0 :                 id += Arg::flagStartString() + _flag;</span>
+<span class="lineNum">     531 </span>            : 
+<span class="lineNum">     532 </span><span class="lineNoCov">          0 :                 if ( _valueRequired )</span>
+<span class="lineNum">     533 </span><span class="lineNoCov">          0 :                         id += std::string( 1, Arg::delimiter() ) + &quot;&lt;&quot; + valueId + &quot;&gt;&quot;;</span>
+<span class="lineNum">     534 </span>            : 
+<span class="lineNum">     535 </span><span class="lineNoCov">          0 :                 id += &quot;,  &quot;;</span>
+<span class="lineNum">     536 </span>            :         }
+<span class="lineNum">     537 </span>            : 
+<span class="lineNum">     538 </span><span class="lineNoCov">          0 :         id += Arg::nameStartString() + _name;</span>
+<span class="lineNum">     539 </span>            : 
+<span class="lineNum">     540 </span><span class="lineNoCov">          0 :         if ( _valueRequired )</span>
+<span class="lineNum">     541 </span><span class="lineNoCov">          0 :                 id += std::string( 1, Arg::delimiter() ) + &quot;&lt;&quot; + valueId + &quot;&gt;&quot;;</span>
+<span class="lineNum">     542 </span>            : 
+<span class="lineNum">     543 </span><span class="lineNoCov">          0 :         return id;</span>
+<span class="lineNum">     544 </span>            : 
+<a name="545"><span class="lineNum">     545 </span>            : }</a>
+<span class="lineNum">     546 </span>            : 
+<span class="lineNum">     547 </span><span class="lineCov">       1050 : inline bool Arg::operator==(const Arg&amp; a) const</span>
+<span class="lineNum">     548 </span>            : {
+<span class="lineNum">     549 </span><span class="lineCov">       1050 :         if ( ( _flag != &quot;&quot; &amp;&amp; _flag == a._flag ) || _name == a._name)</span>
+<span class="lineNum">     550 </span><span class="lineNoCov">          0 :                 return true;</span>
+<span class="lineNum">     551 </span>            :         else
+<span class="lineNum">     552 </span><span class="lineCov">       1050 :                 return false;</span>
+<a name="553"><span class="lineNum">     553 </span>            : }</a>
+<span class="lineNum">     554 </span>            : 
+<span class="lineNum">     555 </span><span class="lineCov">        105 : inline std::string Arg::getDescription() const</span>
+<span class="lineNum">     556 </span>            : {
+<span class="lineNum">     557 </span><span class="lineCov">        105 :         std::string desc = &quot;&quot;;</span>
+<span class="lineNum">     558 </span><span class="lineCov">        105 :         if ( _required )</span>
+<span class="lineNum">     559 </span><span class="lineNoCov">          0 :                 desc = &quot;(&quot; + _requireLabel + &quot;)  &quot;;</span>
+<span class="lineNum">     560 </span>            : 
+<span class="lineNum">     561 </span>            : //      if ( _valueRequired )
+<span class="lineNum">     562 </span>            : //              desc += &quot;(value required)  &quot;;
+<span class="lineNum">     563 </span>            : 
+<span class="lineNum">     564 </span><span class="lineCov">        105 :         desc += _description;</span>
+<span class="lineNum">     565 </span><span class="lineCov">        105 :         return desc;</span>
+<span class="lineNum">     566 </span>            : }
+<span class="lineNum">     567 </span>            : 
+<a name="568"><span class="lineNum">     568 </span>            : inline const std::string&amp; Arg::getFlag() const { return _flag; }</a>
+<span class="lineNum">     569 </span>            : 
+<a name="570"><span class="lineNum">     570 </span><span class="lineCov">        105 : inline const std::string&amp; Arg::getName() const { return _name; }</span></a>
+<span class="lineNum">     571 </span>            : 
+<span class="lineNum">     572 </span><span class="lineCov">        120 : inline bool Arg::isRequired() const { return _required; }</span>
+<span class="lineNum">     573 </span>            : 
+<a name="574"><span class="lineNum">     574 </span>            : inline bool Arg::isValueRequired() const { return _valueRequired; }</a>
+<span class="lineNum">     575 </span>            : 
+<span class="lineNum">     576 </span><span class="lineCov">         70 : inline bool Arg::isSet() const</span>
+<span class="lineNum">     577 </span>            : {
+<span class="lineNum">     578 </span><span class="lineCov">         70 :         if ( _alreadySet &amp;&amp; !_xorSet )</span>
+<span class="lineNum">     579 </span><span class="lineCov">         15 :                 return true;</span>
+<span class="lineNum">     580 </span>            :         else
+<span class="lineNum">     581 </span><span class="lineCov">         55 :                 return false;</span>
+<span class="lineNum">     582 </span>            : }
+<span class="lineNum">     583 </span>            : 
+<a name="584"><span class="lineNum">     584 </span>            : inline bool Arg::isIgnoreable() const { return _ignoreable; }</a>
+<span class="lineNum">     585 </span>            : 
+<span class="lineNum">     586 </span><span class="lineNoCov">          0 : inline void Arg::setRequireLabel( const std::string&amp; s)</span>
+<span class="lineNum">     587 </span>            : {
+<span class="lineNum">     588 </span><span class="lineNoCov">          0 :         _requireLabel = s;</span>
+<a name="589"><span class="lineNum">     589 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     590 </span>            : 
+<span class="lineNum">     591 </span><span class="lineCov">        180 : inline bool Arg::argMatches( const std::string&amp; argFlag ) const</span>
+<span class="lineNum">     592 </span>            : {
+<span class="lineNum">     593 </span><span class="lineCov">        710 :         if ( ( argFlag == Arg::flagStartString() + _flag &amp;&amp; _flag != &quot;&quot; ) ||</span>
+<span class="lineNum">     594 </span><span class="lineCov">        530 :                argFlag == Arg::nameStartString() + _name )</span>
+<span class="lineNum">     595 </span><span class="lineCov">         10 :                 return true;</span>
+<span class="lineNum">     596 </span>            :         else
+<span class="lineNum">     597 </span><span class="lineCov">        170 :                 return false;</span>
+<a name="598"><span class="lineNum">     598 </span>            : }</a>
+<span class="lineNum">     599 </span>            : 
+<span class="lineNum">     600 </span><span class="lineCov">          5 : inline std::string Arg::toString() const</span>
+<span class="lineNum">     601 </span>            : {
+<span class="lineNum">     602 </span><span class="lineCov">          5 :         std::string s = &quot;&quot;;</span>
+<span class="lineNum">     603 </span>            : 
+<span class="lineNum">     604 </span><span class="lineCov">          5 :         if ( _flag != &quot;&quot; )</span>
+<span class="lineNum">     605 </span><span class="lineNoCov">          0 :                 s += Arg::flagStartString() + _flag + &quot; &quot;;</span>
+<span class="lineNum">     606 </span>            : 
+<span class="lineNum">     607 </span><span class="lineCov">          5 :         s += &quot;(&quot; + Arg::nameStartString() + _name + &quot;)&quot;;</span>
+<span class="lineNum">     608 </span>            : 
+<span class="lineNum">     609 </span><span class="lineCov">          5 :         return s;</span>
+<a name="610"><span class="lineNum">     610 </span>            : }</a>
+<span class="lineNum">     611 </span>            : 
+<span class="lineNum">     612 </span><span class="lineCov">         10 : inline void Arg::_checkWithVisitor() const</span>
+<span class="lineNum">     613 </span>            : {
+<span class="lineNum">     614 </span><span class="lineCov">         10 :         if ( _visitor != NULL )</span>
+<span class="lineNum">     615 </span><span class="lineNoCov">          0 :                 _visitor-&gt;visit();</span>
+<span class="lineNum">     616 </span><span class="lineCov">         10 : }</span>
+<span class="lineNum">     617 </span>            : 
+<span class="lineNum">     618 </span>            : /**
+<a name="619"><span class="lineNum">     619 </span>            :  * Implementation of trimFlag.</a>
+<span class="lineNum">     620 </span>            :  */
+<span class="lineNum">     621 </span><span class="lineCov">         60 : inline void Arg::trimFlag(std::string&amp; flag, std::string&amp; value) const</span>
+<span class="lineNum">     622 </span>            : {
+<span class="lineNum">     623 </span><span class="lineCov">         60 :         int stop = 0;</span>
+<span class="lineNum">     624 </span><span class="lineCov">        650 :         for ( int i = 0; static_cast&lt;unsigned int&gt;(i) &lt; flag.length(); i++ )</span>
+<span class="lineNum">     625 </span><span class="lineCov">        590 :                 if ( flag[i] == Arg::delimiter() )</span>
+<span class="lineNum">     626 </span>            :                 {
+<span class="lineNum">     627 </span><span class="lineNoCov">          0 :                         stop = i;</span>
+<span class="lineNum">     628 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     629 </span>            :                 }
+<span class="lineNum">     630 </span>            : 
+<span class="lineNum">     631 </span><span class="lineCov">         60 :         if ( stop &gt; 1 )</span>
+<span class="lineNum">     632 </span>            :         {
+<span class="lineNum">     633 </span><span class="lineNoCov">          0 :                 value = flag.substr(stop+1);</span>
+<span class="lineNum">     634 </span><span class="lineNoCov">          0 :                 flag = flag.substr(0,stop);</span>
+<span class="lineNum">     635 </span>            :         }
+<span class="lineNum">     636 </span>            : 
+<span class="lineNum">     637 </span><span class="lineCov">         60 : }</span>
+<span class="lineNum">     638 </span>            : 
+<span class="lineNum">     639 </span>            : /**
+<a name="640"><span class="lineNum">     640 </span>            :  * Implementation of _hasBlanks.</a>
+<span class="lineNum">     641 </span>            :  */
+<span class="lineNum">     642 </span><span class="lineCov">         65 : inline bool Arg::_hasBlanks( const std::string&amp; s ) const</span>
+<span class="lineNum">     643 </span>            : {
+<span class="lineNum">     644 </span><span class="lineCov">        650 :         for ( int i = 1; static_cast&lt;unsigned int&gt;(i) &lt; s.length(); i++ )</span>
+<span class="lineNum">     645 </span><span class="lineCov">        585 :                 if ( s[i] == Arg::blankChar() )</span>
+<span class="lineNum">     646 </span><span class="lineNoCov">          0 :                         return true;</span>
+<span class="lineNum">     647 </span>            : 
+<span class="lineNum">     648 </span><span class="lineCov">         65 :         return false;</span>
+<a name="649"><span class="lineNum">     649 </span>            : }</a>
+<span class="lineNum">     650 </span>            : 
+<span class="lineNum">     651 </span><span class="lineNoCov">          0 : inline void Arg::forceRequired()</span>
+<span class="lineNum">     652 </span>            : {
+<span class="lineNum">     653 </span><span class="lineNoCov">          0 :         _required = true;</span>
+<a name="654"><span class="lineNum">     654 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     655 </span>            : 
+<span class="lineNum">     656 </span><span class="lineNoCov">          0 : inline void Arg::xorSet()</span>
+<span class="lineNum">     657 </span>            : {
+<span class="lineNum">     658 </span><span class="lineNoCov">          0 :         _alreadySet = true;</span>
+<span class="lineNum">     659 </span><span class="lineNoCov">          0 :         _xorSet = true;</span>
+<span class="lineNum">     660 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     661 </span>            : 
+<span class="lineNum">     662 </span>            : /**
+<a name="663"><span class="lineNum">     663 </span>            :  * Overridden by Args that need to added to the end of the list.</a>
+<span class="lineNum">     664 </span>            :  */
+<span class="lineNum">     665 </span><span class="lineCov">        105 : inline void Arg::addToList( std::list&lt;Arg*&gt;&amp; argList ) const</span>
+<span class="lineNum">     666 </span>            : {
+<span class="lineNum">     667 </span><span class="lineCov">        105 :         argList.push_front( const_cast&lt;Arg*&gt;(this) );</span>
+<a name="668"><span class="lineNum">     668 </span><span class="lineCov">        105 : }</span></a>
+<span class="lineNum">     669 </span>            : 
+<span class="lineNum">     670 </span><span class="lineNoCov">          0 : inline bool Arg::allowMore()</span>
+<span class="lineNum">     671 </span>            : {
+<span class="lineNum">     672 </span><span class="lineNoCov">          0 :         return false;</span>
+<a name="673"><span class="lineNum">     673 </span>            : }</a>
+<span class="lineNum">     674 </span>            : 
+<span class="lineNum">     675 </span><span class="lineNoCov">          0 : inline bool Arg::acceptsMultipleValues()</span>
+<span class="lineNum">     676 </span>            : {
+<span class="lineNum">     677 </span><span class="lineNoCov">          0 :         return _acceptsMultipleValues;</span>
+<a name="678"><span class="lineNum">     678 </span>            : }</a>
+<span class="lineNum">     679 </span>            : 
+<span class="lineNum">     680 </span><span class="lineNoCov">          0 : inline void Arg::reset()</span>
+<span class="lineNum">     681 </span>            : {
+<span class="lineNum">     682 </span><span class="lineNoCov">          0 :         _xorSet = false;</span>
+<span class="lineNum">     683 </span><span class="lineNoCov">          0 :         _alreadySet = false;</span>
+<span class="lineNum">     684 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     685 </span>            : 
+<span class="lineNum">     686 </span>            : //////////////////////////////////////////////////////////////////////
+<span class="lineNum">     687 </span>            : //END Arg.cpp
+<span class="lineNum">     688 </span>            : //////////////////////////////////////////////////////////////////////
+<span class="lineNum">     689 </span>            : 
+<span class="lineNum">     690 </span>            : } //namespace TCLAP
+<span class="lineNum">     691 </span>            : 
+<span class="lineNum">     692 </span>            : #endif
+<span class="lineNum">     693 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

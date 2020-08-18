@@ -1,0 +1,500 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/components/HD44780.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/components</a> - HD44780.cpp<span style="font-size: 80%;"> (source / <a href="HD44780.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">234</td>
+            <td class="headerCovTableEntryLo">0.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntryLo">11.1 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /* HD44780.cpp</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            :         Original based on simavr hd44780.c (C) 2011 Michel Pollet &lt;buserror@gmail.com&gt;
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            :     Rewritten for C++ in 2020, VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            :         This file is part of MK404.
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">      10 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      11 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      12 </span>            :         (at your option) any later version.
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      15 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      16 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      17 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      20 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      21 </span>            :  */
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : #include &quot;HD44780.h&quot;
+<span class="lineNum">      24 </span>            : #include &lt;sim_time.h&gt;        // for avr_usec_to_cycles
+<span class="lineNum">      25 </span>            : #include &lt;stdio.h&gt;           // for printf
+<span class="lineNum">      26 </span>            : #include &lt;string.h&gt;          // for memset
+<span class="lineNum">      27 </span>            : #include &lt;scoped_allocator&gt;  // for allocator_traits&lt;&gt;::value_type
+<span class="lineNum">      28 </span>            : #include &quot;Scriptable.h&quot;      // for Scriptable
+<span class="lineNum">      29 </span>            : #include &quot;TelemetryHost.h&quot;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : //#define TRACE(_w) _w
+<span class="lineNum">      32 </span>            : #ifndef TRACE
+<span class="lineNum">      33 </span>            : #define TRACE(_w)
+<a name="34"><span class="lineNum">      34 </span>            : #endif</a>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 : void HD44780::ResetCursor()</span>
+<span class="lineNum">      37 </span>            : {
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :         m_uiCursor = m_uiCGCursor = 0;</span>
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :         m_bInCGRAM = false;</span>
+<span class="lineNum">      40 </span>            :         TRACE(printf(&quot;cursor reset\n&quot;));
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :         SetFlag(HD44780_FLAG_DIRTY, 1);</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :         RaiseIRQ(ADDR, m_uiCursor);</span>
+<a name="43"><span class="lineNum">      43 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 : void HD44780::ClearScreen()</span>
+<span class="lineNum">      46 </span>            : {
+<span class="lineNum">      47 </span>            :         {
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :                 std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :         memset(m_vRam, ' ', sizeof(m_vRam));</span>
+<span class="lineNum">      50 </span>            :         }
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :         SetFlag(HD44780_FLAG_DIRTY, 1);</span>
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :         RaiseIRQ(ADDR, m_uiCursor);</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :         for (int i=0; i&lt;m_uiHeight; i++)</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :                 m_vLines[i].assign(&quot; &quot;,m_uiWidth);</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : /*
+<span class="lineNum">      58 </span>            :  * This is called when the delay between operation is triggered
+<span class="lineNum">      59 </span>            :  * without the AVR firmware 'reading' the status byte. It
+<a name="60"><span class="lineNum">      60 </span>            :  * automatically clears the BUSY flag for the next command</a>
+<span class="lineNum">      61 </span>            :  */
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 : avr_cycle_count_t HD44780::OnBusyTimeout(struct avr_t * avr,avr_cycle_count_t when)</span>
+<span class="lineNum">      63 </span>            : {
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :         SetFlag(HD44780_FLAG_BUSY, 0);</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :         RaiseIRQ(BUSY, 0);</span>
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         return 0;</span>
+<a name="67"><span class="lineNum">      67 </span>            : }</a>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 : Scriptable::LineStatus HD44780::ProcessAction(unsigned int iAction, const vector&lt;string&gt; &amp;vArgs)</span>
+<span class="lineNum">      70 </span>            : {
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :         switch (iAction)</span>
+<span class="lineNum">      72 </span>            :         {
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :                 case ActDesync:</span>
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :                         ToggleFlag(HD44780_FLAG_LOWNIBBLE);</span>
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :                         return LineStatus::Finished;</span>
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :                 case ActWaitForText:</span>
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :                         int iLine = stoi(vArgs.at(1));</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :                         uint8_t uiLnChk = iLine&lt;0 ? 0xFF : 1&lt;&lt;iLine;</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :                         if (!(uiLnChk &amp; m_uiLineChg)) // NO changes to check against.</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :                                 return LineStatus::Waiting;</span>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                         if (iLine&gt;=m_uiHeight || iLine&lt;-1)</span>
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :                                 return IssueLineError(string(&quot;Line index &quot;) + to_string(iLine) + &quot; is out of range [-1,&quot; + to_string (m_uiHeight) + &quot;]&quot;);</span>
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :                         bool bResult = false;</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :                         if (iLine&lt;0)</span>
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :                                 for (int i=0; i&lt;m_uiHeight; i++)</span>
+<span class="lineNum">      88 </span>            :                                 {
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :                                         bResult |= m_vLines.at(i).find(vArgs.at(0))!=string::npos;</span>
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :                                         if (bResult) break;</span>
+<span class="lineNum">      91 </span>            :                                 }
+<span class="lineNum">      92 </span>            :                         else
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :                                 bResult = m_vLines.at(iLine).find(vArgs.at(0))!=string::npos;</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                         m_uiLineChg^= iLine&lt;0 ? 0xFF : 1&lt;&lt;iLine; // Reset line change tracking.</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                         return bResult ? LineStatus::Finished : LineStatus::Waiting;</span>
+<span class="lineNum">      96 </span>            :         }
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :         return LineStatus::Unhandled;</span>
+<span class="lineNum">      98 </span>            : }
+<a name="99"><span class="lineNum">      99 </span>            : </a>
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 : void HD44780::IncrementCursor()</span>
+<span class="lineNum">     102 </span>            : {
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :         if (GetFlag(HD44780_FLAG_I_D)) {</span>
+<span class="lineNum">     105 </span>            :                 TRACE(printf(&quot;Cursor++ (%02x)\n&quot;,m_uiCursor));
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :                 if (m_uiCursor == 0x67) // end of display.</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :                         m_uiCursor = 0x00; // wrap.</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                 else if (m_uiCursor == 0x27)</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :                         m_uiCursor = 0x40;</span>
+<span class="lineNum">     110 </span>            :                 else
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :                         m_uiCursor++;</span>
+<span class="lineNum">     112 </span>            :         }
+<span class="lineNum">     113 </span>            :         else
+<span class="lineNum">     114 </span>            :          {
+<span class="lineNum">     115 </span>            :                 TRACE(printf(&quot;Cursor--\n&quot;));
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :                 if (m_uiCursor == 0x00)</span>
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :                         m_uiCursor = 0x67;</span>
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :                 else if (m_uiCursor == 0x40)</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :                         m_uiCursor = 0x27;</span>
+<span class="lineNum">     120 </span>            :                 else
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 :                         m_uiCursor--;</span>
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span>            :                 //SetFlag(HD44780_FLAG_DIRTY, 1);
+<span class="lineNum">     124 </span>            :                 //avr_raise_irq(b-&gt;irq + ADDR, m_uiCursor);
+<span class="lineNum">     125 </span>            :         }
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 : }</span>
+<a name="127"><span class="lineNum">     127 </span>            : </a>
+<span class="lineNum">     128 </span>            : // Nudge the CGRAM cursor value.
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 : void HD44780::IncrementCGRAMCursor()</span>
+<span class="lineNum">     130 </span>            : {
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :         if (GetFlag(HD44780_FLAG_I_D))</span>
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :                 if (m_uiCGCursor==64)</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                         m_uiCGCursor = 0;</span>
+<span class="lineNum">     134 </span>            :                 else
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :                         m_uiCGCursor++;</span>
+<span class="lineNum">     136 </span>            :         else
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :                 if (m_uiCGCursor==0)</span>
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :                         m_uiCGCursor = 64;</span>
+<span class="lineNum">     139 </span>            :                 else
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :                         m_uiCGCursor--;</span>
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     142 </span>            : 
+<span class="lineNum">     143 </span>            : /*
+<a name="144"><span class="lineNum">     144 </span>            :  * current data byte is ready in m_uiDataPins</a>
+<span class="lineNum">     145 </span>            :  */
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 : uint32_t HD44780::OnDataReady()</span>
+<span class="lineNum">     147 </span>            : {
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :         uint32_t delay = 37; // uS</span>
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :         if (m_bInCGRAM)</span>
+<span class="lineNum">     150 </span>            :         {
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :                 std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :                 m_cgRam[m_uiCGCursor] = m_uiDataPins;</span>
+<span class="lineNum">     153 </span>            :                 TRACE(printf(&quot;hd44780_write_data %02x to CGRAM %02x\n&quot;,m_uiDataPins,m_uiCGCursor));
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :                 IncrementCGRAMCursor();</span>
+<span class="lineNum">     155 </span>            :         }
+<span class="lineNum">     156 </span>            :         else
+<span class="lineNum">     157 </span>            :         {
+<span class="lineNum">     158 </span>            :                 {
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :                         std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :                         m_vRam[m_uiCursor] = m_uiDataPins;</span>
+<span class="lineNum">     161 </span>            :                 }
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :                 for (int i=0; i&lt;m_uiHeight; i++) // Flag line change for search performance.</span>
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :                         if (m_uiCursor&gt;= m_lineOffsets[i] &amp;&amp; m_uiCursor&lt; (m_lineOffsets[i] + m_uiWidth))</span>
+<span class="lineNum">     165 </span>            :                         {
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :                                 int iPos =m_uiCursor - m_lineOffsets[i];</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :                                 string &amp;line = m_vLines[i];</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :                                 line[iPos] = m_uiDataPins;</span>
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :                                 m_uiLineChg |= 1&lt;&lt;i;</span>
+<span class="lineNum">     170 </span>            :                         }
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :                 TRACE(printf(&quot;hd44780_write_data %02x (%c) to %02x\n&quot;, m_uiDataPins, m_uiDataPins, m_uiCursor));
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :                 if (GetFlag(HD44780_FLAG_S_C)) {        // display shift ?</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :                         printf(&quot;Display shift requested. Not implemented, sorry!\n&quot;);</span>
+<span class="lineNum">     175 </span>            :                 } else {
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :                         IncrementCursor();</span>
+<span class="lineNum">     177 </span>            :                 }
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            :         }
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :     SetFlag(HD44780_FLAG_DIRTY, 1);</span>
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :         return delay;</span>
+<span class="lineNum">     182 </span>            : }
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            : /*
+<a name="185"><span class="lineNum">     185 </span>            :  * current command is ready in m_uiDataPins</a>
+<span class="lineNum">     186 </span>            :  */
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 : uint32_t HD44780::OnCmdReady()</span>
+<span class="lineNum">     188 </span>            : {
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :         uint32_t delay = 37; // uS</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :         int top = 7;    // get highest bit set'm</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :         while (top)</span>
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :                 if (m_uiDataPins &amp; (1 &lt;&lt; top))</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                 else top--;</span>
+<span class="lineNum">     195 </span>            :         TRACE(printf(&quot;hd44780_write_command %02x (top: %u)\n&quot;, m_uiDataPins,top));
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :         switch (top) {</span>
+<span class="lineNum">     197 </span>            :                 // Set  DDRAM address
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :                 case 7:         // 1 ADD ADD ADD ADD ADD ADD ADD</span>
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                         m_uiCursor = m_uiDataPins &amp; 0x7f;</span>
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :                         m_bInCGRAM = 0;</span>
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     202 </span>            :                 // Set  CGRAM address
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :                 case 6:         // 0 1 ADD ADD ADD ADD ADD ADD ADD</span>
+<span class="lineNum">     204 </span>            :                         TRACE(printf(&quot;cgram enter\n&quot;));
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                         m_bInCGRAM = 1;</span>
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :                         m_uiCGCursor = (m_uiDataPins &amp; 0x3f);</span>
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     208 </span>            :                 // Function     set
+<span class="lineNum">     209 </span><span class="lineNoCov">          0 :                 case 5:         // 0 0 1 DL N F x x</span>
+<span class="lineNum">     210 </span>            :                 {
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :                         int four = !GetFlag(HD44780_FLAG_D_L);</span>
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_D_L, m_uiDataPins &amp; 16);</span>
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_N, m_uiDataPins &amp; 8);</span>
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_F, m_uiDataPins &amp; 4);</span>
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :                         if (!four &amp;&amp; !GetFlag(HD44780_FLAG_D_L)) {</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                                 printf(&quot;%s activating 4 bits mode\n&quot;, __FUNCTION__);</span>
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :                                 SetFlag(HD44780_FLAG_LOWNIBBLE, 0);</span>
+<span class="lineNum">     218 </span>            :                         }
+<span class="lineNum">     219 </span>            :                 }
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     221 </span>            :                 // Cursor display shift
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :                 case 4:         // 0 0 0 1 S/C R/L x x</span>
+<span class="lineNum">     223 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_S_C, m_uiDataPins &amp; 8);</span>
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_R_L, m_uiDataPins &amp; 4);</span>
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     226 </span>            :                 // Display on/off control
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :                 case 3:         // 0 0 0 0 1 D C B</span>
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_D, m_uiDataPins &amp; 4);</span>
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_C, m_uiDataPins &amp; 2);</span>
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_B, m_uiDataPins &amp; 1);</span>
+<span class="lineNum">     231 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_DIRTY, 1);</span>
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     233 </span>            :                 // Entry mode set
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 :                 case 2:         // 0 0 0 0 0 1 I/D S</span>
+<span class="lineNum">     235 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_I_D, m_uiDataPins &amp; 2);</span>
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_S, m_uiDataPins &amp; 1);</span>
+<span class="lineNum">     237 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     238 </span>            :                 // Return home
+<span class="lineNum">     239 </span><span class="lineNoCov">          0 :                 case 1:         // 0 0 0 0 0 0 1 x</span>
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 :                         ResetCursor();</span>
+<span class="lineNum">     241 </span><span class="lineNoCov">          0 :                         delay = 1520;</span>
+<span class="lineNum">     242 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     243 </span>            :                 // Clear display
+<span class="lineNum">     244 </span><span class="lineNoCov">          0 :                 case 0:         // 0 0 0 0 0 0 0 1</span>
+<span class="lineNum">     245 </span><span class="lineNoCov">          0 :                         ClearScreen();</span>
+<span class="lineNum">     246 </span><span class="lineNoCov">          0 :                         ResetCursor();</span>
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :                         delay = 1520;</span>
+<span class="lineNum">     248 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     249 </span>            :         }
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 :         return delay;</span>
+<span class="lineNum">     251 </span>            : }
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            : /*
+<a name="254"><span class="lineNum">     254 </span>            :  * the E pin went low, and it's a write</a>
+<span class="lineNum">     255 </span>            :  */
+<span class="lineNum">     256 </span><span class="lineNoCov">          0 : uint32_t HD44780::ProcessWrite()</span>
+<span class="lineNum">     257 </span>            : {
+<span class="lineNum">     258 </span><span class="lineNoCov">          0 :         uint32_t delay = 0; // uS</span>
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 :         int four = !GetFlag(HD44780_FLAG_D_L);</span>
+<span class="lineNum">     260 </span><span class="lineNoCov">          0 :         int comp = four &amp;&amp; GetFlag(HD44780_FLAG_LOWNIBBLE);</span>
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 :         int write = 0;</span>
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :         if (four) { // 4 bits !</span>
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :                 if (comp)</span>
+<span class="lineNum">     265 </span><span class="lineNoCov">          0 :                         m_uiDataPins = (m_uiDataPins &amp; 0xf0) | ((m_uiPinState &gt;&gt;  D4) &amp; 0xf);</span>
+<span class="lineNum">     266 </span>            :                 else
+<span class="lineNum">     267 </span><span class="lineNoCov">          0 :                         m_uiDataPins = (m_uiDataPins &amp; 0xf) | ((m_uiPinState &gt;&gt;  (D4-4)) &amp; 0xf0);</span>
+<span class="lineNum">     268 </span><span class="lineNoCov">          0 :                 write = comp;</span>
+<span class="lineNum">     269 </span><span class="lineNoCov">          0 :                 ToggleFlag(HD44780_FLAG_LOWNIBBLE);</span>
+<span class="lineNum">     270 </span>            :         } else {        // 8 bits
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :                 m_uiDataPins = (m_uiPinState &gt;&gt;  D0) &amp; 0xff;</span>
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :                 write++;</span>
+<span class="lineNum">     273 </span>            :         }
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :         RaiseIRQ(DATA_IN, m_uiDataPins);</span>
+<span class="lineNum">     275 </span>            : 
+<span class="lineNum">     276 </span>            :         // write has 8 bits to process
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :         if (write) {</span>
+<span class="lineNum">     278 </span><span class="lineNoCov">          0 :                 if (GetFlag(HD44780_FLAG_BUSY)) {</span>
+<span class="lineNum">     279 </span><span class="lineNoCov">          0 :                         printf(&quot;%s command %02x write when still BUSY\n&quot;, __FUNCTION__, m_uiDataPins);</span>
+<span class="lineNum">     280 </span>            :                 }
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :                 if (m_uiPinState &amp; (1 &lt;&lt; RS)) // write data</span>
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :                         delay = OnDataReady();</span>
+<span class="lineNum">     283 </span>            :                 else                                                                            // write command
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :                         delay = OnCmdReady();</span>
+<span class="lineNum">     285 </span>            :         }
+<span class="lineNum">     286 </span><span class="lineNoCov">          0 :         return delay;</span>
+<a name="287"><span class="lineNum">     287 </span>            : }</a>
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 : uint32_t HD44780::ProcessRead()</span>
+<span class="lineNum">     290 </span>            : {
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :         uint32_t delay = 0; // uS</span>
+<span class="lineNum">     292 </span><span class="lineNoCov">          0 :         int four = !GetFlag(HD44780_FLAG_D_L);</span>
+<span class="lineNum">     293 </span><span class="lineNoCov">          0 :         int comp = four &amp;&amp; GetFlag(HD44780_FLAG_LOWNIBBLE);</span>
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 :         int done = 0;   // has something on the datapin we want</span>
+<span class="lineNum">     295 </span>            : 
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :         if (comp) {</span>
+<span class="lineNum">     297 </span>            :                 // ready the 4 final bits on the 'actual' lcd pins
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :                 m_uiReadPins &lt;&lt;= 4;</span>
+<span class="lineNum">     299 </span><span class="lineNoCov">          0 :                 done++;</span>
+<span class="lineNum">     300 </span><span class="lineNoCov">          0 :                 ToggleFlag(HD44780_FLAG_LOWNIBBLE);</span>
+<span class="lineNum">     301 </span>            :         }
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :         if (!done) { // new read</span>
+<span class="lineNum">     304 </span>            : 
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :                 if (m_uiPinState &amp; (1 &lt;&lt; RS)) {       // read data</span>
+<span class="lineNum">     306 </span><span class="lineNoCov">          0 :                         delay = 37;</span>
+<span class="lineNum">     307 </span>            :                         {
+<span class="lineNum">     308 </span><span class="lineNoCov">          0 :                                 std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 :                                 m_uiReadPins = m_vRam[m_uiCursor];</span>
+<span class="lineNum">     310 </span>            :                         }
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :                         IncrementCursor();</span>
+<span class="lineNum">     312 </span>            :                 } else {        // read 'command' ie status register
+<span class="lineNum">     313 </span><span class="lineNoCov">          0 :                         delay = 0;      // no raising busy when reading busy !</span>
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span>            :                         // low bits are the current cursor
+<span class="lineNum">     316 </span><span class="lineNoCov">          0 :                         m_uiReadPins = m_uiCursor &lt; 80 ? m_uiCursor : m_uiCursor-64;</span>
+<span class="lineNum">     317 </span><span class="lineNoCov">          0 :                         int busy = GetFlag(HD44780_FLAG_BUSY);</span>
+<span class="lineNum">     318 </span><span class="lineNoCov">          0 :                         m_uiReadPins |= busy ? 0x80 : 0;</span>
+<span class="lineNum">     319 </span>            : 
+<span class="lineNum">     320 </span>            :                 //      if (busy) printf(&quot;Good boy, guy's reading status byte\n&quot;);
+<span class="lineNum">     321 </span>            :                         // now that we're read the busy flag, clear it and clear
+<span class="lineNum">     322 </span>            :                         // the timer too
+<span class="lineNum">     323 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_BUSY, 0);</span>
+<span class="lineNum">     324 </span><span class="lineNoCov">          0 :                         RaiseIRQ(BUSY, 0);</span>
+<span class="lineNum">     325 </span><span class="lineNoCov">          0 :                         CancelTimer(m_fcnBusy,this);</span>
+<span class="lineNum">     326 </span>            :                 }
+<span class="lineNum">     327 </span><span class="lineNoCov">          0 :                 RaiseIRQ(DATA_OUT, m_uiReadPins);</span>
+<span class="lineNum">     328 </span>            : 
+<span class="lineNum">     329 </span><span class="lineNoCov">          0 :                 done++;</span>
+<span class="lineNum">     330 </span><span class="lineNoCov">          0 :                 if (four)</span>
+<span class="lineNum">     331 </span><span class="lineNoCov">          0 :                         SetFlag(HD44780_FLAG_LOWNIBBLE,1); // for next read</span>
+<span class="lineNum">     332 </span>            :         }
+<span class="lineNum">     333 </span>            : 
+<span class="lineNum">     334 </span>            :         // now send the prepared output pins to send as IRQs
+<span class="lineNum">     335 </span><span class="lineNoCov">          0 :         if (done) {</span>
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 :                 RaiseIRQ(ALL, m_uiReadPins &gt;&gt; 4);</span>
+<span class="lineNum">     337 </span><span class="lineNoCov">          0 :                 for (int i = four ? 4 : 0; i &lt; 8; i++)</span>
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :                         RaiseIRQ(D0 + i, (m_uiReadPins &gt;&gt; i) &amp; 1);</span>
+<span class="lineNum">     339 </span>            :         }
+<span class="lineNum">     340 </span><span class="lineNoCov">          0 :         return delay;</span>
+<a name="341"><span class="lineNum">     341 </span>            : }</a>
+<span class="lineNum">     342 </span>            : 
+<span class="lineNum">     343 </span><span class="lineNoCov">          0 : avr_cycle_count_t HD44780::OnEPinChanged(struct avr_t * avr, avr_cycle_count_t when)</span>
+<span class="lineNum">     344 </span>            : {
+<span class="lineNum">     345 </span><span class="lineNoCov">          0 :     SetFlag(HD44780_FLAG_REENTRANT, 1);</span>
+<span class="lineNum">     346 </span>            : 
+<span class="lineNum">     347 </span><span class="lineNoCov">          0 :         int delay = 0; // in uS</span>
+<span class="lineNum">     348 </span>            : 
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 :         if (m_uiPinState &amp; (1 &lt;&lt; RW)) // read !?!</span>
+<span class="lineNum">     350 </span><span class="lineNoCov">          0 :                 delay = ProcessRead();</span>
+<span class="lineNum">     351 </span>            :         else                                                                            // write
+<span class="lineNum">     352 </span><span class="lineNoCov">          0 :                 delay = ProcessWrite();</span>
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span><span class="lineNoCov">          0 :         if (delay) {</span>
+<span class="lineNum">     355 </span><span class="lineNoCov">          0 :                 SetFlag(HD44780_FLAG_BUSY, 1);</span>
+<span class="lineNum">     356 </span><span class="lineNoCov">          0 :                 RaiseIRQ(BUSY, 1);</span>
+<span class="lineNum">     357 </span><span class="lineNoCov">          0 :                 RegisterTimerUsec(m_fcnBusy, delay,this);</span>
+<span class="lineNum">     358 </span>            :         }
+<span class="lineNum">     359 </span><span class="lineNoCov">          0 :         SetFlag(HD44780_FLAG_REENTRANT, 0);</span>
+<span class="lineNum">     360 </span><span class="lineNoCov">          0 :         return 0;</span>
+<a name="361"><span class="lineNum">     361 </span>            : }</a>
+<span class="lineNum">     362 </span>            : 
+<span class="lineNum">     363 </span><span class="lineNoCov">          0 : void HD44780::OnPinChanged(struct avr_irq_t * irq,uint32_t value)</span>
+<span class="lineNum">     364 </span>            : {
+<span class="lineNum">     365 </span><span class="lineNoCov">          0 :         uint16_t old = m_uiPinState;</span>
+<span class="lineNum">     366 </span>            : 
+<span class="lineNum">     367 </span><span class="lineNoCov">          0 :         switch (irq-&gt;irq) {</span>
+<span class="lineNum">     368 </span>            :                 /*
+<span class="lineNum">     369 </span>            :                  * Update all the pins in one go by calling ourselves
+<span class="lineNum">     370 </span>            :                  * This is a shortcut for firmware that respects the conventions
+<span class="lineNum">     371 </span>            :                  */
+<span class="lineNum">     372 </span><span class="lineNoCov">          0 :                 case ALL:</span>
+<span class="lineNum">     373 </span><span class="lineNoCov">          0 :                         for (int i = 0; i &lt; 4; i++)</span>
+<span class="lineNum">     374 </span><span class="lineNoCov">          0 :                                 OnPinChanged(GetIRQ(D4) + i,</span>
+<span class="lineNum">     375 </span><span class="lineNoCov">          0 :                                                 ((value &gt;&gt; i) &amp; 1));</span>
+<span class="lineNum">     376 </span><span class="lineNoCov">          0 :                         OnPinChanged(GetIRQ(RS), (value &gt;&gt; 4));</span>
+<span class="lineNum">     377 </span><span class="lineNoCov">          0 :                         OnPinChanged(GetIRQ(E), (value &gt;&gt; 5));</span>
+<span class="lineNum">     378 </span><span class="lineNoCov">          0 :                         OnPinChanged(GetIRQ(RW), (value &gt;&gt; 6));</span>
+<span class="lineNum">     379 </span><span class="lineNoCov">          0 :                         return; // job already done!</span>
+<span class="lineNum">     380 </span><span class="lineNoCov">          0 :                 case D0 ... D7:</span>
+<span class="lineNum">     381 </span>            :                         // don't update these pins in read mode
+<span class="lineNum">     382 </span><span class="lineNoCov">          0 :                         if (GetFlag(HD44780_FLAG_REENTRANT))</span>
+<span class="lineNum">     383 </span><span class="lineNoCov">          0 :                                 return;</span>
+<span class="lineNum">     384 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     385 </span>            :         }
+<span class="lineNum">     386 </span><span class="lineNoCov">          0 :         m_uiPinState = (m_uiPinState &amp; ~(1 &lt;&lt; irq-&gt;irq)) | (value &lt;&lt; irq-&gt;irq);</span>
+<span class="lineNum">     387 </span><span class="lineNoCov">          0 :         int eo = old &amp; (1 &lt;&lt; E);</span>
+<span class="lineNum">     388 </span><span class="lineNoCov">          0 :         int e = m_uiPinState &amp; (1 &lt;&lt; E);</span>
+<span class="lineNum">     389 </span>            :         // on the E pin rising edge, do stuff otherwise just exit
+<span class="lineNum">     390 </span><span class="lineNoCov">          0 :         if (!eo &amp;&amp; e)</span>
+<span class="lineNum">     391 </span><span class="lineNoCov">          0 :                 RegisterTimer(m_fcnEPinChanged,1,this);</span>
+<a name="392"><span class="lineNum">     392 </span>            : }</a>
+<span class="lineNum">     393 </span>            : 
+<span class="lineNum">     394 </span><span class="lineNoCov">          0 : void HD44780::Init(avr_t *avr)</span>
+<span class="lineNum">     395 </span>            : {
+<span class="lineNum">     396 </span><span class="lineNoCov">          0 :     _Init(avr,this);</span>
+<span class="lineNum">     397 </span>            :         {
+<span class="lineNum">     398 </span><span class="lineNoCov">          0 :                 std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">     399 </span><span class="lineNoCov">          0 :                 memset(m_cgRam, 0, sizeof(m_cgRam));</span>
+<span class="lineNum">     400 </span><span class="lineNoCov">          0 :                 memset(m_vRam, 0, sizeof(m_vRam));</span>
+<span class="lineNum">     401 </span>            :         }
+<span class="lineNum">     402 </span>            :         /*
+<span class="lineNum">     403 </span>            :          * Register callbacks on all our IRQs
+<span class="lineNum">     404 </span>            :          */
+<a name="405"><span class="lineNum">     405 </span>            : </a>
+<span class="lineNum">     406 </span><span class="lineNoCov">          0 :         for (int i = 0; i &lt; BUSY; i++)</span>
+<span class="lineNum">     407 </span><span class="lineNoCov">          0 :                 RegisterNotify(ALL+i, MAKE_C_CALLBACK(HD44780,OnPinChanged), this);</span>
+<span class="lineNum">     408 </span>            : 
+<span class="lineNum">     409 </span><span class="lineNoCov">          0 :         ResetCursor();</span>
+<span class="lineNum">     410 </span><span class="lineNoCov">          0 :     ClearScreen();</span>
+<span class="lineNum">     411 </span>            : 
+<span class="lineNum">     412 </span><span class="lineNoCov">          0 :         printf(&quot;LCD: %duS is %d cycles for your AVR\n&quot;,</span>
+<span class="lineNum">     413 </span><span class="lineNoCov">          0 :                         37, (int)avr_usec_to_cycles(avr, 37));</span>
+<span class="lineNum">     414 </span><span class="lineNoCov">          0 :         printf(&quot;LCD: %duS is %d cycles for your AVR\n&quot;,</span>
+<span class="lineNum">     415 </span><span class="lineNoCov">          0 :                         1, (int)avr_usec_to_cycles(avr, 1));</span>
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span><span class="lineNoCov">          0 :         auto pTH = TelemetryHost::GetHost();</span>
+<span class="lineNum">     418 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, E, {TC::Display, TC::OutputPin});</span>
+<span class="lineNum">     419 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, RS, {TC::Display, TC::OutputPin});</span>
+<span class="lineNum">     420 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, RW, {TC::Display, TC::OutputPin});</span>
+<span class="lineNum">     421 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, DATA_IN, {TC::Display},8);</span>
+<a name="422"><span class="lineNum">     422 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, BRIGHTNESS_IN, {TC::Display, TC::OutputPin});</span></a>
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, BRIGHTNESS_PWM_IN, {TC::Display, TC::PWM});</span>
+<span class="lineNum">     424 </span><span class="lineCov">         15 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

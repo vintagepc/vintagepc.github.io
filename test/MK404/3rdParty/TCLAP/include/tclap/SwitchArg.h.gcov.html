@@ -1,0 +1,342 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/3rdParty/TCLAP/include/tclap/SwitchArg.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">MK404/3rdParty/TCLAP/include/tclap</a> - SwitchArg.h<span style="font-size: 80%;"> (source / <a href="SwitchArg.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntry">53</td>
+            <td class="headerCovTableEntryLo">43.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryLo">62.5 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : </a>
+<span class="lineNum">       2 </span>            : /****************************************************************************** 
+<span class="lineNum">       3 </span>            :  * 
+<span class="lineNum">       4 </span>            :  *  file:  SwitchArg.h
+<span class="lineNum">       5 </span>            :  * 
+<span class="lineNum">       6 </span>            :  *  Copyright (c) 2003, Michael E. Smoot .
+<span class="lineNum">       7 </span>            :  *  Copyright (c) 2004, Michael E. Smoot, Daniel Aarno.
+<span class="lineNum">       8 </span>            :  *  All rights reserved.
+<span class="lineNum">       9 </span>            :  * 
+<span class="lineNum">      10 </span>            :  *  See the file COPYING in the top directory of this distribution for
+<span class="lineNum">      11 </span>            :  *  more information.
+<span class="lineNum">      12 </span>            :  *  
+<span class="lineNum">      13 </span>            :  *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+<span class="lineNum">      14 </span>            :  *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+<span class="lineNum">      15 </span>            :  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+<span class="lineNum">      16 </span>            :  *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+<span class="lineNum">      17 </span>            :  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+<span class="lineNum">      18 </span>            :  *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+<span class="lineNum">      19 </span>            :  *  DEALINGS IN THE SOFTWARE.  
+<span class="lineNum">      20 </span>            :  *  
+<span class="lineNum">      21 </span>            :  *****************************************************************************/ 
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #ifndef TCLAP_SWITCH_ARG_H
+<span class="lineNum">      25 </span>            : #define TCLAP_SWITCH_ARG_H
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            : #include &lt;string&gt;
+<span class="lineNum">      28 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : #include &lt;tclap/Arg.h&gt;
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : namespace TCLAP {
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : /**
+<span class="lineNum">      35 </span>            :  * A simple switch argument.  If the switch is set on the command line, then
+<span class="lineNum">      36 </span>            :  * the getValue method will return the opposite of the default value for the
+<a name="37"><span class="lineNum">      37 </span>            :  * switch.</a>
+<span class="lineNum">      38 </span>            :  */
+<span class="lineNum">      39 </span><span class="lineCov">         85 : class SwitchArg : public Arg</span>
+<span class="lineNum">      40 </span>            : {
+<span class="lineNum">      41 </span>            :         protected:
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :                 /**
+<span class="lineNum">      44 </span>            :                  * The value of the switch.
+<span class="lineNum">      45 </span>            :                  */
+<span class="lineNum">      46 </span>            :                 bool _value;
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :                 /**
+<span class="lineNum">      49 </span>            :                  * Used to support the reset() method so that ValueArg can be
+<span class="lineNum">      50 </span>            :                  * reset to their constructed value.
+<span class="lineNum">      51 </span>            :                  */
+<span class="lineNum">      52 </span>            :         bool _default;
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :         public:
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :         /**
+<span class="lineNum">      57 </span>            :                  * SwitchArg constructor.
+<span class="lineNum">      58 </span>            :                  * \param flag - The one character flag that identifies this
+<span class="lineNum">      59 </span>            :                  * argument on the command line.
+<span class="lineNum">      60 </span>            :                  * \param name - A one word name for the argument.  Can be
+<span class="lineNum">      61 </span>            :                  * used as a long flag on the command line.
+<span class="lineNum">      62 </span>            :                  * \param desc - A description of what the argument is for or
+<span class="lineNum">      63 </span>            :                  * does.
+<span class="lineNum">      64 </span>            :                  * \param def - The default value for this Switch. 
+<span class="lineNum">      65 </span>            :                  * \param v - An optional visitor.  You probably should not
+<span class="lineNum">      66 </span>            :                  * use this unless you have a very good reason.
+<span class="lineNum">      67 </span>            :                  */
+<span class="lineNum">      68 </span>            :                 SwitchArg(const std::string&amp; flag, 
+<span class="lineNum">      69 </span>            :                               const std::string&amp; name, 
+<span class="lineNum">      70 </span>            :                               const std::string&amp; desc,
+<span class="lineNum">      71 </span>            :                               bool def = false,
+<span class="lineNum">      72 </span>            :                                   Visitor* v = NULL);
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            :                                   
+<span class="lineNum">      75 </span>            :                 /**
+<span class="lineNum">      76 </span>            :                  * SwitchArg constructor.
+<span class="lineNum">      77 </span>            :                  * \param flag - The one character flag that identifies this
+<span class="lineNum">      78 </span>            :                  * argument on the command line.
+<span class="lineNum">      79 </span>            :                  * \param name - A one word name for the argument.  Can be
+<span class="lineNum">      80 </span>            :                  * used as a long flag on the command line.
+<span class="lineNum">      81 </span>            :                  * \param desc - A description of what the argument is for or
+<span class="lineNum">      82 </span>            :                  * does.
+<span class="lineNum">      83 </span>            :                  * \param parser - A CmdLine parser object to add this Arg to
+<span class="lineNum">      84 </span>            :                  * \param def - The default value for this Switch.
+<span class="lineNum">      85 </span>            :                  * \param v - An optional visitor.  You probably should not
+<span class="lineNum">      86 </span>            :                  * use this unless you have a very good reason.
+<span class="lineNum">      87 </span>            :                  */
+<span class="lineNum">      88 </span>            :                 SwitchArg(const std::string&amp; flag, 
+<span class="lineNum">      89 </span>            :                               const std::string&amp; name, 
+<span class="lineNum">      90 </span>            :                               const std::string&amp; desc,
+<span class="lineNum">      91 </span>            :                                   CmdLineInterface&amp; parser,
+<span class="lineNum">      92 </span>            :                               bool def = false,
+<span class="lineNum">      93 </span>            :                                   Visitor* v = NULL);
+<span class="lineNum">      94 </span>            :                                   
+<span class="lineNum">      95 </span>            :                                   
+<span class="lineNum">      96 </span>            :         /**
+<span class="lineNum">      97 </span>            :                  * Handles the processing of the argument.
+<span class="lineNum">      98 </span>            :                  * This re-implements the Arg version of this method to set the
+<span class="lineNum">      99 </span>            :                  * _value of the argument appropriately.
+<span class="lineNum">     100 </span>            :                  * \param i - Pointer the the current argument in the list.
+<span class="lineNum">     101 </span>            :                  * \param args - Mutable list of strings. Passed
+<span class="lineNum">     102 </span>            :                  * in from main().
+<span class="lineNum">     103 </span>            :                  */
+<span class="lineNum">     104 </span>            :                 virtual bool processArg(int* i, std::vector&lt;std::string&gt;&amp; args); 
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :                 /**
+<span class="lineNum">     107 </span>            :                  * Checks a string to see if any of the chars in the string
+<span class="lineNum">     108 </span>            :                  * match the flag for this Switch.
+<span class="lineNum">     109 </span>            :                  */
+<span class="lineNum">     110 </span>            :                 bool combinedSwitchesMatch(std::string&amp; combined);
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span>            :                 /**
+<span class="lineNum">     113 </span>            :                  * Returns bool, whether or not the switch has been set.
+<span class="lineNum">     114 </span>            :                  */
+<span class="lineNum">     115 </span>            :                 bool getValue();
+<span class="lineNum">     116 </span>            :                 
+<span class="lineNum">     117 </span>            :                 virtual void reset();
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            :         private:
+<span class="lineNum">     120 </span>            :                 /**
+<span class="lineNum">     121 </span>            :                  * Checks to see if we've found the last match in
+<span class="lineNum">     122 </span>            :                  * a combined string.
+<span class="lineNum">     123 </span>            :                  */
+<span class="lineNum">     124 </span>            :                 bool lastCombined(std::string&amp; combined);
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :                 /**
+<span class="lineNum">     127 </span>            :                  * Does the common processing of processArg.
+<span class="lineNum">     128 </span>            :                  */
+<span class="lineNum">     129 </span>            :                 void commonProcessing();
+<span class="lineNum">     130 </span>            : };
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            : //////////////////////////////////////////////////////////////////////
+<a name="133"><span class="lineNum">     133 </span>            : //BEGIN SwitchArg.cpp</a>
+<span class="lineNum">     134 </span>            : //////////////////////////////////////////////////////////////////////
+<span class="lineNum">     135 </span><span class="lineCov">         70 : inline SwitchArg::SwitchArg(const std::string&amp; flag, </span>
+<span class="lineNum">     136 </span>            :                             const std::string&amp; name, 
+<span class="lineNum">     137 </span>            :                             const std::string&amp; desc, 
+<span class="lineNum">     138 </span>            :                             bool default_val,
+<span class="lineNum">     139 </span><span class="lineCov">         70 :                             Visitor* v )</span>
+<span class="lineNum">     140 </span>            : : Arg(flag, name, desc, false, false, v),
+<span class="lineNum">     141 </span>            :   _value( default_val ),
+<span class="lineNum">     142 </span><span class="lineCov">         70 :   _default( default_val )</span>
+<span class="lineNum">     143 </span><span class="lineCov">         70 : { }</span>
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            : inline SwitchArg::SwitchArg(const std::string&amp; flag, 
+<span class="lineNum">     146 </span>            :                             const std::string&amp; name, 
+<span class="lineNum">     147 </span>            :                             const std::string&amp; desc, 
+<span class="lineNum">     148 </span>            :                             CmdLineInterface&amp; parser,
+<span class="lineNum">     149 </span>            :                             bool default_val,
+<span class="lineNum">     150 </span>            :                             Visitor* v )
+<span class="lineNum">     151 </span>            : : Arg(flag, name, desc, false, false, v),
+<span class="lineNum">     152 </span>            :   _value( default_val ),
+<span class="lineNum">     153 </span>            :   _default(default_val)
+<span class="lineNum">     154 </span>            : { 
+<span class="lineNum">     155 </span>            :         parser.add( this );
+<span class="lineNum">     156 </span>            : }
+<span class="lineNum">     157 </span>            : 
+<a name="158"><span class="lineNum">     158 </span>            : inline bool SwitchArg::getValue() { return _value; }</a>
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 : inline bool SwitchArg::lastCombined(std::string&amp; combinedSwitches ) </span>
+<span class="lineNum">     161 </span>            : {
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :         for ( unsigned int i = 1; i &lt; combinedSwitches.length(); i++ )</span>
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :                 if ( combinedSwitches[i] != Arg::blankChar() )</span>
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :                         return false;</span>
+<span class="lineNum">     165 </span>            :         
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :         return true;</span>
+<a name="167"><span class="lineNum">     167 </span>            : }</a>
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span><span class="lineCov">        120 : inline bool SwitchArg::combinedSwitchesMatch(std::string&amp; combinedSwitches )</span>
+<span class="lineNum">     170 </span>            : {
+<span class="lineNum">     171 </span>            :         // make sure this is actually a combined switch
+<span class="lineNum">     172 </span><span class="lineCov">        480 :         if ( combinedSwitches.length() &gt; 0 &amp;&amp;</span>
+<span class="lineNum">     173 </span><span class="lineCov">        360 :              combinedSwitches[0] != Arg::flagStartString()[0] )</span>
+<span class="lineNum">     174 </span><span class="lineCov">         70 :                 return false;</span>
+<span class="lineNum">     175 </span>            : 
+<span class="lineNum">     176 </span>            :         // make sure it isn't a long name 
+<span class="lineNum">     177 </span><span class="lineCov">        100 :         if ( combinedSwitches.substr( 0, Arg::nameStartString().length() ) == </span>
+<span class="lineNum">     178 </span><span class="lineCov">        100 :              Arg::nameStartString() )</span>
+<span class="lineNum">     179 </span><span class="lineCov">         35 :                 return false;</span>
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            :         // make sure the delimiter isn't in the string 
+<span class="lineNum">     182 </span><span class="lineCov">         15 :         if ( combinedSwitches.find_first_of( Arg::delimiter() ) != std::string::npos )</span>
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">     184 </span>            : 
+<span class="lineNum">     185 </span>            :         // ok, we're not specifying a ValueArg, so we know that we have
+<span class="lineNum">     186 </span>            :         // a combined switch list.  
+<span class="lineNum">     187 </span><span class="lineCov">         30 :         for ( unsigned int i = 1; i &lt; combinedSwitches.length(); i++ )</span>
+<span class="lineNum">     188 </span><span class="lineCov">         40 :                 if ( _flag.length() &gt; 0 &amp;&amp; </span>
+<span class="lineNum">     189 </span><span class="lineCov">         30 :                      combinedSwitches[i] == _flag[0] &amp;&amp;</span>
+<span class="lineNum">     190 </span><span class="lineCov">         15 :                      _flag[0] != Arg::flagStartString()[0] ) </span>
+<span class="lineNum">     191 </span>            :                 {
+<span class="lineNum">     192 </span>            :                         // update the combined switches so this one is no longer present
+<span class="lineNum">     193 </span>            :                         // this is necessary so that no unlabeled args are matched
+<span class="lineNum">     194 </span>            :                         // later in the processing.
+<span class="lineNum">     195 </span>            :                         //combinedSwitches.erase(i,1);
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :                         combinedSwitches[i] = Arg::blankChar(); </span>
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :                         return true;</span>
+<span class="lineNum">     198 </span>            :                 }
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span>            :         // none of the switches passed in the list match. 
+<span class="lineNum">     201 </span><span class="lineCov">         15 :         return false;   </span>
+<a name="202"><span class="lineNum">     202 </span>            : }</a>
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 : inline void SwitchArg::commonProcessing()</span>
+<span class="lineNum">     205 </span>            : {
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :         if ( _xorSet )</span>
+<span class="lineNum">     207 </span>            :                 throw(CmdLineParseException(
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :                       &quot;Mutually exclusive argument already set!&quot;, toString()));</span>
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 :         if ( _alreadySet ) </span>
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :                 throw(CmdLineParseException(&quot;Argument already set!&quot;, toString()));</span>
+<span class="lineNum">     212 </span>            : 
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :         _alreadySet = true;</span>
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :         if ( _value == true )</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                 _value = false;</span>
+<span class="lineNum">     217 </span>            :         else
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 :                 _value = true;</span>
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 :         _checkWithVisitor();</span>
+<a name="221"><span class="lineNum">     221 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span><span class="lineCov">        100 : inline bool SwitchArg::processArg(int *i, std::vector&lt;std::string&gt;&amp; args)</span>
+<span class="lineNum">     224 </span>            : {
+<span class="lineNum">     225 </span><span class="lineCov">        100 :         if ( _ignoreable &amp;&amp; Arg::ignoreRest() )</span>
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span>            :         // if the whole string matches the flag or name string
+<span class="lineNum">     229 </span><span class="lineCov">        100 :         if ( argMatches( args[*i] ) )</span>
+<span class="lineNum">     230 </span>            :         {
+<span class="lineNum">     231 </span><span class="lineNoCov">          0 :                 commonProcessing();</span>
+<span class="lineNum">     232 </span>            : 
+<span class="lineNum">     233 </span><span class="lineNoCov">          0 :                 return true;</span>
+<span class="lineNum">     234 </span>            :         }
+<span class="lineNum">     235 </span>            :         // if a substring matches the flag as part of a combination
+<span class="lineNum">     236 </span><span class="lineCov">        100 :         else if ( combinedSwitchesMatch( args[*i] ) )</span>
+<span class="lineNum">     237 </span>            :         {
+<span class="lineNum">     238 </span>            :                 // check again to ensure we don't misinterpret 
+<span class="lineNum">     239 </span>            :                 // this as a MultiSwitchArg 
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 :                 if ( combinedSwitchesMatch( args[*i] ) )</span>
+<span class="lineNum">     241 </span>            :                         throw(CmdLineParseException(&quot;Argument already set!&quot;, 
+<span class="lineNum">     242 </span><span class="lineNoCov">          0 :                                                     toString()));</span>
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span><span class="lineNoCov">          0 :                 commonProcessing();</span>
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            :                 // We only want to return true if we've found the last combined
+<span class="lineNum">     247 </span>            :                 // match in the string, otherwise we return true so that other 
+<span class="lineNum">     248 </span>            :                 // switches in the combination will have a chance to match.
+<span class="lineNum">     249 </span><span class="lineNoCov">          0 :                 return lastCombined( args[*i] );</span>
+<span class="lineNum">     250 </span>            :         }
+<span class="lineNum">     251 </span>            :         else
+<span class="lineNum">     252 </span><span class="lineCov">        100 :                 return false;</span>
+<a name="253"><span class="lineNum">     253 </span>            : }</a>
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 : inline void SwitchArg::reset()</span>
+<span class="lineNum">     256 </span>            : {
+<span class="lineNum">     257 </span><span class="lineNoCov">          0 :         Arg::reset();</span>
+<span class="lineNum">     258 </span><span class="lineNoCov">          0 :         _value = _default;  </span>
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     260 </span>            : //////////////////////////////////////////////////////////////////////
+<span class="lineNum">     261 </span>            : //End SwitchArg.cpp
+<span class="lineNum">     262 </span>            : //////////////////////////////////////////////////////////////////////
+<span class="lineNum">     263 </span>            : 
+<span class="lineNum">     264 </span>            : } //namespace TCLAP
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

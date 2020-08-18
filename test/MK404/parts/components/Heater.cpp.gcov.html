@@ -1,0 +1,273 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/components/Heater.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/components</a> - Heater.cpp<span style="font-size: 80%;"> (source / <a href="Heater.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">94</td>
+            <td class="headerCovTableEntryLo">1.1 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">17</td>
+            <td class="headerCovTableEntryLo">11.8 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         Heater.cpp - a heater object for MK404. There's not much to it,
+<span class="lineNum">       3 </span>            :     it just ticks the temperature &quot;up&quot; at a determined rate when active on PWM and down in
+<span class="lineNum">       4 </span>            :     in an exponential curve when off.
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         This file is part of MK404.
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">      11 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      12 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      13 </span>            :         (at your option) any later version.
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      16 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      17 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      18 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      21 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      22 </span>            :  */
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #include &quot;Heater.h&quot;
+<span class="lineNum">      25 </span>            : #include &lt;GL/freeglut_std.h&gt;          // for glutStrokeCharacter, GLUT_STROKE_MONO_R...
+<span class="lineNum">      26 </span>            : #if defined(__APPLE__)
+<span class="lineNum">      27 </span>            : # include &lt;OpenGL/gl.h&gt;       // for glVertex2f, glBegin, glColor3f, glColor3fv
+<span class="lineNum">      28 </span>            : #else
+<span class="lineNum">      29 </span>            : # include &lt;GL/gl.h&gt;           // for glVertex2f, glBegin, glColor3f, glColor3fv
+<span class="lineNum">      30 </span>            : #endif
+<span class="lineNum">      31 </span>            : #include &lt;math.h&gt;             // for pow
+<span class="lineNum">      32 </span>            : #include &quot;sim_regbit.h&quot;       // for avr_regbit_get, AVR_IO_REGBIT
+<span class="lineNum">      33 </span>            : #include &quot;TelemetryHost.h&quot;
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : #define TRACE(_w)
+<span class="lineNum">      36 </span>            : #ifndef TRACE
+<span class="lineNum">      37 </span>            : #include &lt;stdio.h&gt;
+<span class="lineNum">      38 </span>            : #define TRACE(_w)_w
+<span class="lineNum">      39 </span>            : #endif
+<a name="40"><span class="lineNum">      40 </span>            : </a>
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 : avr_cycle_count_t Heater::OnTempTick(avr_t * avr, avr_cycle_count_t when)</span>
+<span class="lineNum">      43 </span>            : {
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :         if (m_bStopTicking)</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                 return 0;</span>
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :     if (m_uiPWM&gt;0)</span>
+<span class="lineNum">      48 </span>            :     {
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :         float fDelta = (m_fThermalMass*((float)(m_uiPWM)/255.0f))*0.3;</span>
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :         m_fCurrentTemp += fDelta;</span>
+<span class="lineNum">      51 </span>            :     }
+<span class="lineNum">      52 </span>            :     else // Cooling - do a little exponential decay
+<span class="lineNum">      53 </span>            :     {
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :         float dT = (m_fCurrentTemp - m_fAmbientTemp)*pow(2.7183,-0.005*0.3);</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :         m_fCurrentTemp -= m_fCurrentTemp - (m_fAmbientTemp + dT);</span>
+<span class="lineNum">      56 </span>            :     }
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :         m_iDrawTemp = m_fCurrentTemp;</span>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :     TRACE(printf(&quot;New temp value: %.02f\n&quot;,m_fCurrentTemp));
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :     RaiseIRQ(TEMP_OUT,(int)m_fCurrentTemp*256);</span>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :     if (m_uiPWM&gt;0 || m_fCurrentTemp&gt;m_fAmbientTemp+0.3)</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :         RegisterTimerUsec(m_fcnTempTick,300000,this);</span>
+<span class="lineNum">      64 </span>            :     else
+<span class="lineNum">      65 </span>            :     {
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         m_fCurrentTemp = m_fAmbientTemp;</span>
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :         RaiseIRQ(TEMP_OUT,(int)m_fCurrentTemp*256);</span>
+<span class="lineNum">      68 </span>            :     }
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 :     return 0;</span>
+<span class="lineNum">      70 </span>            : }
+<a name="71"><span class="lineNum">      71 </span>            : </a>
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 : void Heater::OnPWMChanged(struct avr_irq_t * irq,uint32_t value)</span>
+<span class="lineNum">      74 </span>            : {
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :     if (m_bAuto) // Only update if auto (pwm-controlled). Else user supplied RPM.</span>
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :         m_uiPWM = value;</span>
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :     if (m_uiPWM &gt; 0)</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :         RegisterTimerUsec(m_fcnTempTick, 100000, this);</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :     if ((m_pIrq + ON_OUT)-&gt;value != (m_uiPWM&gt;0))</span>
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :         RaiseIRQ(ON_OUT,m_uiPWM&gt;0);</span>
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : //TCCR0A  _SFR_IO8(0x24)
+<a name="85"><span class="lineNum">      85 </span>            : //#define COM0B0  4</a>
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 : void Heater::OnDigitalChanged(struct avr_irq_t * irq, uint32_t value)</span>
+<span class="lineNum">      88 </span>            : {
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :     if (m_bIsBed) // The heatbed PWM is based on inverting mode trickery. We can just watch COM0B0 rather than the digital pin output.</span>
+<span class="lineNum">      91 </span>            :     {
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :         avr_regbit_t inv = AVR_IO_REGBIT(0x24 + 32,4);</span>
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :         uint8_t COM0B0 = avr_regbit_get(m_pAVR, inv);</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :         value = COM0B0^1;</span>
+<span class="lineNum">      95 </span>            :     }
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :     if (value==1)</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :         value = 255;</span>
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :     OnPWMChanged(irq,value);</span>
+<a name="101"><span class="lineNum">     101 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 : Heater::Heater(float fThermalMass, float fAmbientTemp, bool bIsBed,</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :                            char chrLabel, float fColdTemp, float fHotTemp):</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :                                                                                         Scriptable(string(&quot;Heater_&quot;) + chrLabel),</span>
+<span class="lineNum">     106 </span>            :                                             m_fThermalMass(fThermalMass),
+<span class="lineNum">     107 </span>            :                                             m_fAmbientTemp(fAmbientTemp),
+<span class="lineNum">     108 </span>            :                                             m_fCurrentTemp(fAmbientTemp),
+<span class="lineNum">     109 </span>            :                                             m_bIsBed(bIsBed),
+<span class="lineNum">     110 </span>            :                                             m_chrLabel(chrLabel),
+<span class="lineNum">     111 </span>            :                                             m_fColdTemp(fColdTemp),
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :                                             m_fHotTemp(fHotTemp)</span>
+<span class="lineNum">     113 </span>            : {
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :         RegisterAction(&quot;SetPWM&quot;,&quot;Sets the raw heater PWM value&quot;,ActSetPWM, {ArgType::Int});</span>
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :         RegisterActionAndMenu(&quot;Resume&quot;, &quot;Resumes auto PWM control and clears the 'stopheating' flag&quot;,ActResume);</span>
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :         RegisterActionAndMenu(&quot;StopHeating&quot;,&quot;Stops heating, as if a thermal runaway is happening due to loose heater or thermistor&quot;,ActStopHeating);</span>
+<a name="117"><span class="lineNum">     117 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 : Scriptable::LineStatus Heater::ProcessAction(unsigned int iAct, const vector&lt;string&gt; &amp;vArgs)</span>
+<span class="lineNum">     120 </span>            : {
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 :         switch (iAct)</span>
+<span class="lineNum">     122 </span>            :         {
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :                 case ActSetPWM:</span>
+<span class="lineNum">     124 </span>            :                 {
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :                         uint8_t uiVal = stoi(vArgs.at(0));</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :                         Set(uiVal);</span>
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :                         return LineStatus::Finished;</span>
+<span class="lineNum">     128 </span>            :                 }
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :                 case ActResume:</span>
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :                         Resume_Auto();</span>
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :                         return LineStatus::Finished;</span>
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :                 case ActStopHeating:</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                         m_bStopTicking = true;</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :                         return LineStatus::Finished;</span>
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :         }
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :         return LineStatus::Unhandled;</span>
+<a name="138"><span class="lineNum">     138 </span>            : }</a>
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 : void Heater::Init(struct avr_t * avr, avr_irq_t *irqPWM, avr_irq_t *irqDigital)</span>
+<span class="lineNum">     141 </span>            : {
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :     _Init(avr, this);</span>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :     if(irqPWM) ConnectFrom(irqPWM, PWM_IN);</span>
+<a name="144"><span class="lineNum">     144 </span><span class="lineNoCov">          0 :     if(irqDigital) ConnectFrom(irqDigital, DIGITAL_IN);</span></a>
+<a name="145"><span class="lineNum">     145 </span>            : </a>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :     RegisterNotify(PWM_IN, MAKE_C_CALLBACK(Heater,OnPWMChanged),this);</span>
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 :     RegisterNotify(DIGITAL_IN, MAKE_C_CALLBACK(Heater,OnDigitalChanged),this);</span>
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :         auto pTH = TelemetryHost::GetHost();</span>
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, PWM_IN, {TC::Heater,TC::PWM},8);</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, DIGITAL_IN, {TC::Heater});</span>
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, ON_OUT, {TC::Heater,TC::Misc});</span>
+<a name="154"><span class="lineNum">     154 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 : void Heater::Set(uint8_t uiPWM)</span>
+<span class="lineNum">     157 </span>            : {
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :     m_bAuto = false;</span>
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :     m_uiPWM = uiPWM;</span>
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :     RaiseIRQ(PWM_IN,0XFF);</span>
+<a name="161"><span class="lineNum">     161 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     162 </span>            : 
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 : void Heater::Resume_Auto()</span>
+<span class="lineNum">     164 </span>            : {
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :     m_bAuto = true;</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :         m_bStopTicking = false;</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            : 
+<span class="lineNum">     170 </span>            : constexpr Color3fv Heater::m_colColdTemp;
+<a name="171"><span class="lineNum">     171 </span>            : constexpr Color3fv Heater::m_colHotTemp;</a>
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 : void Heater::Draw()</span>
+<span class="lineNum">     174 </span>            : {
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :         bool bOn = m_uiPWM&gt;0;</span>
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span>            :         Color3fv colFill;
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :         float v = (float(m_iDrawTemp) - m_fColdTemp) / (m_fHotTemp - m_fColdTemp);</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :         colorLerp(m_colColdTemp, m_colHotTemp, v, colFill);</span>
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :     glPushMatrix();</span>
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :             glColor3fv(colFill);</span>
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :         glBegin(GL_QUADS);</span>
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :             glVertex2f(0,10);</span>
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :             glVertex2f(20,10);</span>
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :             glVertex2f(20,0);</span>
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :             glVertex2f(0,0);</span>
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :         glEnd();</span>
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :         glColor3f(bOn,bOn,bOn);</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :         glTranslatef(8,7,-1);</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :         glScalef(0.05,-0.05,1);</span>
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :                 glPushAttrib(GL_LINE_BIT);</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                         glLineWidth(3);</span>
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                         glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN,m_chrLabel);</span>
+<a name="195"><span class="lineNum">     195 </span><span class="lineNoCov">          0 :                 glPopAttrib();</span></a>
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :     glPopMatrix();</span>
+<span class="lineNum">     197 </span><span class="lineCov">         15 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

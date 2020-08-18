@@ -1,0 +1,220 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/utility/FatImage.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">MK404/utility</a> - FatImage.cpp<span style="font-size: 80%;"> (source / <a href="FatImage.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">49</td>
+            <td class="headerCovTableEntryLo">20.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">66.7 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         FatImage.cpp - Quick and dirty utility class to make crude
+<span class="lineNum">       3 </span>            :         (and probably not-officially-conforming) empty FAT32 images
+<span class="lineNum">       4 </span>            :         for use with the SD card simulator.
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         This file is part of MK404.
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">      11 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      12 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      13 </span>            :         (at your option) any later version.
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      16 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      17 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      18 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      21 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      22 </span>            :  */
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #include &quot;FatImage.h&quot;
+<span class="lineNum">      25 </span>            : #include &lt;fcntl.h&gt;      // for open, O_CREAT, O_WRONLY, SEEK_SET
+<span class="lineNum">      26 </span>            : #include &lt;stdio.h&gt;      // for perror
+<span class="lineNum">      27 </span>            : #include &lt;stdlib.h&gt;     // for exit
+<span class="lineNum">      28 </span>            : #include &lt;unistd.h&gt;     // for close, ftruncate, lseek, write
+<span class="lineNum">      29 </span>            : #include &lt;type_traits&gt;  // for __decay_and_strip&lt;&gt;::__type
+<span class="lineNum">      30 </span>            : #include &lt;vector&gt;       // for vector
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : // const map&lt;FatImage::Size, uint32_t&gt;FatImage::SectorsPerFat =
+<span class="lineNum">      33 </span>            : // {
+<span class="lineNum">      34 </span>            : //      make_pair(Size::M32, 505),
+<span class="lineNum">      35 </span>            : //      make_pair(Size::M64, 1009),
+<span class="lineNum">      36 </span>            : //      make_pair(Size::M128, 2017),
+<span class="lineNum">      37 </span>            : //      make_pair(Size::M256, 4033),
+<span class="lineNum">      38 </span>            : //      make_pair(Size::M512, 1022),
+<span class="lineNum">      39 </span>            : //      make_pair(Size::G1, 2044),
+<span class="lineNum">      40 </span>            : //      make_pair(Size::G2, 4088),
+<span class="lineNum">      41 </span>            : // };
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">         75 : const map&lt;string, FatImage::Size&gt;FatImage::NameToSize =</span>
+<span class="lineNum">      44 </span>            : {
+<span class="lineNum">      45 </span><span class="lineCov">         10 :         make_pair(&quot;32M&quot;,Size::M32),</span>
+<span class="lineNum">      46 </span><span class="lineCov">         10 :         make_pair(&quot;64M&quot;,Size::M64),</span>
+<span class="lineNum">      47 </span><span class="lineCov">         10 :         make_pair(&quot;128M&quot;,Size::M128),</span>
+<span class="lineNum">      48 </span><span class="lineCov">         10 :         make_pair(&quot;256M&quot;,Size::M256),</span>
+<span class="lineNum">      49 </span><span class="lineCov">         10 :         make_pair(&quot;512M&quot;,Size::M512),</span>
+<span class="lineNum">      50 </span><span class="lineCov">         10 :         make_pair(&quot;1G&quot;,Size::G1),</span>
+<span class="lineNum">      51 </span><span class="lineCov">         10 :         make_pair(&quot;2G&quot;,Size::G2)</span>
+<span class="lineNum">      52 </span><span class="lineCov">         35 : };</span>
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : const uint8_t FatImage::FAT32[] = {
+<span class="lineNum">      56 </span>            :         0xEB,0x58,0x90,0x6D,0x6B,0x66,0x73,0x2E,0x66,0x61,0x74,0x00,0x02,0x01,0x20,0x00,
+<span class="lineNum">      57 </span>            :         0x02,0x00,0x00,0x00,0x00,0xF8,0x00,0x00,0x20,0x00,0x40,0x00,0x00,0x00,0x00,0x00,
+<span class="lineNum">      58 </span>            :         0x00,0x00,0x02,0x00,0xF1,0x03,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x00,0x00,0x00,
+<span class="lineNum">      59 </span>            :         0x01,0x00,0x06,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+<span class="lineNum">      60 </span>            :         0x80,0x00,0x29,0x00,0x00,0x00,0x00,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
+<span class="lineNum">      61 </span>            :         0x20,0x20,0x46,0x41,0x54,0x33,0x32,0x20,0x20,0x20,0x0E,0x1F,0xBE,0x77,0x7C,0xAC,
+<span class="lineNum">      62 </span>            :         0x22,0xC0,0x74,0x0B,0x56,0xB4,0x0E,0xBB,0x07,0x00,0xCD,0x10,0x5E,0xEB,0xF0,0x32,
+<span class="lineNum">      63 </span>            :         0xE4,0xCD,0x16,0xCD,0x19,0xEB,0xFE
+<span class="lineNum">      64 </span>            : };
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : const uint8_t FatImage::FATHeader[] = {0xF8,0xFF,0xFF,0x0F,0xFF,0xFF,0xFF,0x0F,0xF8,0xFF,0xFF,0x0F};
+<span class="lineNum">      67 </span>            : const uint8_t FatImage::FSInfo_1[] = { 0x55, 0xAA, 0x52, 0x52, 0x61, 0x41 };
+<span class="lineNum">      68 </span>            : const uint8_t FatImage::FSInfo_2[] = { 0x72, 0x72, 0x41, 0x61, 0xFF, 0xFF, 0xFF, 0xFF, 0x02};
+<span class="lineNum">      69 </span>            : const uint8_t FatImage::FSInfo_3[] = {0x55, 0xAA};
+<span class="lineNum">      70 </span>            : const uint8_t FatImage::DataRegion[] = { 0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x08,0x00,0x00,0x57,0x49,
+<a name="71"><span class="lineNum">      71 </span>            :                                                                                         0xCD,0x50,0xCD,0x50,0x00,0x00,0x57,0x49,0xCD,0x50};</a>
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 : bool FatImage::MakeFatImage(string strFile, string strSize)</span>
+<span class="lineNum">      74 </span>            : {
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :         FatImage::Size size = NameToSize.at(strSize);</span>
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :         int fd = open(strFile.c_str(), O_WRONLY | O_CREAT, 0644);</span>
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :         if (fd &lt; 0) {</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :                 perror(strFile.c_str());</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :                 exit(1);</span>
+<span class="lineNum">      80 </span>            :         }
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :         uint32_t uiSize = GetSizeInBytes(size);</span>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :         if (ftruncate(fd, uiSize)==-1)</span>
+<span class="lineNum">      85 </span>            :         {
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :                 perror(strFile.c_str());</span>
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :                 exit(1);</span>
+<span class="lineNum">      88 </span>            :         }
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :         vector&lt;uint8_t&gt; data;</span>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            :         // Write main FAT block.
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :         data.insert(data.end(), FAT32, FAT32+119);</span>
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            :         // Set setors per cluster.
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :         data[0x0D] = GetSectorsPerCluster(size);</span>
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span>            :         // set sectors and sectors per fat.
+<span class="lineNum">      99 </span>            :         ui32_cvt_ui8 cvt;
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :         cvt.all = Byte2Sector(uiSize);</span>
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :         for (int i=0; i&lt;4; i++)</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :                 data[0x20+i] = cvt.bytes[i];</span>
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :         cvt.all = SectorsPerFat(size);</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :         for (int i=0; i&lt;4; i++)</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                 data[0x24+i] = cvt.bytes[i];</span>
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :         // Copy the FS info signature
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :         data.resize(0x1FE);</span>
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 :         data.insert(data.end(),FSInfo_1,FSInfo_1+6);</span>
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :         data.resize(0x3E4);</span>
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :         data.insert(data.end(),FSInfo_2,FSInfo_2+9);</span>
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :         data.resize(0x3FE);</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :         data.insert(data.end(), FSInfo_3, FSInfo_3+2);</span>
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            :         // Second copy of boot record @ 0xC00
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :         data.resize(0xC00);</span>
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :         data.insert(data.end(), data.begin(), data.begin()+0x200);</span>
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span>            :         // Copy fat header(s)
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :         data.resize(FirstFATAddr);</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :         data.insert(data.end(), FATHeader, FATHeader+12);</span>
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :         data.resize(GetSecondFatAddr(size));</span>
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :         data.insert(data.end(), FATHeader, FATHeader+12);</span>
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            :         // Data start.
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :         data.resize(GetDataStartAddr(size));</span>
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :         data.insert(data.end(), DataRegion, DataRegion+26);</span>
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :         lseek(fd,SEEK_SET, 0);</span>
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :         size_t s = write(fd,data.data(),data.size());</span>
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :         if(s != data.size())</span>
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :                 fprintf(stderr,&quot;Failed to write full file to disk.\n&quot;);</span>
+<span class="lineNum">     141 </span>            : 
+<a name="142"><span class="lineNum">     142 </span><span class="lineNoCov">          0 :         close(fd);</span></a>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :         return true;</span>
+<span class="lineNum">     144 </span><span class="lineCov">         15 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/utility/MK3SGL.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">MK404/utility</a> - MK3SGL.cpp<span style="font-size: 80%;"> (source / <a href="MK3SGL.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">452</td>
+            <td class="headerCovTableEntryLo">0.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">94</td>
+            <td class="headerCovTableEntryLo">2.1 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         MK3SGL.cpp - Printer visualization for a MK3S, with MMU and print.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         This file is part of MK404.
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">       9 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      10 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            :         (at your option) any later version.
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      20 </span>            :  */
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #include &quot;MK3SGL.h&quot;
+<span class="lineNum">      23 </span>            : #include &lt;GL/freeglut_std.h&gt;  // for glutSetWindow, GLUT_DOWN, GLUT_UP, glut...
+<span class="lineNum">      24 </span>            : #include &lt;GL/freeglut_ext.h&gt;  // for glutSetOption
+<span class="lineNum">      25 </span>            : #include &lt;GL/glew.h&gt;          // for glTranslatef, glPopMatrix, glPushMatrix
+<span class="lineNum">      26 </span>            : #include &lt;stdlib.h&gt;           // for exit
+<span class="lineNum">      27 </span>            : #include &lt;cstdio&gt;             // for size_t, fprintf, printf, stderr
+<span class="lineNum">      28 </span>            : #include &lt;vector&gt;             // for vector
+<span class="lineNum">      29 </span>            : #include &quot;Camera.hpp&quot;         // for Camera
+<span class="lineNum">      30 </span>            : #include &quot;GLPrint.h&quot;          // for GLPrint
+<span class="lineNum">      31 </span>            : #include &quot;HD44780GL.h&quot;        // for HD44780GL
+<span class="lineNum">      32 </span>            : #include &quot;MK3S_Bear.h&quot;        // for MK3S_Bear
+<span class="lineNum">      33 </span>            : #include &quot;MK3S_Full.h&quot;        // for MK3S_Full
+<span class="lineNum">      34 </span>            : #include &quot;MK3S_Lite.h&quot;        // for MK3S_Lite
+<span class="lineNum">      35 </span>            : #include &quot;OBJCollection.h&quot;    // for OBJCollection, OBJCollection::ObjClass
+<span class="lineNum">      36 </span>            : #include &quot;Printer.h&quot;          // for Printer
+<span class="lineNum">      37 </span>            : 
+<a name="38"><span class="lineNum">      38 </span>            : MK3SGL* MK3SGL::g_pMK3SGL = nullptr;</a>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 : MK3SGL::MK3SGL(const string &amp;strModel, bool bMMU, Printer *pParent):Scriptable(&quot;3DVisuals&quot;),m_bMMU(bMMU),m_pParent(pParent)</span>
+<span class="lineNum">      41 </span>            : {
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :         if (g_pMK3SGL)</span>
+<span class="lineNum">      43 </span>            :         {
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :                 fprintf(stderr,&quot;ERROR: Cannot have multiple MK3SGL instances due to freeglut limitations.\n&quot;);</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                 exit(1);</span>
+<span class="lineNum">      46 </span>            :         }
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :         g_pMK3SGL = this;</span>
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :         if (strModel.compare(&quot;lite&quot;)==0)</span>
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :                 m_Objs = new MK3S_Lite(bMMU);</span>
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :         else if (strModel.compare(&quot;fancy&quot;)==0)</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :                 m_Objs = new MK3S_Full(bMMU);</span>
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :         else if (strModel.compare(&quot;bear&quot;)==0)</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :                 m_Objs = new MK3S_Bear(bMMU);</span>
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :         RegisterActionAndMenu(&quot;ClearPrint&quot;,&quot;Clears rendered print objects&quot;,ActClear);</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :         RegisterActionAndMenu(&quot;ToggleNozzleCam&quot;,&quot;Toggles between normal and nozzle cam mode.&quot;,ActToggleNCam);</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :         RegisterActionAndMenu(&quot;ResetCamera&quot;,&quot;Resets camera view to default&quot;,ActResetView);</span>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :         glewInit();</span>
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :         glutSetOption(GLUT_MULTISAMPLE,4);</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :         glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE) ;</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :         glutInitWindowSize(800,800);            /* width=400pixels height=500pixels */</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :         string strTitle = string(&quot;Fancy Graphics: &quot;) + m_Objs-&gt;GetName();</span>
+<a name="65"><span class="lineNum">      65 </span><span class="lineNoCov">          0 :         m_iWindow = glutCreateWindow(strTitle.c_str()); /* create window */</span></a>
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :         auto fcnDraw = []() { g_pMK3SGL-&gt;Draw();};</span>
+<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :         glutDisplayFunc(fcnDraw);</span></a>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :         auto fcnKey = [](unsigned char c, int x, int y) { g_pMK3SGL-&gt;KeyCB(c,x,y);};</span>
+<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :         glutKeyboardFunc(fcnKey); // same func as main window.</span></a>
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :         auto fwd = [](int button, int state, int x, int y) {g_pMK3SGL-&gt;MouseCB(button,state,x,y);};</span>
+<a name="74"><span class="lineNum">      74 </span><span class="lineNoCov">          0 :         glutMouseFunc(fwd);</span></a>
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :         auto fcnMove = [](int x, int y) { g_pMK3SGL-&gt;MotionCB(x,y);};</span>
+<a name="77"><span class="lineNum">      77 </span><span class="lineNoCov">          0 :         glutMotionFunc(fcnMove);</span></a>
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :         auto fcnResize = [](int x, int y) { g_pMK3SGL-&gt;ResizeCB(x,y);};</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :         glutReshapeFunc(fcnResize);</span>
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);</span>
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :         glEnable(GL_BLEND);</span>
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :         glEnable(GL_MULTISAMPLE);</span>
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :         ResetCamera();</span>
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :         for(size_t i=0; i&lt;m_vObjLite.size(); i++)</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :                 m_vObjLite[i]-&gt;Load();</span>
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :         m_Objs-&gt;Load();</span>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :         if (m_bMMU)</span>
+<span class="lineNum">      93 </span>            :         {
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                 for(size_t i=0; i&lt;m_vObjMMU.size(); i++)</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                         m_vObjMMU[i]-&gt;Load();</span>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                 m_MMUIdl.SetSubobjectVisible(1,false); // Screw, high triangle count</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :                 m_MMUBase.SetSubobjectVisible(1, false);</span>
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :                 if (strModel.compare(&quot;lite&quot;) == 0)</span>
+<span class="lineNum">     100 </span>            :                 {
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :                         m_MMUIdl.SetAllVisible(false);</span>
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :                         m_MMUIdl.SetSubobjectVisible(3);</span>
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :                         m_MMUSel.SetAllVisible(false);</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :                         m_MMUSel.SetSubobjectVisible(1);</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :                         m_MMUSel.SetSubobjectVisible(2);</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :                         m_MMUBase.SetAllVisible(false);</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :                         m_MMUBase.SetSubobjectVisible(17);</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                         for (size_t i=32; i&lt;43; i++)</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :                                 m_MMUBase.SetSubobjectVisible(i); // LEDs</span>
+<span class="lineNum">     110 </span>            :                 }
+<span class="lineNum">     111 </span>            :         }
+<span class="lineNum">     112 </span>            : 
+<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 : void MK3SGL::ResetCamera()</span>
+<span class="lineNum">     116 </span>            : {
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :         m_camera = Camera();</span>
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :         m_camera.setWindowSize(800,800);</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :         m_camera.setEye(0,0.5,3);</span>
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :         m_camera.setCenter(0,0,0);</span>
+<a name="121"><span class="lineNum">     121 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 : void MK3SGL::ResizeCB(int w, int h)</span>
+<span class="lineNum">     124 </span>            : {
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :         glViewport(0, 0, w, h);</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :         glMatrixMode(GL_PROJECTION);</span>
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :         glLoadIdentity();</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :         gluPerspective(45.0, (float)w / (float)h, 0.01f, 100.0f);</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :         glMatrixMode(GL_MODELVIEW);</span>
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :         glLoadIdentity();</span>
+<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 : void MK3SGL::KeyCB(unsigned char c, int x, int y)</span>
+<span class="lineNum">     134 </span>            : {
+<span class="lineNum">     135 </span>            :         // Decomment this block and use the flDbg variables
+<span class="lineNum">     136 </span>            :         // as your position translation. Then, you can move the
+<span class="lineNum">     137 </span>            :         // object into place using the numpad, and just read off
+<span class="lineNum">     138 </span>            :         // the correct position values to use when finished.
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :         if (c =='+')</span>
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :                 m_flDbg = m_flDbg+0.001f;</span>
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :         else if (c == '-')</span>
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :                 m_flDbg = m_flDbg-0.001f;</span>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :         if (c =='*')</span>
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :                 m_flDbg2 = m_flDbg2+0.001f;</span>
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :         else if (c == '/')</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :                 m_flDbg2 = m_flDbg2-0.001f;</span>
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 :         if (c =='3')</span>
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :                 m_flDbg3 = m_flDbg3+0.001f;</span>
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :         else if (c == '9')</span>
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :                 m_flDbg3 = m_flDbg3-0.001f;</span>
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :         else if (c == '7')</span>
+<span class="lineNum">     152 </span>            :         {
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :                 m_iDbg ++;</span>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :                 m_MMUBase.SetSubobjectVisible(m_iDbg,false);</span>
+<span class="lineNum">     155 </span>            :         }
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :         else if (c == '8')</span>
+<span class="lineNum">     157 </span>            :         {
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :                 m_iDbg --;</span>
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :                 m_MMUBase.SetSubobjectVisible(m_iDbg,true);</span>
+<span class="lineNum">     160 </span>            :         }
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :         printf(&quot;Int: %d\n&quot;,m_iDbg.load());</span>
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :         printf(&quot;Offsets: %03f, %03f, %03f,\n&quot;,m_flDbg.load(),m_flDbg2.load(), m_flDbg3.load());</span>
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :         if (m_pParent)</span>
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :                 m_pParent-&gt;OnKeyPress(c,x,y);</span>
+<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 : void MK3SGL::Init(avr_t *avr)</span>
+<a name="168"><span class="lineNum">     168 </span>            : {</a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :         _Init(avr,this);</span></a>
+<a name="170"><span class="lineNum">     170 </span><span class="lineNoCov">          0 :         RegisterNotify(X_IN,MAKE_C_CALLBACK(MK3SGL,OnXChanged),this);</span></a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineNoCov">          0 :         RegisterNotify(Y_IN,MAKE_C_CALLBACK(MK3SGL,OnYChanged),this);</span></a>
+<a name="172"><span class="lineNum">     172 </span><span class="lineNoCov">          0 :         RegisterNotify(Z_IN,MAKE_C_CALLBACK(MK3SGL,OnZChanged),this);</span></a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 :         RegisterNotify(E_IN,MAKE_C_CALLBACK(MK3SGL,OnEChanged),this);</span></a>
+<a name="174"><span class="lineNum">     174 </span><span class="lineNoCov">          0 :         RegisterNotify(FEED_IN,MAKE_C_CALLBACK(MK3SGL,OnPChanged),this);</span></a>
+<a name="175"><span class="lineNum">     175 </span><span class="lineNoCov">          0 :         RegisterNotify(SEL_IN,MAKE_C_CALLBACK(MK3SGL,OnSelChanged),this);</span></a>
+<a name="176"><span class="lineNum">     176 </span><span class="lineNoCov">          0 :         RegisterNotify(IDL_IN,MAKE_C_CALLBACK(MK3SGL,OnIdlChanged),this);</span></a>
+<a name="177"><span class="lineNum">     177 </span><span class="lineNoCov">          0 :         RegisterNotify(SHEET_IN, MAKE_C_CALLBACK(MK3SGL, OnSheetChanged), this);</span></a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineNoCov">          0 :         RegisterNotify(EFAN_IN, MAKE_C_CALLBACK(MK3SGL, OnEFanChanged), this);</span></a>
+<a name="179"><span class="lineNum">     179 </span><span class="lineNoCov">          0 :         RegisterNotify(PFAN_IN, MAKE_C_CALLBACK(MK3SGL, OnPFanChanged), this);</span></a>
+<a name="180"><span class="lineNum">     180 </span><span class="lineNoCov">          0 :         RegisterNotify(BED_IN, MAKE_C_CALLBACK(MK3SGL, OnBedChanged), this);</span></a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineNoCov">          0 :         RegisterNotify(SD_IN, MAKE_C_CALLBACK(MK3SGL,OnSDChanged),this);</span></a>
+<a name="182"><span class="lineNum">     182 </span><span class="lineNoCov">          0 :         RegisterNotify(PINDA_IN, MAKE_C_CALLBACK(MK3SGL,OnPINDAChanged),this);</span></a>
+<a name="183"><span class="lineNum">     183 </span><span class="lineNoCov">          0 :         RegisterNotify(FINDA_IN, MAKE_C_CALLBACK(MK3SGL,OnFINDAChanged),this);</span></a>
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :         RegisterNotify(TOOL_IN,MAKE_C_CALLBACK(MK3SGL,OnToolChanged),this);</span>
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :         RegisterNotify(MMU_LEDS_IN,MAKE_C_CALLBACK(MK3SGL,OnMMULedsChanged),this);</span>
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 : }</span>
+<a name="189"><span class="lineNum">     189 </span>            : </a>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 : Scriptable::LineStatus MK3SGL::ProcessAction(unsigned int iAct, const vector&lt;string&gt; &amp;vArgs)</span>
+<span class="lineNum">     192 </span>            : {
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :         switch (iAct)</span>
+<span class="lineNum">     194 </span>            :         {
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :                 case ActResetView:</span>
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :                         ResetCamera();</span>
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :                         return LineStatus::Finished;</span>
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :                 case ActToggleNCam:</span>
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                         m_bFollowNozzle = !m_bFollowNozzle;</span>
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :                         return LineStatus::Finished;</span>
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :                 case ActClear:</span>
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :                         ClearPrint();</span>
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :                         return LineStatus::Finished;</span>
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :                 default:</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                         return LineStatus::Unhandled;</span>
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span>            :         }
+<a name="208"><span class="lineNum">     208 </span>            : }</a>
+<span class="lineNum">     209 </span>            : 
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 : void MK3SGL::TwistKnob(bool bDir)</span>
+<span class="lineNum">     211 </span>            : {
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :         if (bDir)</span>
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                 m_iKnobPos = (m_iKnobPos+18)%360;</span>
+<span class="lineNum">     214 </span>            :         else
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :                 m_iKnobPos = (m_iKnobPos + 342)%360;</span>
+<a name="216"><span class="lineNum">     216 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 : void MK3SGL::OnXChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     219 </span>            : {
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 :         float* fPos = (float*)(&amp;value); // both 32 bits, just mangle it for sending over the wire.</span>
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :         m_fXPos =  fPos[0]/1000.f;</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="223"><span class="lineNum">     223 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 : void MK3SGL::OnSelChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     226 </span>            : {
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :         float* fPos = (float*)(&amp;value); // both 32 bits, just mangle it for sending over the wire.</span>
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :         m_fSelPos =  fPos[0]/1000.f;</span>
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="230"><span class="lineNum">     230 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 : void MK3SGL::OnIdlChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     233 </span>            : {
+<span class="lineNum">     234 </span><span class="lineNoCov">          0 :         float* fPos = (float*)(&amp;value); // both 32 bits, just mangle it for sending over the wire.</span>
+<span class="lineNum">     235 </span><span class="lineNoCov">          0 :         m_fIdlPos =  fPos[0];</span>
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     238 </span>            : 
+<span class="lineNum">     239 </span><span class="lineNoCov">          0 : void MK3SGL::OnBedChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     240 </span>            : {
+<span class="lineNum">     241 </span><span class="lineNoCov">          0 :         m_bBedOn = value&gt;0;</span>
+<span class="lineNum">     242 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="243"><span class="lineNum">     243 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     244 </span>            : 
+<span class="lineNum">     245 </span><span class="lineNoCov">          0 : void MK3SGL::OnSheetChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     246 </span>            : {
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :         m_bPrintSurface = value&gt;0;</span>
+<span class="lineNum">     248 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="249"><span class="lineNum">     249 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     250 </span>            : 
+<span class="lineNum">     251 </span><span class="lineNoCov">          0 : void MK3SGL::OnEFanChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     252 </span>            : {
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :         m_bFanOn = (value&gt;0);</span>
+<span class="lineNum">     254 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="255"><span class="lineNum">     255 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span><span class="lineNoCov">          0 : void MK3SGL::OnPFanChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     258 </span>            : {
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 :         m_bPFanOn = (value&gt;0);</span>
+<span class="lineNum">     260 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="261"><span class="lineNum">     261 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 : void MK3SGL::OnSDChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     264 </span>            : {
+<span class="lineNum">     265 </span><span class="lineNoCov">          0 :         m_bSDCard = value==0;</span>
+<span class="lineNum">     266 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="267"><span class="lineNum">     267 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     268 </span>            : 
+<span class="lineNum">     269 </span><span class="lineNoCov">          0 : void MK3SGL::OnPINDAChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     270 </span>            : {
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :         m_bPINDAOn = value;</span>
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="273"><span class="lineNum">     273 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span><span class="lineNoCov">          0 : void MK3SGL::OnFINDAChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     276 </span>            : {
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :         m_bFINDAOn = value;</span>
+<span class="lineNum">     278 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="279"><span class="lineNum">     279 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 : void MK3SGL::OnMMULedsChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     282 </span>            : {
+<span class="lineNum">     283 </span>            :         // Set the materials appropriately:
+<span class="lineNum">     284 </span>            :         // Bits 9..0 are LEDs G/R 1..4, 0
+<span class="lineNum">     285 </span>            :         // LEDs are subobjects R: 32-36 (4..0) and G(38-42)
+<span class="lineNum">     286 </span>            :         //Red mtl = 31, G = 32. On mtls = 37/38
+<span class="lineNum">     287 </span>            :         //      m_lGreen[0].ConnectFrom(m_shift.GetIRQ(HC595::BIT6), LED::LED_IN);
+<span class="lineNum">     288 </span>            :         // m_lRed[0].ConnectFrom(       m_shift.GetIRQ(HC595::BIT7), LED::LED_IN);
+<span class="lineNum">     289 </span>            :         // m_lGreen[4].ConnectFrom(m_shift.GetIRQ(HC595::BIT8), LED::LED_IN);
+<span class="lineNum">     290 </span>            :         // m_lRed[4].ConnectFrom(       m_shift.GetIRQ(HC595::BIT9), LED::LED_IN);
+<span class="lineNum">     291 </span>            :         // m_lGreen[3].ConnectFrom(m_shift.GetIRQ(HC595::BIT10), LED::LED_IN);
+<span class="lineNum">     292 </span>            :         // m_lRed[3].ConnectFrom(       m_shift.GetIRQ(HC595::BIT11), LED::LED_IN);
+<span class="lineNum">     293 </span>            :         // m_lGreen[2].ConnectFrom(m_shift.GetIRQ(HC595::BIT12), LED::LED_IN);
+<span class="lineNum">     294 </span>            :         // m_lRed[2].ConnectFrom(       m_shift.GetIRQ(HC595::BIT13), LED::LED_IN);
+<span class="lineNum">     295 </span>            :         // m_lGreen[1].ConnectFrom(m_shift.GetIRQ(HC595::BIT14), LED::LED_IN);
+<span class="lineNum">     296 </span>            :         // m_lRed[1].ConnectFrom(       m_shift.GetIRQ(HC595::BIT15), LED::LED_IN);
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :         uint32_t bChanged = irq-&gt;value ^ value;</span>
+<span class="lineNum">     298 </span>            :         static constexpr uint8_t iLedBase[2] = {38, 32}; // G, R
+<span class="lineNum">     299 </span>            :         static constexpr uint8_t iLedObj[10] = {4,4,0,0,1,1,2,2,3,3};
+<span class="lineNum">     300 </span>            :         //static constexpr uint8_t iMtlOff[2] = {32, 31};
+<span class="lineNum">     301 </span>            :         static constexpr uint8_t iMtlOn[2] = {38,37};
+<span class="lineNum">     302 </span><span class="lineNoCov">          0 :         for (int i=0; i&lt;10; i++)</span>
+<span class="lineNum">     303 </span>            :         {
+<span class="lineNum">     304 </span><span class="lineNoCov">          0 :                 if ((bChanged&gt;&gt;i) &amp;1)</span>
+<span class="lineNum">     305 </span>            :                 {
+<span class="lineNum">     306 </span><span class="lineNoCov">          0 :                         if ((value&gt;&gt;i) &amp; 1)</span>
+<span class="lineNum">     307 </span><span class="lineNoCov">          0 :                                 m_MMUBase.SetSubobjectMaterial(iLedBase[i%2]+iLedObj[i],iMtlOn[i%2]);</span>
+<span class="lineNum">     308 </span>            :                         else
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 :                                 m_MMUBase.SetSubobjectMaterial(iLedBase[i%2]+iLedObj[i],5);//iMtlOff[i%2]);</span>
+<span class="lineNum">     310 </span>            :                 }
+<span class="lineNum">     311 </span>            :         }
+<span class="lineNum">     312 </span>            : 
+<span class="lineNum">     313 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="314"><span class="lineNum">     314 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     315 </span>            : 
+<span class="lineNum">     316 </span><span class="lineNoCov">          0 : void MK3SGL::OnYChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     317 </span>            : {
+<span class="lineNum">     318 </span><span class="lineNoCov">          0 :         float* fPos = (float*)(&amp;value); // both 32 bits, just mangle it for sending over the wire.</span>
+<span class="lineNum">     319 </span><span class="lineNoCov">          0 :         m_fYPos = fPos[0]/1000.f;</span>
+<span class="lineNum">     320 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="321"><span class="lineNum">     321 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span><span class="lineNoCov">          0 : void MK3SGL::OnEChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     324 </span>            : {
+<span class="lineNum">     325 </span><span class="lineNoCov">          0 :         float* fPos = (float*)(&amp;value); // both 32 bits, just mangle it for sending over the wire.</span>
+<span class="lineNum">     326 </span><span class="lineNoCov">          0 :         m_fEPos = fPos[0]/1000.f;</span>
+<span class="lineNum">     327 </span><span class="lineNoCov">          0 :         m_vPrints[m_iCurTool]-&gt;NewCoord(m_fXPos,m_fYPos,m_fZPos,m_fEPos);</span>
+<span class="lineNum">     328 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="329"><span class="lineNum">     329 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     330 </span>            : 
+<span class="lineNum">     331 </span><span class="lineNoCov">          0 : void MK3SGL::OnZChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     332 </span>            : {
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :         float* fPos = (float*)(&amp;value); // both 32 bits, just mangle it for sending over the wire.</span>
+<span class="lineNum">     334 </span><span class="lineNoCov">          0 :         m_fZPos =  fPos[0]/1000.f;</span>
+<span class="lineNum">     335 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 : }</span>
+<a name="337"><span class="lineNum">     337 </span>            : </a>
+<span class="lineNum">     338 </span>            : 
+<span class="lineNum">     339 </span><span class="lineNoCov">          0 : void MK3SGL::OnPChanged(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     340 </span>            : {
+<span class="lineNum">     341 </span><span class="lineNoCov">          0 :         float* fPos = (float*)(&amp;value); // both 32 bits, just mangle it for sending over the wire.</span>
+<span class="lineNum">     342 </span><span class="lineNoCov">          0 :         m_fPPos =  fPos[0]/1000.f;</span>
+<span class="lineNum">     343 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="344"><span class="lineNum">     344 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     345 </span>            : 
+<span class="lineNum">     346 </span><span class="lineNoCov">          0 : void MK3SGL::OnToolChanged(avr_irq_t *irq, uint32_t iIdx)</span>
+<span class="lineNum">     347 </span>            : {
+<span class="lineNum">     348 </span>            :         // Need to stop the old tool and start the new one at the right location.
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 :         m_iCurTool = iIdx;</span>
+<span class="lineNum">     350 </span><span class="lineNoCov">          0 : };</span>
+<span class="lineNum">     351 </span>            : 
+<a name="352"><span class="lineNum">     352 </span>            : static constexpr float fMM2M = 1.f/1000.f;</a>
+<span class="lineNum">     353 </span>            : 
+<span class="lineNum">     354 </span><span class="lineNoCov">          0 : void MK3SGL::Draw()</span>
+<span class="lineNum">     355 </span>            : {
+<span class="lineNum">     356 </span>            :                 //if (!m_bDirty)
+<span class="lineNum">     357 </span>            :                 //    return;
+<span class="lineNum">     358 </span><span class="lineNoCov">          0 :         if (m_bClearPrints) // Needs to be done in the GL loop for thread safety.</span>
+<span class="lineNum">     359 </span>            :         {
+<span class="lineNum">     360 </span><span class="lineNoCov">          0 :                 for (int i=0; i&lt;5; i++) m_vPrints[i]-&gt;Clear();</span>
+<span class="lineNum">     361 </span><span class="lineNoCov">          0 :                 m_bClearPrints = false;</span>
+<span class="lineNum">     362 </span>            :         }
+<span class="lineNum">     363 </span><span class="lineNoCov">          0 :         int iOldWin = glutGetWindow();</span>
+<span class="lineNum">     364 </span><span class="lineNoCov">          0 :         glutSetWindow(m_iWindow);</span>
+<span class="lineNum">     365 </span><span class="lineNoCov">          0 :         glClearColor(0.1f, 0.2f, 0.3f, 1.0f);</span>
+<span class="lineNum">     366 </span><span class="lineNoCov">          0 :         glClearDepth(1.0f);</span>
+<span class="lineNum">     367 </span><span class="lineNoCov">          0 :         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);</span>
+<span class="lineNum">     368 </span>            : 
+<span class="lineNum">     369 </span><span class="lineNoCov">          0 :         glEnable(GL_DEPTH_TEST);</span>
+<span class="lineNum">     370 </span><span class="lineNoCov">          0 :         glEnable(GL_TEXTURE_2D);</span>
+<span class="lineNum">     371 </span><span class="lineNoCov">          0 :         glLoadIdentity();</span>
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span><span class="lineNoCov">          0 :                 glEnable(GL_CULL_FACE);</span>
+<span class="lineNum">     374 </span><span class="lineNoCov">          0 :                 glCullFace(GL_BACK);</span>
+<span class="lineNum">     375 </span><span class="lineNoCov">          0 :                 float fExtent = m_Objs-&gt;GetScaleFactor();</span>
+<span class="lineNum">     376 </span><span class="lineNoCov">          0 :                 m_Objs-&gt;SetupLighting();</span>
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span><span class="lineNoCov">          0 :                 glEnable(GL_LIGHT0);</span>
+<span class="lineNum">     379 </span>            : 
+<span class="lineNum">     380 </span><span class="lineNoCov">          0 :                 glEnable(GL_LIGHTING);</span>
+<span class="lineNum">     381 </span><span class="lineNoCov">          0 :                 glMatrixMode(GL_MODELVIEW);</span>
+<span class="lineNum">     382 </span><span class="lineNoCov">          0 :                 glEnable(GL_NORMALIZE);</span>
+<span class="lineNum">     383 </span><span class="lineNoCov">          0 :                 glLoadIdentity();</span>
+<span class="lineNum">     384 </span>            : 
+<span class="lineNum">     385 </span><span class="lineNoCov">          0 :                 if (!m_bFollowNozzle)</span>
+<span class="lineNum">     386 </span>            :                 {
+<span class="lineNum">     387 </span><span class="lineNoCov">          0 :                         float fSize = 0.1f;</span>
+<span class="lineNum">     388 </span><span class="lineNoCov">          0 :                         float fBase[3] = {0,0,0};</span>
+<span class="lineNum">     389 </span><span class="lineNoCov">          0 :                         glLineWidth(2.f);</span>
+<span class="lineNum">     390 </span>            :                         // If a mouse button is pressed, draw the &quot;look at&quot; axis.
+<span class="lineNum">     391 </span><span class="lineNoCov">          0 :                         glPushMatrix();</span>
+<span class="lineNum">     392 </span><span class="lineNoCov">          0 :                                 glEnable(GL_COLOR_MATERIAL);</span>
+<span class="lineNum">     393 </span><span class="lineNoCov">          0 :                                 glBegin(GL_LINES);</span>
+<span class="lineNum">     394 </span><span class="lineNoCov">          0 :                                         glColor3f(1,0,0);</span>
+<span class="lineNum">     395 </span><span class="lineNoCov">          0 :                                         glVertex3f(fBase[0]-fSize, fBase[1], fBase[2]); glVertex3f(fBase[0]+fSize,fBase[1], fBase[2]);</span>
+<span class="lineNum">     396 </span><span class="lineNoCov">          0 :                                         glColor3f(0,1,0);</span>
+<span class="lineNum">     397 </span><span class="lineNoCov">          0 :                                         glVertex3f(fBase[0], fBase[1]-fSize,  fBase[2]); glVertex3f(fBase[0], fBase[1]+fSize, fBase[2]);</span>
+<span class="lineNum">     398 </span><span class="lineNoCov">          0 :                                         glColor3f(0,0,1);</span>
+<span class="lineNum">     399 </span><span class="lineNoCov">          0 :                                         glVertex3f(fBase[0],fBase[1], fBase[2]-fSize); glVertex3f(fBase[0],fBase[1], fBase[2]+fSize);</span>
+<span class="lineNum">     400 </span><span class="lineNoCov">          0 :                                 glEnd();</span>
+<span class="lineNum">     401 </span><span class="lineNoCov">          0 :                                 glDisable(GL_COLOR_MATERIAL);</span>
+<span class="lineNum">     402 </span><span class="lineNoCov">          0 :                         glPopMatrix();</span>
+<span class="lineNum">     403 </span><span class="lineNoCov">          0 :                         glMultMatrixf(m_camera.getViewMatrix());</span>
+<span class="lineNum">     404 </span>            :                 }
+<span class="lineNum">     405 </span>            : 
+<span class="lineNum">     406 </span><span class="lineNoCov">          0 :                 glScalef(1.0f / fExtent, 1.0f / fExtent, 1.0f / fExtent);</span>
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span>            :                 float fTransform[3];
+<span class="lineNum">     409 </span><span class="lineNoCov">          0 :                 m_Objs-&gt;GetBaseCenter(fTransform);</span>
+<span class="lineNum">     410 </span>            :                 // Centerize object.
+<span class="lineNum">     411 </span><span class="lineNoCov">          0 :                 glTranslatef (fTransform[0], fTransform[1], fTransform[2]);</span>
+<span class="lineNum">     412 </span><span class="lineNoCov">          0 :                 if (m_bFollowNozzle)</span>
+<span class="lineNum">     413 </span>            :                 {
+<span class="lineNum">     414 </span>            :                                 float fLook[3];
+<span class="lineNum">     415 </span><span class="lineNoCov">          0 :                                 m_Objs-&gt;GetNozzleCamPos(fLook);</span>
+<span class="lineNum">     416 </span><span class="lineNoCov">          0 :                                 fLook[0]+=fTransform[0]=m_fXPos;</span>
+<span class="lineNum">     417 </span><span class="lineNoCov">          0 :                                 fLook[1]+=m_fZPos;</span>
+<span class="lineNum">     418 </span><span class="lineNoCov">          0 :                                 gluLookAt(fLook[0]+.001, fLook[1]+.003 ,fLook[2]+.08, fLook[0],fLook[1],fLook[2] ,0,1,0);</span>
+<span class="lineNum">     419 </span>            :                 }
+<span class="lineNum">     420 </span><span class="lineNoCov">          0 :                 m_Objs-&gt;SetNozzleCam(m_bFollowNozzle);</span>
+<span class="lineNum">     421 </span><span class="lineNoCov">          0 :                 glPushMatrix();</span>
+<span class="lineNum">     422 </span><span class="lineNoCov">          0 :                         glTranslatef(0,m_fZPos,0);</span>
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 :                         m_Objs-&gt;Draw(OBJCollection::ObjClass::Z);</span>
+<span class="lineNum">     424 </span><span class="lineNoCov">          0 :                         glPushMatrix();</span>
+<span class="lineNum">     425 </span><span class="lineNoCov">          0 :                                 glTranslatef(m_fXPos,0,0);</span>
+<span class="lineNum">     426 </span><span class="lineNoCov">          0 :                                 m_Objs-&gt;Draw(OBJCollection::ObjClass::X);</span>
+<span class="lineNum">     427 </span><span class="lineNoCov">          0 :                                 if (!m_bPINDAOn)</span>
+<span class="lineNum">     428 </span>            :                                 {
+<span class="lineNum">     429 </span><span class="lineNoCov">          0 :                                         glPushMatrix();</span>
+<span class="lineNum">     430 </span><span class="lineNoCov">          0 :                                                 m_Objs-&gt;ApplyPLEDTransform();</span>
+<span class="lineNum">     431 </span><span class="lineNoCov">          0 :                                                 DrawRoundLED();</span>
+<span class="lineNum">     432 </span><span class="lineNoCov">          0 :                                         glPopMatrix();</span>
+<span class="lineNum">     433 </span>            :                                 }
+<span class="lineNum">     434 </span><span class="lineNoCov">          0 :                                 glPushMatrix();</span>
+<span class="lineNum">     435 </span><span class="lineNoCov">          0 :                                         if (m_bPFanOn)</span>
+<span class="lineNum">     436 </span><span class="lineNoCov">          0 :                                                 m_iPFanPos = (m_iPFanPos + 5)%360;</span>
+<span class="lineNum">     437 </span><span class="lineNoCov">          0 :                                         m_Objs-&gt;DrawPFan(m_iPFanPos);</span>
+<span class="lineNum">     438 </span><span class="lineNoCov">          0 :                                 glPopMatrix();</span>
+<span class="lineNum">     439 </span>            : 
+<span class="lineNum">     440 </span><span class="lineNoCov">          0 :                                 glPushMatrix();</span>
+<span class="lineNum">     441 </span><span class="lineNoCov">          0 :                                         if (m_bFanOn)</span>
+<span class="lineNum">     442 </span><span class="lineNoCov">          0 :                                                 m_iFanPos = (m_iFanPos + 339)%360;</span>
+<span class="lineNum">     443 </span><span class="lineNoCov">          0 :                                         m_Objs-&gt;DrawEFan(m_iFanPos);</span>
+<span class="lineNum">     444 </span><span class="lineNoCov">          0 :                                 glPopMatrix();</span>
+<span class="lineNum">     445 </span><span class="lineNoCov">          0 :                                 glPushMatrix();</span>
+<span class="lineNum">     446 </span><span class="lineNoCov">          0 :                                         m_Objs-&gt;DrawEVis(m_fEPos);</span>
+<span class="lineNum">     447 </span><span class="lineNoCov">          0 :                                 glPopMatrix();</span>
+<span class="lineNum">     448 </span><span class="lineNoCov">          0 :                         glPopMatrix();</span>
+<span class="lineNum">     449 </span><span class="lineNoCov">          0 :                 glPopMatrix();</span>
+<span class="lineNum">     450 </span>            : 
+<span class="lineNum">     451 </span><span class="lineNoCov">          0 :                 glPushMatrix();</span>
+<span class="lineNum">     452 </span><span class="lineNoCov">          0 :                         glTranslatef(0,0,(m_fYPos));</span>
+<span class="lineNum">     453 </span><span class="lineNoCov">          0 :                         m_Objs-&gt;Draw(OBJCollection::ObjClass::Y);</span>
+<span class="lineNum">     454 </span><span class="lineNoCov">          0 :                         if (m_bPrintSurface)</span>
+<span class="lineNum">     455 </span><span class="lineNoCov">          0 :                                 m_Objs-&gt;Draw(OBJCollection::ObjClass::PrintSurface);</span>
+<span class="lineNum">     456 </span><span class="lineNoCov">          0 :                         glPushMatrix();</span>
+<span class="lineNum">     457 </span><span class="lineNoCov">          0 :                                 glScalef(1,1,-1);</span>
+<span class="lineNum">     458 </span><span class="lineNoCov">          0 :                                 m_Objs-&gt;ApplyPrintTransform();</span>
+<span class="lineNum">     459 </span><span class="lineNoCov">          0 :                                 for (size_t i=0; i&lt;m_vPrints.size(); i++)</span>
+<span class="lineNum">     460 </span><span class="lineNoCov">          0 :                                         m_vPrints[i]-&gt;Draw();</span>
+<span class="lineNum">     461 </span><span class="lineNoCov">          0 :                         glPopMatrix();</span>
+<span class="lineNum">     462 </span><span class="lineNoCov">          0 :                         if (m_bBedOn)</span>
+<span class="lineNum">     463 </span>            :                         {
+<span class="lineNum">     464 </span><span class="lineNoCov">          0 :                                 glTranslatef(m_flDbg,m_flDbg2,m_flDbg3);</span>
+<span class="lineNum">     465 </span><span class="lineNoCov">          0 :                                 m_Objs-&gt;ApplyBedLEDTransform();</span>
+<span class="lineNum">     466 </span><span class="lineNoCov">          0 :                                 DrawLED(1,0,0);</span>
+<span class="lineNum">     467 </span>            :                         }
+<span class="lineNum">     468 </span><span class="lineNoCov">          0 :                 glPopMatrix();</span>
+<span class="lineNum">     469 </span><span class="lineNoCov">          0 :                 m_Objs-&gt;Draw(OBJCollection::ObjClass::Fixed);</span>
+<span class="lineNum">     470 </span><span class="lineNoCov">          0 :                 glPushMatrix();</span>
+<span class="lineNum">     471 </span><span class="lineNoCov">          0 :                         m_Objs-&gt;DrawKnob(m_iKnobPos);</span>
+<span class="lineNum">     472 </span><span class="lineNoCov">          0 :                 glPopMatrix();</span>
+<span class="lineNum">     473 </span><span class="lineNoCov">          0 :                 if (m_pLCD)</span>
+<span class="lineNum">     474 </span>            :                 {
+<span class="lineNum">     475 </span><span class="lineNoCov">          0 :                         glPushMatrix();</span>
+<span class="lineNum">     476 </span><span class="lineNoCov">          0 :                                 m_Objs-&gt;ApplyLCDTransform();</span>
+<span class="lineNum">     477 </span><span class="lineNoCov">          0 :                                 glRotatef(-45.f,1,0,0);</span>
+<span class="lineNum">     478 </span><span class="lineNoCov">          0 :                                 glPushMatrix();</span>
+<span class="lineNum">     479 </span><span class="lineNoCov">          0 :                                 float fScale = (4.f*0.076f)/500.f; // Disp is 76mm wide, lcd is drawn 500 wide at 4x scale</span>
+<span class="lineNum">     480 </span><span class="lineNoCov">          0 :                                         glScalef(fScale,fScale,fScale);</span>
+<span class="lineNum">     481 </span><span class="lineNoCov">          0 :                                         glScalef(1.0,-1.0f,-0.1f);</span>
+<span class="lineNum">     482 </span><span class="lineNoCov">          0 :                                         glPushMatrix();</span>
+<span class="lineNum">     483 </span>            :                                                 // This scheme is a bit more legible on the smaller screen.
+<span class="lineNum">     484 </span><span class="lineNoCov">          0 :                                                 m_pLCD-&gt;Draw(0x382200ff, 0x000000ff , 0xFF9900ff, 0x00000055, true);</span>
+<span class="lineNum">     485 </span><span class="lineNoCov">          0 :                                         glPopMatrix();</span>
+<span class="lineNum">     486 </span><span class="lineNoCov">          0 :                                 glPopMatrix();</span>
+<span class="lineNum">     487 </span><span class="lineNoCov">          0 :                         glPopMatrix();</span>
+<span class="lineNum">     488 </span>            :                 }
+<span class="lineNum">     489 </span><span class="lineNoCov">          0 :                 if (m_bSDCard) //if card present</span>
+<span class="lineNum">     490 </span><span class="lineNoCov">          0 :                         m_Objs-&gt;Draw(OBJCollection::ObjClass::Media); // Draw removable media (SD, USB, etc)</span>
+<span class="lineNum">     491 </span><span class="lineNoCov">          0 :                 if (m_Objs-&gt;SupportsMMU() &amp;&amp; m_bMMU)</span>
+<span class="lineNum">     492 </span><span class="lineNoCov">          0 :                         DrawMMU();</span>
+<span class="lineNum">     493 </span><span class="lineNoCov">          0 :                 glutSwapBuffers();</span>
+<span class="lineNum">     494 </span><span class="lineNoCov">          0 :                 m_bDirty = false;</span>
+<span class="lineNum">     495 </span><span class="lineNoCov">          0 :                 glutSetWindow(iOldWin);</span>
+<a name="496"><span class="lineNum">     496 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     497 </span>            : 
+<span class="lineNum">     498 </span><span class="lineNoCov">          0 : void MK3SGL::DrawRoundLED()</span>
+<span class="lineNum">     499 </span>            : {
+<span class="lineNum">     500 </span><span class="lineNoCov">          0 :         float fLED[4] = {1,0,0,1};</span>
+<span class="lineNum">     501 </span><span class="lineNoCov">          0 :         float fNone[4] = {0,0,0,1};</span>
+<span class="lineNum">     502 </span><span class="lineNoCov">          0 :         glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE | GL_SPECULAR,fNone);</span>
+<span class="lineNum">     503 </span><span class="lineNoCov">          0 :         glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,fLED);</span>
+<span class="lineNum">     504 </span><span class="lineNoCov">          0 :         glPushMatrix();</span>
+<span class="lineNum">     505 </span><span class="lineNoCov">          0 :                 glTranslatef(0.092,0.3355,0.274);</span>
+<span class="lineNum">     506 </span><span class="lineNoCov">          0 :                 glBegin(GL_TRIANGLE_FAN);</span>
+<span class="lineNum">     507 </span><span class="lineNoCov">          0 :                         glVertex3f( 0,   0,    0);</span>
+<span class="lineNum">     508 </span><span class="lineNoCov">          0 :                         glVertex3f(-0.003,0,0);</span>
+<span class="lineNum">     509 </span><span class="lineNoCov">          0 :                         glVertex3f(-0.002,0,0.002);</span>
+<span class="lineNum">     510 </span><span class="lineNoCov">          0 :                         glVertex3f( 0,   0,     0.003);</span>
+<span class="lineNum">     511 </span><span class="lineNoCov">          0 :                         glVertex3f( 0.002,0,0.002);</span>
+<span class="lineNum">     512 </span><span class="lineNoCov">          0 :                         glVertex3f( 0.003,  0,  0);</span>
+<span class="lineNum">     513 </span><span class="lineNoCov">          0 :                         glVertex3f(0.002, 0,   -0.002);</span>
+<span class="lineNum">     514 </span><span class="lineNoCov">          0 :                         glVertex3f( 0,   0,    -0.003);</span>
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 :                         glVertex3f(-0.002, 0, -0.002);</span>
+<span class="lineNum">     516 </span><span class="lineNoCov">          0 :                         glVertex3f(-0.003,0,0);</span>
+<span class="lineNum">     517 </span><span class="lineNoCov">          0 :                 glEnd();</span>
+<span class="lineNum">     518 </span><span class="lineNoCov">          0 :         glPopMatrix();</span>
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 :         glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION, fNone);</span>
+<a name="520"><span class="lineNum">     520 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     521 </span>            : 
+<span class="lineNum">     522 </span><span class="lineNoCov">          0 : void MK3SGL::DrawLED(float r, float g, float b)</span>
+<span class="lineNum">     523 </span>            : {
+<span class="lineNum">     524 </span><span class="lineNoCov">          0 :                 float fLED[4] = {r,g,b,1};</span>
+<span class="lineNum">     525 </span><span class="lineNoCov">          0 :                 float fNone[4] = {0,0,0,1};</span>
+<span class="lineNum">     526 </span><span class="lineNoCov">          0 :                 glMaterialfv(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE | GL_SPECULAR,fNone);</span>
+<span class="lineNum">     527 </span><span class="lineNoCov">          0 :                                 glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,fLED);</span>
+<span class="lineNum">     528 </span><span class="lineNoCov">          0 :                                 glBegin(GL_QUADS);</span>
+<span class="lineNum">     529 </span><span class="lineNoCov">          0 :                                         glVertex3f(0,0,0);</span>
+<span class="lineNum">     530 </span><span class="lineNoCov">          0 :                                         glVertex3f(0.004,0,0);</span>
+<span class="lineNum">     531 </span><span class="lineNoCov">          0 :                                         glVertex3f(0.004,0.003,0.003);</span>
+<span class="lineNum">     532 </span><span class="lineNoCov">          0 :                                         glVertex3f(0,0.003,0.003);</span>
+<span class="lineNum">     533 </span><span class="lineNoCov">          0 :                                 glEnd();</span>
+<span class="lineNum">     534 </span><span class="lineNoCov">          0 :                                 glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION, fNone);</span>
+<a name="535"><span class="lineNum">     535 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     536 </span>            : 
+<span class="lineNum">     537 </span><span class="lineNoCov">          0 : void MK3SGL::DrawMMU()</span>
+<span class="lineNum">     538 </span>            : {
+<span class="lineNum">     539 </span>            :                 float fTransform[3];
+<span class="lineNum">     540 </span><span class="lineNoCov">          0 :                 glPushMatrix();</span>
+<span class="lineNum">     541 </span><span class="lineNoCov">          0 :                         m_MMUBase.GetCenteringTransform(fTransform);</span>
+<span class="lineNum">     542 </span><span class="lineNoCov">          0 :                         glTranslatef(0,0.3185,0.0425);</span>
+<span class="lineNum">     543 </span><span class="lineNoCov">          0 :                         glTranslatef (-fTransform[0], -fTransform[1], -fTransform[2]);</span>
+<span class="lineNum">     544 </span><span class="lineNoCov">          0 :                         glRotatef(-45,1,0,0);</span>
+<span class="lineNum">     545 </span><span class="lineNoCov">          0 :                         glTranslatef(0.13+fTransform[0],fTransform[1],fTransform[2]);</span>
+<span class="lineNum">     546 </span><span class="lineNoCov">          0 :                         m_MMUBase.Draw();</span>
+<span class="lineNum">     547 </span><span class="lineNoCov">          0 :                         glPushMatrix();</span>
+<span class="lineNum">     548 </span><span class="lineNoCov">          0 :                                 m_MMUSel.GetCenteringTransform(fTransform);</span>
+<span class="lineNum">     549 </span><span class="lineNoCov">          0 :                                 glPushMatrix();</span>
+<span class="lineNum">     550 </span><span class="lineNoCov">          0 :                                         glTranslatef(m_fSelPos - m_fSelCorr,0.062,0.123);</span>
+<span class="lineNum">     551 </span><span class="lineNoCov">          0 :                                         if (m_bFINDAOn)</span>
+<span class="lineNum">     552 </span>            :                                         {
+<span class="lineNum">     553 </span><span class="lineNoCov">          0 :                                                 glPushMatrix();</span>
+<span class="lineNum">     554 </span><span class="lineNoCov">          0 :                                                         glTranslatef(-0.075,-0.274,-0.222);</span>
+<span class="lineNum">     555 </span><span class="lineNoCov">          0 :                                                         DrawRoundLED();</span>
+<span class="lineNum">     556 </span><span class="lineNoCov">          0 :                                                 glPopMatrix();</span>
+<span class="lineNum">     557 </span>            :                                         }
+<span class="lineNum">     558 </span><span class="lineNoCov">          0 :                                         glTranslatef (-fTransform[0], -fTransform[1], -fTransform[2]);</span>
+<span class="lineNum">     559 </span><span class="lineNoCov">          0 :                                         glRotatef(-90,1,0,0);</span>
+<span class="lineNum">     560 </span><span class="lineNoCov">          0 :                                         glRotatef(-2.5,0,1,0);</span>
+<span class="lineNum">     561 </span><span class="lineNoCov">          0 :                                         glTranslatef (fTransform[0], fTransform[1], fTransform[2]);</span>
+<span class="lineNum">     562 </span><span class="lineNoCov">          0 :                                         m_MMUSel.Draw();</span>
+<span class="lineNum">     563 </span><span class="lineNoCov">          0 :                                 glPopMatrix();</span>
+<span class="lineNum">     564 </span><span class="lineNoCov">          0 :                                 glPushMatrix();</span>
+<span class="lineNum">     565 </span><span class="lineNoCov">          0 :                                         glTranslatef(0.051, -0.299, -0.165);</span>
+<span class="lineNum">     566 </span><span class="lineNoCov">          0 :                                         glScalef(fMM2M,fMM2M,fMM2M);</span>
+<span class="lineNum">     567 </span><span class="lineNoCov">          0 :                                         m_EVis.GetCenteringTransform(fTransform);</span>
+<span class="lineNum">     568 </span><span class="lineNoCov">          0 :                                         fTransform[1] +=1.5f;</span>
+<span class="lineNum">     569 </span><span class="lineNoCov">          0 :                                         glTranslatef (-fTransform[0] , -fTransform[1], -fTransform[2]);</span>
+<span class="lineNum">     570 </span><span class="lineNoCov">          0 :                                         glRotatef(90,0,1,0);</span>
+<span class="lineNum">     571 </span><span class="lineNoCov">          0 :                                         glRotatef(360.f*(m_fSelPos/0.008f),0,0,1); // 8mm thread pitch, so we need to rotate 360deg for every 8 of travel.</span>
+<span class="lineNum">     572 </span><span class="lineNoCov">          0 :                                         glTranslatef (fTransform[0], fTransform[1], fTransform[2]);</span>
+<span class="lineNum">     573 </span><span class="lineNoCov">          0 :                                         m_EVis.Draw();</span>
+<span class="lineNum">     574 </span><span class="lineNoCov">          0 :                                 glPopMatrix();</span>
+<span class="lineNum">     575 </span><span class="lineNoCov">          0 :                         glPopMatrix();</span>
+<span class="lineNum">     576 </span>            : 
+<span class="lineNum">     577 </span><span class="lineNoCov">          0 :                         glPushMatrix();</span>
+<span class="lineNum">     578 </span><span class="lineNoCov">          0 :                                 m_MMUIdl.GetCenteringTransform(fTransform);</span>
+<span class="lineNum">     579 </span><span class="lineNoCov">          0 :                                 glTranslatef(-0.03,0.028,0.025);</span>
+<span class="lineNum">     580 </span><span class="lineNoCov">          0 :                                 fTransform[1]=-0.071;</span>
+<span class="lineNum">     581 </span><span class="lineNoCov">          0 :                                 fTransform[2]=-0.0929;</span>
+<span class="lineNum">     582 </span><span class="lineNoCov">          0 :                                 glPushMatrix();</span>
+<span class="lineNum">     583 </span><span class="lineNoCov">          0 :                                         glTranslatef (-fTransform[0], -fTransform[1], -fTransform[2]);</span>
+<span class="lineNum">     584 </span><span class="lineNoCov">          0 :                                         glRotatef(m_fIdlPos + m_fIdlCorr,1,0,0);</span>
+<span class="lineNum">     585 </span><span class="lineNoCov">          0 :                                         glRotatef(180,0,1,0);</span>
+<span class="lineNum">     586 </span><span class="lineNoCov">          0 :                                         glTranslatef (fTransform[0], fTransform[1], fTransform[2]);</span>
+<span class="lineNum">     587 </span><span class="lineNoCov">          0 :                                         m_MMUIdl.Draw();</span>
+<span class="lineNum">     588 </span><span class="lineNoCov">          0 :                                 glPopMatrix();</span>
+<span class="lineNum">     589 </span><span class="lineNoCov">          0 :                                 glPushMatrix();</span>
+<span class="lineNum">     590 </span><span class="lineNoCov">          0 :                                         glTranslatef(-0.117, -0.300, -0.238);</span>
+<span class="lineNum">     591 </span><span class="lineNoCov">          0 :                                         glScalef(fMM2M,fMM2M,fMM2M);</span>
+<span class="lineNum">     592 </span><span class="lineNoCov">          0 :                                         m_EVis.GetCenteringTransform(fTransform);</span>
+<span class="lineNum">     593 </span><span class="lineNoCov">          0 :                                         fTransform[1] +=1.5f;</span>
+<span class="lineNum">     594 </span><span class="lineNoCov">          0 :                                         glTranslatef (-fTransform[0] , -fTransform[1], -fTransform[2]);</span>
+<span class="lineNum">     595 </span><span class="lineNoCov">          0 :                                         glRotatef(270,0,1,0);</span>
+<span class="lineNum">     596 </span><span class="lineNoCov">          0 :                                         glRotatef(-m_fIdlPos,0,0,1);</span>
+<span class="lineNum">     597 </span><span class="lineNoCov">          0 :                                         glTranslatef (fTransform[0], fTransform[1], fTransform[2]);</span>
+<span class="lineNum">     598 </span><span class="lineNoCov">          0 :                                         m_EVis.Draw();</span>
+<span class="lineNum">     599 </span><span class="lineNoCov">          0 :                                 glPopMatrix();</span>
+<span class="lineNum">     600 </span>            : 
+<span class="lineNum">     601 </span>            : 
+<span class="lineNum">     602 </span><span class="lineNoCov">          0 :                         glPopMatrix();</span>
+<span class="lineNum">     603 </span>            : 
+<span class="lineNum">     604 </span><span class="lineNoCov">          0 :                         glPushMatrix();</span>
+<span class="lineNum">     605 </span><span class="lineNoCov">          0 :                                 glTranslatef(0.061, -0.296, -0.212);</span>
+<span class="lineNum">     606 </span><span class="lineNoCov">          0 :                                 glScalef(fMM2M,fMM2M,fMM2M);</span>
+<span class="lineNum">     607 </span><span class="lineNoCov">          0 :                                 m_EVis.GetCenteringTransform(fTransform);</span>
+<span class="lineNum">     608 </span><span class="lineNoCov">          0 :                                 fTransform[1] +=1.5f;</span>
+<span class="lineNum">     609 </span><span class="lineNoCov">          0 :                                 glTranslatef (-fTransform[0] , -fTransform[1], -fTransform[2]);</span>
+<span class="lineNum">     610 </span><span class="lineNoCov">          0 :                                 glRotatef(90,0,1,0);</span>
+<span class="lineNum">     611 </span><span class="lineNoCov">          0 :                                 glRotatef((m_fPPos/0.021f)*360.f,0,0,1); // 1 rotation for every 21mm of travel.</span>
+<span class="lineNum">     612 </span><span class="lineNoCov">          0 :                                 glTranslatef (fTransform[0], fTransform[1], fTransform[2]);</span>
+<span class="lineNum">     613 </span><span class="lineNoCov">          0 :                                 m_EVis.Draw();</span>
+<span class="lineNum">     614 </span><span class="lineNoCov">          0 :                         glPopMatrix();</span>
+<span class="lineNum">     615 </span>            : 
+<span class="lineNum">     616 </span><span class="lineNoCov">          0 :                 glPopMatrix();</span>
+<span class="lineNum">     617 </span><span class="lineNoCov">          0 :         }</span>
+<a name="618"><span class="lineNum">     618 </span>            : </a>
+<span class="lineNum">     619 </span>            : 
+<span class="lineNum">     620 </span><span class="lineNoCov">          0 : void MK3SGL::MouseCB(int button, int action, int x, int y)</span>
+<span class="lineNum">     621 </span>            : {
+<span class="lineNum">     622 </span><span class="lineNoCov">          0 :         if (button == GLUT_LEFT_BUTTON) {</span>
+<span class="lineNum">     623 </span><span class="lineNoCov">          0 :                 if (action == GLUT_DOWN)</span>
+<span class="lineNum">     624 </span><span class="lineNoCov">          0 :                         m_camera.beginRotate();</span>
+<span class="lineNum">     625 </span><span class="lineNoCov">          0 :                 else if (action == GLUT_UP)</span>
+<span class="lineNum">     626 </span><span class="lineNoCov">          0 :                         m_camera.endRotate();</span>
+<span class="lineNum">     627 </span>            :         }
+<span class="lineNum">     628 </span><span class="lineNoCov">          0 :         if (button == GLUT_RIGHT_BUTTON) {</span>
+<span class="lineNum">     629 </span><span class="lineNoCov">          0 :                 if (action == GLUT_DOWN)</span>
+<span class="lineNum">     630 </span><span class="lineNoCov">          0 :                         m_camera.beginPan();</span>
+<span class="lineNum">     631 </span><span class="lineNoCov">          0 :                 else if (action == GLUT_UP)</span>
+<span class="lineNum">     632 </span><span class="lineNoCov">          0 :                         m_camera.endPan();</span>
+<span class="lineNum">     633 </span>            : 
+<span class="lineNum">     634 </span>            :         }
+<span class="lineNum">     635 </span><span class="lineNoCov">          0 :         if (button == GLUT_MIDDLE_BUTTON) {</span>
+<span class="lineNum">     636 </span><span class="lineNoCov">          0 :                 if (action == GLUT_DOWN)</span>
+<span class="lineNum">     637 </span><span class="lineNoCov">          0 :                         m_camera.beginZoom();</span>
+<span class="lineNum">     638 </span><span class="lineNoCov">          0 :                 else if (action == GLUT_UP)</span>
+<span class="lineNum">     639 </span><span class="lineNoCov">          0 :                         m_camera.endZoom();</span>
+<span class="lineNum">     640 </span>            : 
+<span class="lineNum">     641 </span>            :         }
+<span class="lineNum">     642 </span><span class="lineNoCov">          0 :         if (button==3)</span>
+<span class="lineNum">     643 </span><span class="lineNoCov">          0 :                 m_camera.zoom(0.5f);</span>
+<span class="lineNum">     644 </span><span class="lineNoCov">          0 :         if (button==4)</span>
+<span class="lineNum">     645 </span><span class="lineNoCov">          0 :                 m_camera.zoom(-0.5f);</span>
+<span class="lineNum">     646 </span>            : 
+<span class="lineNum">     647 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<a name="648"><span class="lineNum">     648 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     649 </span>            : 
+<span class="lineNum">     650 </span><span class="lineNoCov">          0 : void MK3SGL::MotionCB(int x, int y)</span>
+<span class="lineNum">     651 </span>            : {
+<a name="652"><span class="lineNum">     652 </span><span class="lineNoCov">          0 :         m_camera.setCurrentMousePos(x, y);</span></a>
+<span class="lineNum">     653 </span><span class="lineNoCov">          0 :         m_bDirty = true;</span>
+<span class="lineNum">     654 </span><span class="lineCov">         15 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

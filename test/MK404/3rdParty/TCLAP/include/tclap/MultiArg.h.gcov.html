@@ -1,0 +1,509 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/3rdParty/TCLAP/include/tclap/MultiArg.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">MK404/3rdParty/TCLAP/include/tclap</a> - MultiArg.h<span style="font-size: 80%;"> (source / <a href="MultiArg.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">17</td>
+            <td class="headerCovTableEntry">57</td>
+            <td class="headerCovTableEntryLo">29.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntryLo">45.5 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /****************************************************************************** </a>
+<span class="lineNum">       2 </span>            :  * 
+<span class="lineNum">       3 </span>            :  *  file:  MultiArg.h
+<span class="lineNum">       4 </span>            :  * 
+<span class="lineNum">       5 </span>            :  *  Copyright (c) 2003, Michael E. Smoot .
+<span class="lineNum">       6 </span>            :  *  Copyright (c) 2004, Michael E. Smoot, Daniel Aarno.
+<span class="lineNum">       7 </span>            :  *  All rights reserved.
+<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       9 </span>            :  *  See the file COPYING in the top directory of this distribution for
+<span class="lineNum">      10 </span>            :  *  more information.
+<span class="lineNum">      11 </span>            :  *  
+<span class="lineNum">      12 </span>            :  *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+<span class="lineNum">      13 </span>            :  *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+<span class="lineNum">      14 </span>            :  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+<span class="lineNum">      15 </span>            :  *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+<span class="lineNum">      16 </span>            :  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+<span class="lineNum">      17 </span>            :  *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+<span class="lineNum">      18 </span>            :  *  DEALINGS IN THE SOFTWARE.  
+<span class="lineNum">      19 </span>            :  *  
+<span class="lineNum">      20 </span>            :  *****************************************************************************/
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : #ifndef TCLAP_MULTIPLE_ARGUMENT_H
+<span class="lineNum">      24 </span>            : #define TCLAP_MULTIPLE_ARGUMENT_H
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : #include &lt;string&gt;
+<span class="lineNum">      27 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : #include &lt;tclap/Arg.h&gt;
+<span class="lineNum">      30 </span>            : #include &lt;tclap/Constraint.h&gt;
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : namespace TCLAP {
+<span class="lineNum">      33 </span>            : /**
+<span class="lineNum">      34 </span>            :  * An argument that allows multiple values of type T to be specified.  Very
+<span class="lineNum">      35 </span>            :  * similar to a ValueArg, except a vector of values will be returned
+<span class="lineNum">      36 </span>            :  * instead of just one.
+<a name="37"><span class="lineNum">      37 </span>            :  */</a>
+<span class="lineNum">      38 </span>            : template&lt;class T&gt;
+<span class="lineNum">      39 </span><span class="lineCov">          5 : class MultiArg : public Arg</span>
+<span class="lineNum">      40 </span>            : {
+<span class="lineNum">      41 </span>            : public:
+<span class="lineNum">      42 </span>            :         typedef std::vector&lt;T&gt; container_type;    
+<span class="lineNum">      43 </span>            :         typedef typename container_type::iterator iterator;
+<span class="lineNum">      44 </span>            :         typedef typename container_type::const_iterator const_iterator;
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            : protected:
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :         /**
+<span class="lineNum">      49 </span>            :          * The list of values parsed from the CmdLine.
+<span class="lineNum">      50 </span>            :          */
+<span class="lineNum">      51 </span>            :         std::vector&lt;T&gt; _values;
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            :         /**
+<span class="lineNum">      54 </span>            :          * The description of type T to be used in the usage.
+<span class="lineNum">      55 </span>            :          */
+<span class="lineNum">      56 </span>            :         std::string _typeDesc;
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :         /**
+<span class="lineNum">      59 </span>            :          * A list of constraint on this Arg. 
+<span class="lineNum">      60 </span>            :          */
+<span class="lineNum">      61 </span>            :         Constraint&lt;T&gt;* _constraint;
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :         /**
+<span class="lineNum">      64 </span>            :          * Extracts the value from the string.
+<span class="lineNum">      65 </span>            :          * Attempts to parse string as type T, if this fails an exception
+<span class="lineNum">      66 </span>            :          * is thrown.
+<span class="lineNum">      67 </span>            :          * \param val - The string to be read.
+<span class="lineNum">      68 </span>            :          */
+<span class="lineNum">      69 </span>            :         void _extractValue( const std::string&amp; val );
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :         /**
+<span class="lineNum">      72 </span>            :          * Used by XorHandler to decide whether to keep parsing for this arg.
+<span class="lineNum">      73 </span>            :          */
+<span class="lineNum">      74 </span>            :         bool _allowMore;
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : public:
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :         /**
+<span class="lineNum">      79 </span>            :          * Constructor.
+<span class="lineNum">      80 </span>            :          * \param flag - The one character flag that identifies this
+<span class="lineNum">      81 </span>            :          * argument on the command line.
+<span class="lineNum">      82 </span>            :          * \param name - A one word name for the argument.  Can be
+<span class="lineNum">      83 </span>            :          * used as a long flag on the command line.
+<span class="lineNum">      84 </span>            :          * \param desc - A description of what the argument is for or
+<span class="lineNum">      85 </span>            :          * does.
+<span class="lineNum">      86 </span>            :          * \param req - Whether the argument is required on the command
+<span class="lineNum">      87 </span>            :          * line.
+<span class="lineNum">      88 </span>            :          * \param typeDesc - A short, human readable description of the
+<span class="lineNum">      89 </span>            :          * type that this object expects.  This is used in the generation
+<span class="lineNum">      90 </span>            :          * of the USAGE statement.  The goal is to be helpful to the end user
+<span class="lineNum">      91 </span>            :          * of the program.
+<span class="lineNum">      92 </span>            :          * \param v - An optional visitor.  You probably should not
+<span class="lineNum">      93 </span>            :          * use this unless you have a very good reason.
+<span class="lineNum">      94 </span>            :          */
+<span class="lineNum">      95 </span>            :         MultiArg( const std::string&amp; flag,
+<span class="lineNum">      96 </span>            :                   const std::string&amp; name,
+<span class="lineNum">      97 </span>            :                   const std::string&amp; desc,
+<span class="lineNum">      98 </span>            :                   bool req,
+<span class="lineNum">      99 </span>            :                   const std::string&amp; typeDesc,
+<span class="lineNum">     100 </span>            :                   Visitor* v = NULL);
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            :         /**
+<span class="lineNum">     103 </span>            :          * Constructor.
+<span class="lineNum">     104 </span>            :          * \param flag - The one character flag that identifies this
+<span class="lineNum">     105 </span>            :          * argument on the command line.
+<span class="lineNum">     106 </span>            :          * \param name - A one word name for the argument.  Can be
+<span class="lineNum">     107 </span>            :          * used as a long flag on the command line.
+<span class="lineNum">     108 </span>            :          * \param desc - A description of what the argument is for or
+<span class="lineNum">     109 </span>            :          * does.
+<span class="lineNum">     110 </span>            :          * \param req - Whether the argument is required on the command
+<span class="lineNum">     111 </span>            :          * line.
+<span class="lineNum">     112 </span>            :          * \param typeDesc - A short, human readable description of the
+<span class="lineNum">     113 </span>            :          * type that this object expects.  This is used in the generation
+<span class="lineNum">     114 </span>            :          * of the USAGE statement.  The goal is to be helpful to the end user
+<span class="lineNum">     115 </span>            :          * of the program.
+<span class="lineNum">     116 </span>            :          * \param parser - A CmdLine parser object to add this Arg to
+<span class="lineNum">     117 </span>            :          * \param v - An optional visitor.  You probably should not
+<span class="lineNum">     118 </span>            :          * use this unless you have a very good reason.
+<span class="lineNum">     119 </span>            :          */
+<span class="lineNum">     120 </span>            :         MultiArg( const std::string&amp; flag, 
+<span class="lineNum">     121 </span>            :                   const std::string&amp; name,
+<span class="lineNum">     122 </span>            :                   const std::string&amp; desc,
+<span class="lineNum">     123 </span>            :                   bool req,
+<span class="lineNum">     124 </span>            :                   const std::string&amp; typeDesc,
+<span class="lineNum">     125 </span>            :                   CmdLineInterface&amp; parser,
+<span class="lineNum">     126 </span>            :                   Visitor* v = NULL );
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            :         /**
+<span class="lineNum">     129 </span>            :          * Constructor.
+<span class="lineNum">     130 </span>            :          * \param flag - The one character flag that identifies this
+<span class="lineNum">     131 </span>            :          * argument on the command line.
+<span class="lineNum">     132 </span>            :          * \param name - A one word name for the argument.  Can be
+<span class="lineNum">     133 </span>            :          * used as a long flag on the command line.
+<span class="lineNum">     134 </span>            :          * \param desc - A description of what the argument is for or
+<span class="lineNum">     135 </span>            :          * does.
+<span class="lineNum">     136 </span>            :          * \param req - Whether the argument is required on the command
+<span class="lineNum">     137 </span>            :          * line.
+<span class="lineNum">     138 </span>            :          * \param constraint - A pointer to a Constraint object used
+<span class="lineNum">     139 </span>            :          * to constrain this Arg.
+<span class="lineNum">     140 </span>            :          * \param v - An optional visitor.  You probably should not
+<span class="lineNum">     141 </span>            :          * use this unless you have a very good reason.
+<span class="lineNum">     142 </span>            :          */
+<span class="lineNum">     143 </span>            :         MultiArg( const std::string&amp; flag,
+<span class="lineNum">     144 </span>            :                   const std::string&amp; name,
+<span class="lineNum">     145 </span>            :                   const std::string&amp; desc,
+<span class="lineNum">     146 </span>            :                   bool req,
+<span class="lineNum">     147 </span>            :                   Constraint&lt;T&gt;* constraint,
+<span class="lineNum">     148 </span>            :                   Visitor* v = NULL );
+<span class="lineNum">     149 </span>            :                   
+<span class="lineNum">     150 </span>            :         /**
+<span class="lineNum">     151 </span>            :          * Constructor.
+<span class="lineNum">     152 </span>            :          * \param flag - The one character flag that identifies this
+<span class="lineNum">     153 </span>            :          * argument on the command line.
+<span class="lineNum">     154 </span>            :          * \param name - A one word name for the argument.  Can be
+<span class="lineNum">     155 </span>            :          * used as a long flag on the command line.
+<span class="lineNum">     156 </span>            :          * \param desc - A description of what the argument is for or
+<span class="lineNum">     157 </span>            :          * does.
+<span class="lineNum">     158 </span>            :          * \param req - Whether the argument is required on the command
+<span class="lineNum">     159 </span>            :          * line.
+<span class="lineNum">     160 </span>            :          * \param constraint - A pointer to a Constraint object used
+<span class="lineNum">     161 </span>            :          * to constrain this Arg.
+<span class="lineNum">     162 </span>            :          * \param parser - A CmdLine parser object to add this Arg to
+<span class="lineNum">     163 </span>            :          * \param v - An optional visitor.  You probably should not
+<span class="lineNum">     164 </span>            :          * use this unless you have a very good reason.
+<span class="lineNum">     165 </span>            :          */
+<span class="lineNum">     166 </span>            :         MultiArg( const std::string&amp; flag, 
+<span class="lineNum">     167 </span>            :                   const std::string&amp; name,
+<span class="lineNum">     168 </span>            :                   const std::string&amp; desc,
+<span class="lineNum">     169 </span>            :                   bool req,
+<span class="lineNum">     170 </span>            :                   Constraint&lt;T&gt;* constraint,
+<span class="lineNum">     171 </span>            :                   CmdLineInterface&amp; parser,
+<span class="lineNum">     172 </span>            :                   Visitor* v = NULL );
+<span class="lineNum">     173 </span>            :                   
+<span class="lineNum">     174 </span>            :         /**
+<span class="lineNum">     175 </span>            :          * Handles the processing of the argument.
+<span class="lineNum">     176 </span>            :          * This re-implements the Arg version of this method to set the
+<span class="lineNum">     177 </span>            :          * _value of the argument appropriately.  It knows the difference
+<span class="lineNum">     178 </span>            :          * between labeled and unlabeled.
+<span class="lineNum">     179 </span>            :          * \param i - Pointer the the current argument in the list.
+<span class="lineNum">     180 </span>            :          * \param args - Mutable list of strings. Passed from main().
+<span class="lineNum">     181 </span>            :          */
+<span class="lineNum">     182 </span>            :         virtual bool processArg(int* i, std::vector&lt;std::string&gt;&amp; args); 
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            :         /**
+<span class="lineNum">     185 </span>            :          * Returns a vector of type T containing the values parsed from
+<span class="lineNum">     186 </span>            :          * the command line.
+<span class="lineNum">     187 </span>            :          */
+<span class="lineNum">     188 </span>            :         const std::vector&lt;T&gt;&amp; getValue();
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            :         /**
+<span class="lineNum">     191 </span>            :          * Returns an iterator over the values parsed from the command
+<span class="lineNum">     192 </span>            :          * line.
+<span class="lineNum">     193 </span>            :          */
+<span class="lineNum">     194 </span>            :         const_iterator begin() const { return _values.begin(); }
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :         /**
+<span class="lineNum">     197 </span>            :          * Returns the end of the values parsed from the command
+<span class="lineNum">     198 </span>            :          * line.
+<span class="lineNum">     199 </span>            :          */
+<span class="lineNum">     200 </span>            :         const_iterator end() const { return _values.end(); }
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            :         /**
+<span class="lineNum">     203 </span>            :          * Returns the a short id string.  Used in the usage. 
+<span class="lineNum">     204 </span>            :          * \param val - value to be used.
+<span class="lineNum">     205 </span>            :          */
+<span class="lineNum">     206 </span>            :         virtual std::string shortID(const std::string&amp; val=&quot;val&quot;) const;
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span>            :         /**
+<span class="lineNum">     209 </span>            :          * Returns the a long id string.  Used in the usage. 
+<span class="lineNum">     210 </span>            :          * \param val - value to be used.
+<span class="lineNum">     211 </span>            :          */
+<span class="lineNum">     212 </span>            :         virtual std::string longID(const std::string&amp; val=&quot;val&quot;) const;
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span>            :         /**
+<span class="lineNum">     215 </span>            :          * Once we've matched the first value, then the arg is no longer
+<span class="lineNum">     216 </span>            :          * required.
+<span class="lineNum">     217 </span>            :          */
+<span class="lineNum">     218 </span>            :         virtual bool isRequired() const;
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span>            :         virtual bool allowMore();
+<span class="lineNum">     221 </span>            :         
+<span class="lineNum">     222 </span>            :         virtual void reset();
+<span class="lineNum">     223 </span>            : 
+<span class="lineNum">     224 </span>            : private:
+<span class="lineNum">     225 </span>            :         /**
+<span class="lineNum">     226 </span>            :          * Prevent accidental copying
+<span class="lineNum">     227 </span>            :          */
+<span class="lineNum">     228 </span>            :         MultiArg&lt;T&gt;(const MultiArg&lt;T&gt;&amp; rhs);
+<span class="lineNum">     229 </span>            :         MultiArg&lt;T&gt;&amp; operator=(const MultiArg&lt;T&gt;&amp; rhs);
+<span class="lineNum">     230 </span>            : 
+<span class="lineNum">     231 </span>            : };
+<a name="232"><span class="lineNum">     232 </span>            : </a>
+<span class="lineNum">     233 </span>            : template&lt;class T&gt;
+<span class="lineNum">     234 </span><span class="lineCov">          5 : MultiArg&lt;T&gt;::MultiArg(const std::string&amp; flag, </span>
+<span class="lineNum">     235 </span>            :                       const std::string&amp; name,
+<span class="lineNum">     236 </span>            :                       const std::string&amp; desc,
+<span class="lineNum">     237 </span>            :                       bool req,
+<span class="lineNum">     238 </span>            :                       const std::string&amp; typeDesc,
+<span class="lineNum">     239 </span>            :                       Visitor* v) :
+<span class="lineNum">     240 </span>            :    Arg( flag, name, desc, req, true, v ),
+<span class="lineNum">     241 </span>            :   _values(std::vector&lt;T&gt;()),
+<span class="lineNum">     242 </span>            :   _typeDesc( typeDesc ),
+<span class="lineNum">     243 </span>            :   _constraint( NULL ),
+<span class="lineNum">     244 </span><span class="lineCov">          5 :   _allowMore(false)</span>
+<span class="lineNum">     245 </span>            : { 
+<span class="lineNum">     246 </span><span class="lineCov">          5 :         _acceptsMultipleValues = true;</span>
+<span class="lineNum">     247 </span><span class="lineCov">          5 : }</span>
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span>            : template&lt;class T&gt;
+<span class="lineNum">     250 </span>            : MultiArg&lt;T&gt;::MultiArg(const std::string&amp; flag, 
+<span class="lineNum">     251 </span>            :                       const std::string&amp; name,
+<span class="lineNum">     252 </span>            :                       const std::string&amp; desc,
+<span class="lineNum">     253 </span>            :                       bool req,
+<span class="lineNum">     254 </span>            :                       const std::string&amp; typeDesc,
+<span class="lineNum">     255 </span>            :                       CmdLineInterface&amp; parser,
+<span class="lineNum">     256 </span>            :                       Visitor* v)
+<span class="lineNum">     257 </span>            : : Arg( flag, name, desc, req, true, v ),
+<span class="lineNum">     258 </span>            :   _values(std::vector&lt;T&gt;()),
+<span class="lineNum">     259 </span>            :   _typeDesc( typeDesc ),
+<span class="lineNum">     260 </span>            :   _constraint( NULL ),
+<span class="lineNum">     261 </span>            :   _allowMore(false)
+<span class="lineNum">     262 </span>            : { 
+<span class="lineNum">     263 </span>            :         parser.add( this );
+<span class="lineNum">     264 </span>            :         _acceptsMultipleValues = true;
+<span class="lineNum">     265 </span>            : }
+<span class="lineNum">     266 </span>            : 
+<span class="lineNum">     267 </span>            : /**
+<span class="lineNum">     268 </span>            :  *
+<span class="lineNum">     269 </span>            :  */
+<span class="lineNum">     270 </span>            : template&lt;class T&gt;
+<span class="lineNum">     271 </span>            : MultiArg&lt;T&gt;::MultiArg(const std::string&amp; flag, 
+<span class="lineNum">     272 </span>            :                       const std::string&amp; name,
+<span class="lineNum">     273 </span>            :                       const std::string&amp; desc,
+<span class="lineNum">     274 </span>            :                       bool req,
+<span class="lineNum">     275 </span>            :                       Constraint&lt;T&gt;* constraint,
+<span class="lineNum">     276 </span>            :                       Visitor* v)
+<span class="lineNum">     277 </span>            : : Arg( flag, name, desc, req, true, v ),
+<span class="lineNum">     278 </span>            :   _values(std::vector&lt;T&gt;()),
+<span class="lineNum">     279 </span>            :   _typeDesc( constraint-&gt;shortID() ),
+<span class="lineNum">     280 </span>            :   _constraint( constraint ),
+<span class="lineNum">     281 </span>            :   _allowMore(false)
+<span class="lineNum">     282 </span>            : { 
+<span class="lineNum">     283 </span>            :         _acceptsMultipleValues = true;
+<span class="lineNum">     284 </span>            : }
+<span class="lineNum">     285 </span>            : 
+<span class="lineNum">     286 </span>            : template&lt;class T&gt;
+<span class="lineNum">     287 </span>            : MultiArg&lt;T&gt;::MultiArg(const std::string&amp; flag, 
+<span class="lineNum">     288 </span>            :                       const std::string&amp; name,
+<span class="lineNum">     289 </span>            :                       const std::string&amp; desc,
+<span class="lineNum">     290 </span>            :                       bool req,
+<span class="lineNum">     291 </span>            :                       Constraint&lt;T&gt;* constraint,
+<span class="lineNum">     292 </span>            :                       CmdLineInterface&amp; parser,
+<span class="lineNum">     293 </span>            :                       Visitor* v)
+<span class="lineNum">     294 </span>            : : Arg( flag, name, desc, req, true, v ),
+<span class="lineNum">     295 </span>            :   _values(std::vector&lt;T&gt;()),
+<span class="lineNum">     296 </span>            :   _typeDesc( constraint-&gt;shortID() ),
+<span class="lineNum">     297 </span>            :   _constraint( constraint ),
+<span class="lineNum">     298 </span>            :   _allowMore(false)
+<span class="lineNum">     299 </span>            : { 
+<span class="lineNum">     300 </span>            :         parser.add( this );
+<span class="lineNum">     301 </span>            :         _acceptsMultipleValues = true;
+<span class="lineNum">     302 </span>            : }
+<a name="303"><span class="lineNum">     303 </span>            : </a>
+<span class="lineNum">     304 </span>            : template&lt;class T&gt;
+<span class="lineNum">     305 </span><span class="lineCov">          5 : const std::vector&lt;T&gt;&amp; MultiArg&lt;T&gt;::getValue() { return _values; }</span>
+<a name="306"><span class="lineNum">     306 </span>            : </a>
+<span class="lineNum">     307 </span>            : template&lt;class T&gt;
+<span class="lineNum">     308 </span><span class="lineCov">          5 : bool MultiArg&lt;T&gt;::processArg(int *i, std::vector&lt;std::string&gt;&amp; args) </span>
+<span class="lineNum">     309 </span>            : {
+<span class="lineNum">     310 </span><span class="lineCov">          5 :         if ( _ignoreable &amp;&amp; Arg::ignoreRest() )</span>
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">     312 </span>            : 
+<span class="lineNum">     313 </span><span class="lineCov">          5 :         if ( _hasBlanks( args[*i] ) )</span>
+<span class="lineNum">     314 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">     315 </span>            : 
+<span class="lineNum">     316 </span><span class="lineCov">         10 :         std::string flag = args[*i];</span>
+<span class="lineNum">     317 </span><span class="lineCov">         10 :         std::string value = &quot;&quot;;</span>
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span><span class="lineCov">          5 :         trimFlag( flag, value );</span>
+<span class="lineNum">     320 </span>            : 
+<span class="lineNum">     321 </span><span class="lineCov">          5 :         if ( argMatches( flag ) )</span>
+<span class="lineNum">     322 </span>            :         {
+<span class="lineNum">     323 </span><span class="lineNoCov">          0 :                 if ( Arg::delimiter() != ' ' &amp;&amp; value == &quot;&quot; )</span>
+<span class="lineNum">     324 </span>            :                         throw( ArgParseException( 
+<span class="lineNum">     325 </span>            :                                    &quot;Couldn't find delimiter for this argument!&quot;,
+<span class="lineNum">     326 </span><span class="lineNoCov">          0 :                                            toString() ) );</span>
+<span class="lineNum">     327 </span>            : 
+<span class="lineNum">     328 </span>            :                 // always take the first one, regardless of start string
+<span class="lineNum">     329 </span><span class="lineNoCov">          0 :                 if ( value == &quot;&quot; )</span>
+<span class="lineNum">     330 </span>            :                 {
+<span class="lineNum">     331 </span><span class="lineNoCov">          0 :                         (*i)++;</span>
+<span class="lineNum">     332 </span><span class="lineNoCov">          0 :                         if ( static_cast&lt;unsigned int&gt;(*i) &lt; args.size() )</span>
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :                                 _extractValue( args[*i] );</span>
+<span class="lineNum">     334 </span>            :                         else
+<span class="lineNum">     335 </span>            :                                 throw( ArgParseException(&quot;Missing a value for this argument!&quot;,
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 :                                          toString() ) );</span>
+<span class="lineNum">     337 </span>            :                 } 
+<span class="lineNum">     338 </span>            :                 else
+<span class="lineNum">     339 </span><span class="lineNoCov">          0 :                         _extractValue( value );</span>
+<span class="lineNum">     340 </span>            : 
+<span class="lineNum">     341 </span>            :                 /*
+<span class="lineNum">     342 </span>            :                 // continuing taking the args until we hit one with a start string 
+<span class="lineNum">     343 </span>            :                 while ( (unsigned int)(*i)+1 &lt; args.size() &amp;&amp;
+<span class="lineNum">     344 </span>            :                                 args[(*i)+1].find_first_of( Arg::flagStartString() ) != 0 &amp;&amp;
+<span class="lineNum">     345 </span>            :                         args[(*i)+1].find_first_of( Arg::nameStartString() ) != 0 ) 
+<span class="lineNum">     346 </span>            :                                 _extractValue( args[++(*i)] );
+<span class="lineNum">     347 </span>            :                 */
+<span class="lineNum">     348 </span>            : 
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 :                 _alreadySet = true;</span>
+<span class="lineNum">     350 </span><span class="lineNoCov">          0 :                 _checkWithVisitor();</span>
+<span class="lineNum">     351 </span>            : 
+<span class="lineNum">     352 </span><span class="lineNoCov">          0 :                 return true;</span>
+<span class="lineNum">     353 </span>            :         }
+<span class="lineNum">     354 </span>            :         else
+<span class="lineNum">     355 </span><span class="lineCov">          5 :                 return false;</span>
+<span class="lineNum">     356 </span>            : }
+<span class="lineNum">     357 </span>            : 
+<span class="lineNum">     358 </span>            : /**
+<span class="lineNum">     359 </span>            :  *
+<a name="360"><span class="lineNum">     360 </span>            :  */</a>
+<span class="lineNum">     361 </span>            : template&lt;class T&gt;
+<span class="lineNum">     362 </span><span class="lineNoCov">          0 : std::string MultiArg&lt;T&gt;::shortID(const std::string&amp; val) const</span>
+<span class="lineNum">     363 </span>            : {
+<span class="lineNum">     364 </span>            :         static_cast&lt;void&gt;(val); // Ignore input, don't warn
+<span class="lineNum">     365 </span><span class="lineNoCov">          0 :         return Arg::shortID(_typeDesc) + &quot; ... &quot;;</span>
+<span class="lineNum">     366 </span>            : }
+<span class="lineNum">     367 </span>            : 
+<span class="lineNum">     368 </span>            : /**
+<span class="lineNum">     369 </span>            :  *
+<a name="370"><span class="lineNum">     370 </span>            :  */</a>
+<span class="lineNum">     371 </span>            : template&lt;class T&gt;
+<span class="lineNum">     372 </span><span class="lineNoCov">          0 : std::string MultiArg&lt;T&gt;::longID(const std::string&amp; val) const</span>
+<span class="lineNum">     373 </span>            : {
+<span class="lineNum">     374 </span>            :         static_cast&lt;void&gt;(val); // Ignore input, don't warn
+<span class="lineNum">     375 </span><span class="lineNoCov">          0 :         return Arg::longID(_typeDesc) + &quot;  (accepted multiple times)&quot;;</span>
+<span class="lineNum">     376 </span>            : }
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span>            : /**
+<span class="lineNum">     379 </span>            :  * Once we've matched the first value, then the arg is no longer
+<span class="lineNum">     380 </span>            :  * required.
+<a name="381"><span class="lineNum">     381 </span>            :  */</a>
+<span class="lineNum">     382 </span>            : template&lt;class T&gt;
+<span class="lineNum">     383 </span><span class="lineCov">          5 : bool MultiArg&lt;T&gt;::isRequired() const</span>
+<span class="lineNum">     384 </span>            : {
+<span class="lineNum">     385 </span><span class="lineCov">          5 :         if ( _required )</span>
+<span class="lineNum">     386 </span>            :         {
+<span class="lineNum">     387 </span><span class="lineNoCov">          0 :                 if ( _values.size() &gt; 1 )</span>
+<span class="lineNum">     388 </span><span class="lineNoCov">          0 :                         return false;</span>
+<span class="lineNum">     389 </span>            :                 else
+<span class="lineNum">     390 </span><span class="lineNoCov">          0 :                         return true;</span>
+<span class="lineNum">     391 </span>            :         }
+<span class="lineNum">     392 </span>            :         else
+<span class="lineNum">     393 </span><span class="lineCov">          5 :                 return false;</span>
+<span class="lineNum">     394 </span>            : 
+<span class="lineNum">     395 </span>            : }
+<a name="396"><span class="lineNum">     396 </span>            : </a>
+<span class="lineNum">     397 </span>            : template&lt;class T&gt;
+<span class="lineNum">     398 </span><span class="lineNoCov">          0 : void MultiArg&lt;T&gt;::_extractValue( const std::string&amp; val ) </span>
+<span class="lineNum">     399 </span>            : {
+<span class="lineNum">     400 </span>            :     try {
+<span class="lineNum">     401 </span><span class="lineNoCov">          0 :         T tmp;</span>
+<span class="lineNum">     402 </span><span class="lineNoCov">          0 :         ExtractValue(tmp, val, typename ArgTraits&lt;T&gt;::ValueCategory());</span>
+<span class="lineNum">     403 </span><span class="lineNoCov">          0 :         _values.push_back(tmp);</span>
+<span class="lineNum">     404 </span><span class="lineNoCov">          0 :     } catch( ArgParseException &amp;e) {</span>
+<span class="lineNum">     405 </span><span class="lineNoCov">          0 :         throw ArgParseException(e.error(), toString());</span>
+<span class="lineNum">     406 </span>            :     }
+<span class="lineNum">     407 </span>            : 
+<span class="lineNum">     408 </span><span class="lineNoCov">          0 :     if ( _constraint != NULL )</span>
+<span class="lineNum">     409 </span><span class="lineNoCov">          0 :         if ( ! _constraint-&gt;check( _values.back() ) )</span>
+<span class="lineNum">     410 </span>            :             throw( CmdLineParseException( &quot;Value '&quot; + val +
+<span class="lineNum">     411 </span><span class="lineNoCov">          0 :                                           &quot;' does not meet constraint: &quot; +</span>
+<span class="lineNum">     412 </span><span class="lineNoCov">          0 :                                           _constraint-&gt;description(), </span>
+<span class="lineNum">     413 </span><span class="lineNoCov">          0 :                                           toString() ) );</span>
+<span class="lineNum">     414 </span><span class="lineNoCov">          0 : }</span>
+<a name="415"><span class="lineNum">     415 </span>            :                 </a>
+<span class="lineNum">     416 </span>            : template&lt;class T&gt;
+<span class="lineNum">     417 </span><span class="lineNoCov">          0 : bool MultiArg&lt;T&gt;::allowMore()</span>
+<span class="lineNum">     418 </span>            : {
+<span class="lineNum">     419 </span><span class="lineNoCov">          0 :         bool am = _allowMore;</span>
+<span class="lineNum">     420 </span><span class="lineNoCov">          0 :         _allowMore = true;</span>
+<span class="lineNum">     421 </span><span class="lineNoCov">          0 :         return am;</span>
+<span class="lineNum">     422 </span>            : }
+<a name="423"><span class="lineNum">     423 </span>            : </a>
+<span class="lineNum">     424 </span>            : template&lt;class T&gt;
+<span class="lineNum">     425 </span><span class="lineNoCov">          0 : void MultiArg&lt;T&gt;::reset()</span>
+<span class="lineNum">     426 </span>            : {
+<span class="lineNum">     427 </span><span class="lineNoCov">          0 :         Arg::reset();</span>
+<span class="lineNum">     428 </span><span class="lineNoCov">          0 :         _values.clear();</span>
+<span class="lineNum">     429 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     430 </span>            : 
+<span class="lineNum">     431 </span>            : } // namespace TCLAP
+<span class="lineNum">     432 </span>            : 
+<span class="lineNum">     433 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

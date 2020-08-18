@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/Wiring.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">MK404/parts</a> - Wiring.h<span style="font-size: 80%;"> (source / <a href="Wiring.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntryLo">60.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntryLo">54.5 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         Wiring.h - wiring definition that maps from common names to specific pins for your board.
+<span class="lineNum">       3 </span>            :         Derive from this and set the values accordingly for your model, -1 is undefined/unused.
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            :         This file is part of MK404.
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">      10 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      11 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      12 </span>            :         (at your option) any later version.
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      15 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      16 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      17 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      20 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      21 </span>            :  */
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : #pragma once
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #include &lt;map&gt;
+<span class="lineNum">      26 </span>            : #include &quot;avr_ioport.h&quot;
+<span class="lineNum">      27 </span>            : #include &quot;avr_timer.h&quot;
+<span class="lineNum">      28 </span>            : #include &lt;PinSpec.h&gt;
+<span class="lineNum">      29 </span>            : #include &lt;PinNames.h&gt;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : using namespace PinNames;
+<span class="lineNum">      32 </span>            : namespace Wirings
+<span class="lineNum">      33 </span>            : {
+<span class="lineNum">      34 </span>            :         class Wiring
+<span class="lineNum">      35 </span>            :         {
+<span class="lineNum">      36 </span>            :                 public:
+<span class="lineNum">      37 </span>            :                         // Making a type so that this is easy to update
+<span class="lineNum">      38 </span>            :                         // down the road if we need more values than this can provide.
+<span class="lineNum">      39 </span>            :                         typedef signed char MCUPin;
+<a name="40"><span class="lineNum">      40 </span>            : </a>
+<span class="lineNum">      41 </span>            :                         // Creates a new board with the given pinspec.
+<span class="lineNum">      42 </span><span class="lineCov">          5 :                         Wiring(const PinSpec &amp;pSpec):m_pinSpec(pSpec){};</span>
+<a name="43"><span class="lineNum">      43 </span>            : </a>
+<span class="lineNum">      44 </span>            :                         // Passthrough to retrieve the MCU name
+<span class="lineNum">      45 </span><span class="lineCov">         40 :                         std::string GetMCUName() const { return m_pinSpec.GetMCUName(); }</span>
+<span class="lineNum">      46 </span>            : 
+<a name="47"><span class="lineNum">      47 </span>            :                         const PinSpec&amp; GetPinSpec() const { return m_pinSpec; }</a>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">          5 :                         virtual ~Wiring(){};</span>
+<a name="50"><span class="lineNum">      50 </span>            : </a>
+<span class="lineNum">      51 </span>            :                         // Shorthand to get IRQ for a digital IO port.
+<span class="lineNum">      52 </span><span class="lineCov">         30 :                         inline struct avr_irq_t* IOIRQ(struct avr_t* avr,uint8_t port,uint8_t number) const { return avr_io_getirq(avr,AVR_IOCTL_IOPORT_GETIRQ(port),number); }</span>
+<a name="53"><span class="lineNum">      53 </span>            : </a>
+<span class="lineNum">      54 </span>            :                         // Timer PWM shorthand function
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :                         inline struct avr_irq_t* TIMERIRQ(struct avr_t* avr,uint8_t timer,uint8_t number) const {return avr_io_getirq(avr,AVR_IOCTL_TIMER_GETIRQ(timer), _TimerPWMID(number)); }</span>
+<span class="lineNum">      56 </span>            : 
+<a name="57"><span class="lineNum">      57 </span>            :                         // Looks up a digital IRQ based on the arduino convenience pin number.</a>
+<span class="lineNum">      58 </span>            :                         //inline struct avr_irq_t* DIRQLU(struct avr_t* avr, unsigned int n){ return IOIRQ(avr,m_pinSpec.PORT(n),m_pinSpec.PIN(n)); }
+<span class="lineNum">      59 </span><span class="lineCov">         30 :                         inline struct avr_irq_t* DIRQLU(struct avr_t* avr, Pin ePin) const { return IOIRQ(avr,m_pinSpec.PORT(m_mPins.at(ePin)),m_pinSpec.PIN(m_mPins.at(ePin))); }</span>
+<span class="lineNum">      60 </span>            : 
+<a name="61"><span class="lineNum">      61 </span>            :                         // Looks up a PWM IRQ based on the arduino convenience pin number.</a>
+<span class="lineNum">      62 </span>            :                         //inline struct avr_irq_t* DPWMLU(struct avr_t* avr, unsigned int n) { return TIMERIRQ(avr, m_pinSpec.TIMER_CHAR(n), m_pinSpec.TIMER_IDX(n)); }
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :                         inline struct avr_irq_t* DPWMLU(struct avr_t* avr, Pin ePin)  const { return TIMERIRQ(avr, m_pinSpec.TIMER_CHAR(m_mPins.at(ePin)), m_pinSpec.TIMER_IDX(m_mPins.at(ePin))); }</span>
+<a name="64"><span class="lineNum">      64 </span>            : </a>
+<span class="lineNum">      65 </span>            :                         // Returns T/F whether a pin is defined.
+<a name="66"><span class="lineNum">      66 </span><span class="lineCov">         30 :                         inline bool IsPin(PinNames::Pin pin) const { return m_mPins.count(pin)&gt;0;}</span></a>
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :                         inline MCUPin GetPin(PinNames::Pin ePin) const { return m_mPins.at(ePin);}</span>
+<span class="lineNum">      69 </span>            : 
+<a name="70"><span class="lineNum">      70 </span>            :                 protected:</a>
+<span class="lineNum">      71 </span>            :                         // Gets the PWM id for a given timer number.
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :                         inline unsigned int _TimerPWMID(uint8_t number) const { return TIMER_IRQ_OUT_PWM0 + number; }</span>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            :                         std::map&lt;Pin,MCUPin&gt; m_mPins;
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            :                 private:
+<span class="lineNum">      77 </span>            :                         const PinSpec &amp;m_pinSpec;
+<span class="lineNum">      78 </span>            :         };
+<span class="lineNum">      79 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

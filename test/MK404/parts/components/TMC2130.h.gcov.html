@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/components/TMC2130.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/components</a> - TMC2130.h<span style="font-size: 80%;"> (source / <a href="TMC2130.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         TMC2130.h - a trinamic driver simulator for Einsy.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         This file is part of MK404.
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">       9 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      10 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            :         (at your option) any later version.
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      20 </span>            :  */
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : #pragma once
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #include &lt;stdint.h&gt;            // for uint8_t, uint32_t, int32_t, uint16_t
+<span class="lineNum">      26 </span>            : #include &lt;string&gt;              // for string
+<span class="lineNum">      27 </span>            : #include &lt;vector&gt;              // for vector
+<span class="lineNum">      28 </span>            : #include &lt;atomic&gt;
+<span class="lineNum">      29 </span>            : #include &quot;BasePeripheral.h&quot;    // for MAKE_C_TIMER_CALLBACK
+<span class="lineNum">      30 </span>            : #include &quot;IScriptable.h&quot;       // for IScriptable::LineStatus
+<span class="lineNum">      31 </span>            : #include &quot;SPIPeripheral.h&quot;     // for SPIPeripheral
+<span class="lineNum">      32 </span>            : #include &quot;Scriptable.h&quot;        // for Scriptable
+<span class="lineNum">      33 </span>            : #include &quot;sim_avr.h&quot;           // for avr_t
+<span class="lineNum">      34 </span>            : #include &quot;sim_avr_types.h&quot;     // for avr_cycle_count_t
+<span class="lineNum">      35 </span>            : #include &quot;sim_cycle_timers.h&quot;  // for avr_cycle_timer_t
+<a name="36"><span class="lineNum">      36 </span>            : #include &quot;sim_irq.h&quot;           // for avr_irq_t</a>
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 : class TMC2130: public SPIPeripheral, public Scriptable</span>
+<span class="lineNum">      39 </span>            : {
+<span class="lineNum">      40 </span>            :     public:
+<span class="lineNum">      41 </span>            :         #define IRQPAIRS \
+<span class="lineNum">      42 </span>            :                 _IRQ(SPI_BYTE_IN,       &quot;8&lt;tmc2130.byte_in&quot;) \
+<span class="lineNum">      43 </span>            :                 _IRQ(SPI_BYTE_OUT,      &quot;8&gt;tmc2130.byte_out&quot;) \
+<span class="lineNum">      44 </span>            :             _IRQ(SPI_COMMAND_IN,    &quot;40&lt;tmc2130.cmd_in&quot;) \
+<span class="lineNum">      45 </span>            :             _IRQ(SPI_CSEL,          &quot;&lt;tmc2130.cs_in&quot;) \
+<span class="lineNum">      46 </span>            :             _IRQ(STEP_IN,           &quot;&lt;tmc2130.step_in&quot;) \
+<span class="lineNum">      47 </span>            :             _IRQ(DIR_IN,            &quot;&lt;tmc2130.dir_in&quot;) \
+<span class="lineNum">      48 </span>            :             _IRQ(ENABLE_IN,         &quot;&lt;tmc2130.en_in&quot;) \
+<span class="lineNum">      49 </span>            :             _IRQ(DIAG_OUT,          &quot;&gt;tmc2130.diag_out&quot;) \
+<span class="lineNum">      50 </span>            :             _IRQ(MIN_OUT,           &quot;&gt;tmc2130.min_out&quot;) \
+<span class="lineNum">      51 </span>            :             _IRQ(POSITION_OUT,      &quot;&gt;tmc2130.pos_out&quot;)
+<span class="lineNum">      52 </span>            :         #include &quot;IRQHelper.h&quot;
+<a name="53"><span class="lineNum">      53 </span>            : </a>
+<span class="lineNum">      54 </span>            :         struct TMC2130_cfg_t {
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :             TMC2130_cfg_t():bInverted(false),uiStepsPerMM(100),iMaxMM(200),fStartPos(10.0),bHasNoEndStops(false){};</span>
+<span class="lineNum">      56 </span>            :             bool bInverted;
+<span class="lineNum">      57 </span>            :             uint16_t uiStepsPerMM;
+<span class="lineNum">      58 </span>            :             int16_t iMaxMM;
+<span class="lineNum">      59 </span>            :             float fStartPos;
+<span class="lineNum">      60 </span>            :             bool bHasNoEndStops;
+<span class="lineNum">      61 </span>            :         };
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :         // Default constructor.
+<span class="lineNum">      64 </span>            :         TMC2130(char cAxis = ' ');
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :         // Sets the configuration to the provided values. (inversion, positions, etc)
+<span class="lineNum">      67 </span>            :         void SetConfig(TMC2130_cfg_t cfg);
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            :         // Registers with SimAVR.
+<span class="lineNum">      70 </span>            :         void Init(avr_t *avr);
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            :         // Draws a simple visual representation of the motor position.
+<span class="lineNum">      73 </span>            :         void Draw();
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            :         // Draws the position value as a number, without position ticks.
+<span class="lineNum">      76 </span>            :         void Draw_Simple();
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :         protected:
+<span class="lineNum">      79 </span>            :                 Scriptable::LineStatus ProcessAction (unsigned int iAct, const vector&lt;string&gt; &amp;vArgs) override;
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            :     private:
+<span class="lineNum">      82 </span>            :                 enum Actions
+<span class="lineNum">      83 </span>            :                 {
+<span class="lineNum">      84 </span>            :                         ActToggleStall,
+<span class="lineNum">      85 </span>            :                         ActSetDiag,
+<span class="lineNum">      86 </span>            :                         ActResetDiag
+<span class="lineNum">      87 </span>            :                 };
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            :         // SPI handlers.
+<span class="lineNum">      90 </span>            :         uint8_t OnSPIIn(avr_irq_t *irq, uint32_t value) override;
+<span class="lineNum">      91 </span>            :         void OnCSELIn(avr_irq_t *irq, uint32_t value) override;
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            :         // Input handlers.
+<span class="lineNum">      94 </span>            :         void OnDirIn(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      95 </span>            :         void OnStepIn(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      96 </span>            :         void OnEnableIn(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      97 </span>            : 
+<a name="98"><span class="lineNum">      98 </span>            :         // Standstill register handler.</a>
+<span class="lineNum">      99 </span>            :         avr_cycle_count_t OnStandStillTimeout(avr_t *avr, avr_cycle_count_t when);
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :         avr_cycle_timer_t m_fcnStandstill = MAKE_C_TIMER_CALLBACK(TMC2130,OnStandStillTimeout);</span>
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            :         // Command processing
+<span class="lineNum">     103 </span>            :         void ProcessCommand();
+<span class="lineNum">     104 </span>            :         void CreateReply();
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :         void CheckDiagOut();
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            :         bool m_bDir  = 0;
+<span class="lineNum">     109 </span>            :         atomic_bool m_bEnable {true}, m_bConfigured {false};
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            :         TMC2130_cfg_t cfg;
+<a name="112"><span class="lineNum">     112 </span>            :         // Register definitions.</a>
+<span class="lineNum">     113 </span>            :         typedef union tmc2130_cmd_t{
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :             tmc2130_cmd_t():all(0x0){}</span>
+<span class="lineNum">     115 </span>            :             uint64_t all :40;
+<span class="lineNum">     116 </span>            :             struct {
+<span class="lineNum">     117 </span>            :                 unsigned long data :32; // 32 bits of data
+<span class="lineNum">     118 </span>            :                 uint8_t address :7;
+<span class="lineNum">     119 </span>            :                 uint8_t RW :1;
+<span class="lineNum">     120 </span>            :             } bitsIn;
+<span class="lineNum">     121 </span>            :             struct {
+<span class="lineNum">     122 </span>            :                 unsigned long data :32; // 32 bits of data
+<span class="lineNum">     123 </span>            :                 uint8_t reset_flag :1;
+<span class="lineNum">     124 </span>            :                 uint8_t driver_error :1;
+<span class="lineNum">     125 </span>            :                 uint8_t sg2 :1;
+<span class="lineNum">     126 </span>            :                 uint8_t standstill :1;
+<span class="lineNum">     127 </span>            :                 uint8_t :5; // unused
+<span class="lineNum">     128 </span>            :             } bitsOut;
+<span class="lineNum">     129 </span>            :             uint8_t bytes[5]; // Raw bytes as piped in/out by SPI.
+<span class="lineNum">     130 </span>            :         } tmc2130_cmd_t;
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            :         // the internal programming registers.
+<span class="lineNum">     133 </span>            :         typedef union
+<span class="lineNum">     134 </span>            :         {
+<span class="lineNum">     135 </span>            :             uint32_t raw[128]; // There are 128, 7-bit addressing.
+<span class="lineNum">     136 </span>            :             // TODO: add fields for specific ones down the line...
+<span class="lineNum">     137 </span>            :             struct {
+<span class="lineNum">     138 </span>            :                 struct {
+<span class="lineNum">     139 </span>            :                     uint8_t I_scale_analog  :1;
+<span class="lineNum">     140 </span>            :                     uint8_t internal_Rsense :1;
+<span class="lineNum">     141 </span>            :                     uint8_t en_pwm_mode :1;
+<span class="lineNum">     142 </span>            :                     uint8_t enc_communication   :1;
+<span class="lineNum">     143 </span>            :                     uint8_t shaft   :1;
+<span class="lineNum">     144 </span>            :                     uint8_t diag0_error :1;
+<span class="lineNum">     145 </span>            :                     uint8_t diag0_optw  :1;
+<span class="lineNum">     146 </span>            :                     uint8_t diag0_stall :1;
+<span class="lineNum">     147 </span>            :                     uint8_t diag1_stall :1;
+<span class="lineNum">     148 </span>            :                     uint8_t diag1_index :1;
+<span class="lineNum">     149 </span>            :                     uint8_t diag1_onstate   :1;
+<span class="lineNum">     150 </span>            :                     uint8_t diag1_steps_skipped :1;
+<span class="lineNum">     151 </span>            :                     uint8_t diag0_int_pushpull  :1;
+<span class="lineNum">     152 </span>            :                     uint8_t diag1_int_pushpull  :1;
+<span class="lineNum">     153 </span>            :                     uint8_t small_hysteresis    :1;
+<span class="lineNum">     154 </span>            :                     uint8_t stop_enable :1;
+<span class="lineNum">     155 </span>            :                     uint8_t direct_mode         :1;
+<span class="lineNum">     156 </span>            :                 } GCONF;             // 0x00
+<span class="lineNum">     157 </span>            :                 struct                 // 0x01
+<span class="lineNum">     158 </span>            :                 {
+<span class="lineNum">     159 </span>            :                     uint8_t reset   :1;
+<span class="lineNum">     160 </span>            :                     uint8_t drv_err :1;
+<span class="lineNum">     161 </span>            :                     uint8_t uv_cp   :1;
+<span class="lineNum">     162 </span>            :                 } GSTAT;
+<span class="lineNum">     163 </span>            :                 uint32_t _unimplemented[107]; //0x02 - 0x6B
+<span class="lineNum">     164 </span>            :                                 struct                        //0x6C
+<span class="lineNum">     165 </span>            :                                 {
+<span class="lineNum">     166 </span>            :                                         uint32_t toff           :4;
+<span class="lineNum">     167 </span>            :                                         uint32_t hstrt          :3;
+<span class="lineNum">     168 </span>            :                                         uint32_t hend           :4;
+<span class="lineNum">     169 </span>            :                                         uint32_t fd3            :1;
+<span class="lineNum">     170 </span>            :                                         uint32_t disfdcc        :1;
+<span class="lineNum">     171 </span>            :                                         uint32_t rndtf          :1;
+<span class="lineNum">     172 </span>            :                                         uint32_t chm            :1;
+<span class="lineNum">     173 </span>            :                                         uint32_t tbl            :2;
+<span class="lineNum">     174 </span>            :                                         uint32_t vsense         :1;
+<span class="lineNum">     175 </span>            :                                         uint32_t vhighfs        :1;
+<span class="lineNum">     176 </span>            :                                         uint32_t vhighchm       :1;
+<span class="lineNum">     177 </span>            :                                         uint32_t sync           :4;
+<span class="lineNum">     178 </span>            :                                         uint32_t mres           :4;
+<span class="lineNum">     179 </span>            :                                         uint32_t intpol         :1;
+<span class="lineNum">     180 </span>            :                                         uint32_t dedge          :1;
+<span class="lineNum">     181 </span>            :                                         uint32_t diss2g         :1;
+<span class="lineNum">     182 </span>            :                                         uint32_t                        :1;
+<span class="lineNum">     183 </span>            :                                 } CHOPCONF;
+<span class="lineNum">     184 </span>            :                 uint32_t _unimplemented2[2]; //0x6D - 0x6E
+<span class="lineNum">     185 </span>            :                 struct                       //0x6F
+<span class="lineNum">     186 </span>            :                 {
+<span class="lineNum">     187 </span>            :                     uint16_t SG_RESULT   :10;
+<span class="lineNum">     188 </span>            :                     uint8_t             :5;
+<span class="lineNum">     189 </span>            :                     uint8_t fsactive    :1;
+<span class="lineNum">     190 </span>            :                     uint8_t CS_ACTUAL   :5;
+<span class="lineNum">     191 </span>            :                     uint8_t             :3;
+<span class="lineNum">     192 </span>            :                     uint8_t stallGuard  :1;
+<span class="lineNum">     193 </span>            :                     uint8_t ot          :1;
+<span class="lineNum">     194 </span>            :                     uint8_t otpw        :1;
+<span class="lineNum">     195 </span>            :                     uint8_t sg2a        :1;
+<span class="lineNum">     196 </span>            :                     uint8_t sg2b        :1;
+<span class="lineNum">     197 </span>            :                     uint8_t ola         :1;
+<span class="lineNum">     198 </span>            :                     uint8_t olb         :1;
+<span class="lineNum">     199 </span>            :                     uint8_t stst        :1;
+<span class="lineNum">     200 </span>            :                 }DRV_STATUS;
+<span class="lineNum">     201 </span>            :             }defs;
+<span class="lineNum">     202 </span>            :         } tmc2130_registers_t;
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span>            :         int32_t m_iCurStep = 0;
+<span class="lineNum">     205 </span>            :         int32_t m_iMaxPos = 0;
+<span class="lineNum">     206 </span>            :         atomic&lt;float&gt; m_fCurPos = {0}, m_fEnd = {0}; // Tracks position in float for gl
+<span class="lineNum">     207 </span>            :         tmc2130_cmd_t m_cmdIn;
+<span class="lineNum">     208 </span>            :         tmc2130_cmd_t m_cmdProc;
+<span class="lineNum">     209 </span>            :         tmc2130_cmd_t m_cmdOut; // the previous data for output.
+<span class="lineNum">     210 </span>            :         tmc2130_registers_t m_regs;
+<span class="lineNum">     211 </span>            :                 atomic_char m_cAxis;
+<span class="lineNum">     212 </span>            :                 bool m_bStall = false;
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span>            :                 // Position helpers
+<span class="lineNum">     215 </span>            :                 float StepToPos(int32_t step);
+<span class="lineNum">     216 </span>            :                 int32_t PosToStep(float step);
+<span class="lineNum">     217 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

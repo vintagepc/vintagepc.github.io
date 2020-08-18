@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/utility/GLPrint.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">MK404/utility</a> - GLPrint.h<span style="font-size: 80%;"> (source / <a href="GLPrint.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         GLPrint.h - Object responsible for print visualization
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         This file is part of MK404.
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">       9 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      10 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            :         (at your option) any later version.
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      20 </span>            :  */
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #pragma once
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #include &lt;array&gt;   // for array
+<span class="lineNum">      25 </span>            : #include &lt;cmath&gt;   // for sqrt
+<span class="lineNum">      26 </span>            : #include &lt;vector&gt;  // for vector
+<span class="lineNum">      27 </span>            : #include &lt;mutex&gt;
+<span class="lineNum">      28 </span>            : #include &lt;atomic&gt;
+<span class="lineNum">      29 </span>            : 
+<a name="30"><span class="lineNum">      30 </span>            : using namespace std;</a>
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 : class GLPrint</span>
+<span class="lineNum">      33 </span>            : {
+<span class="lineNum">      34 </span>            :         public:
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            :         // Creates a new GLPrint.
+<span class="lineNum">      37 </span>            :         GLPrint(float fR, float fG, float fB);
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :         // Clears the current print from the bed. You probably shouldn't call this when mid print.
+<span class="lineNum">      40 </span>            :         void Clear();
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            :         // Draws the print within the current GL matrix context.
+<span class="lineNum">      43 </span>            :         void Draw();
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :         // Function to receive new coordinate updates from your simulated printer's stepper drivers.
+<span class="lineNum">      46 </span>            :         void NewCoord(float fX, float fY, float fZ, float fE);
+<span class="lineNum">      47 </span>            : 
+<a name="48"><span class="lineNum">      48 </span>            :         private:</a>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :                 static inline void CrossProduct(const float fA[3], const float fB[3], float fOut[3])</span>
+<span class="lineNum">      51 </span>            :                 {
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :                         fOut[0] = (fA[1]*fB[2]) - (fA[2]*fB[1]);</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :                         fOut[1] = (fA[2]*fB[0]) - (fA[0]*fB[2]);</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :                         fOut[2] = (fA[0]*fB[1]) - (fA[1]*fB[0]);</span>
+<a name="55"><span class="lineNum">      55 </span><span class="lineNoCov">          0 :                 };</span></a>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :                 static inline void Normalize(float fA[3])</span>
+<span class="lineNum">      58 </span>            :                 {
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                         float fNorm = sqrt((fA[0]*fA[0]) + (fA[1]*fA[1]) + (fA[2]*fA[2]));</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                         fA[0]/=fNorm;</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :                         fA[1]/=fNorm;</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                         fA[2]/=fNorm;</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :                 }</span>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :                 //void FindNearest(const float fVec[3]);
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :                 array&lt;int,4&gt; m_iExtrEnd, m_iExtrStart;
+<span class="lineNum">      69 </span>            :                 array&lt;float,4&gt; m_fExtrEnd, m_fExtrStart;
+<span class="lineNum">      70 </span>            :                 vector&lt;int&gt; m_ivStart, m_ivTStart;
+<span class="lineNum">      71 </span>            :                 vector&lt;int&gt; m_ivCount, m_ivTCount;
+<span class="lineNum">      72 </span>            :                 vector&lt;float&gt; m_fvDraw, m_fvNorms;
+<span class="lineNum">      73 </span>            :                 vector&lt;float&gt; m_fvTri;
+<span class="lineNum">      74 </span>            :                 // Layer vertex tracking.
+<span class="lineNum">      75 </span>            :                 vector&lt;float*&gt; m_vpfLayer1, m_vpfLayer2;
+<span class="lineNum">      76 </span>            :                 // vector&lt;float*&gt; *m_pCurLayer = &amp;m_vpfLayer1;   // not used
+<span class="lineNum">      77 </span>            :                 // vector&lt;float*&gt; *m_pPrevLayer = &amp;m_vpfLayer2;  // not used
+<span class="lineNum">      78 </span>            :                 float m_fCurZ = -1;
+<span class="lineNum">      79 </span>            :                 // float m_fLastZ = -1;                          // not used
+<span class="lineNum">      80 </span>            :                 float m_fEMax = 0;
+<span class="lineNum">      81 </span>            :                 const float m_fColR, m_fColG, m_fColB;
+<span class="lineNum">      82 </span>            :                 atomic_bool m_bExtruding = {false};
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            :                 std::mutex m_lock;
+<span class="lineNum">      85 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

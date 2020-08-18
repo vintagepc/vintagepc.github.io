@@ -1,0 +1,377 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/printers/Prusa_MK3S.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/printers</a> - Prusa_MK3S.cpp<span style="font-size: 80%;"> (source / <a href="Prusa_MK3S.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">198</td>
+            <td class="headerCovTableEntryLo">0.5 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryLo">13.3 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         Prusa_MK3S.cpp - Printer definition for the Prusa MK3S
+<span class="lineNum">       3 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            :         This file is part of MK404.
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">       8 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">       9 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      10 </span>            :         (at your option) any later version.
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      13 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      14 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      15 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      18 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      19 </span>            :  */
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #include &quot;Prusa_MK3S.h&quot;
+<span class="lineNum">      22 </span>            : #include &lt;GL/glew.h&gt;
+<span class="lineNum">      23 </span>            : #include &lt;GL/freeglut_std.h&gt;  // for GLUT_DOWN, GLUT_LEFT_BUTTON, GLUT_RIGHT...
+<span class="lineNum">      24 </span>            : #include &lt;stdio.h&gt;            // for printf
+<span class="lineNum">      25 </span>            : #include &quot;Beeper.h&quot;           // for Beeper
+<span class="lineNum">      26 </span>            : #include &quot;Button.h&quot;           // for Button
+<span class="lineNum">      27 </span>            : #include &quot;Fan.h&quot;              // for Fan
+<span class="lineNum">      28 </span>            : #include &quot;HD44780GL.h&quot;        // for HD44780GL
+<span class="lineNum">      29 </span>            : #include &quot;Heater.h&quot;           // for Heater
+<span class="lineNum">      30 </span>            : #include &quot;IRSensor.h&quot;         // for IRSensor
+<span class="lineNum">      31 </span>            : #include &quot;LED.h&quot;              // for LED
+<span class="lineNum">      32 </span>            : #include &quot;PINDA.h&quot;            // for PINDA
+<span class="lineNum">      33 </span>            : #include &quot;PinNames.h&quot;         // for Pin::IR_SENSOR_PIN, Pin::VOLT_IR_PIN
+<span class="lineNum">      34 </span>            : #include &quot;RotaryEncoder.h&quot;    // for RotaryEncoder, RotaryEncoder::::CCW_CLICK
+<span class="lineNum">      35 </span>            : #include &quot;SDCard.h&quot;           // for SDCard
+<span class="lineNum">      36 </span>            : #include &quot;TMC2130.h&quot;          // for TMC2130
+<span class="lineNum">      37 </span>            : #include &quot;sim_io.h&quot;           // for avr_register_io_write
+<a name="38"><span class="lineNum">      38 </span>            : #include &quot;uart_pty.h&quot;         // for uart_pty</a>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 : void Prusa_MK3S::Draw()</span>
+<span class="lineNum">      41 </span>            : {
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :                 glPushMatrix();</span>
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :                 glLoadIdentity(); // Start with an identity matrix</span>
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :                         glScalef(4, 4, 1);</span>
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :                         lcd.Draw(m_colors[(4*m_iScheme) + 0], /* background */</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :                                         m_colors[(4*m_iScheme) + 1], /* character background */</span>
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :                                         m_colors[(4*m_iScheme) + 2], /* text */</span>
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :                                         m_colors[(4*m_iScheme) + 3] /* shadow */ );</span>
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :                 glPopMatrix();</span>
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :                 // Do something for the motors...
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :                 float fX = (5 + lcd.GetWidth()* 6)*4;</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :                 float fY = (5 + lcd.GetHeight() * 9);</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :                 glLoadIdentity();</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :                 glScalef(fX/350,4,1);</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :                 glPushMatrix();</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :                         glTranslatef(0, fY,0);</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                         X.Draw();</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                         glTranslatef(0, 10,0);</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :                         Y.Draw();</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                         glTranslatef(0, 10,0);</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :                         Z.Draw();</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :                         glTranslatef(0, 10,0);</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :                         E.Draw_Simple();</span>
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :                         glTranslatef(190,0,0);</span>
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :                         m_buzzer.Draw();</span>
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :                         glTranslatef(20,0,0);</span>
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 :                         fPrint.Draw();</span>
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :                         glTranslatef(20,0,0);</span>
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :                         fExtruder.Draw();</span>
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :                         glTranslatef(20,0,0);</span>
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :                         hExtruder.Draw();</span>
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :                         glTranslatef(20,0,0);</span>
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :                         hBed.Draw();</span>
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :                         glTranslatef(20,0,0);</span>
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :                         lSD.Draw();</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :                         glTranslatef(20,0,0);</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :                         lPINDA.Draw();</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :                         glTranslatef(20,0,0);</span>
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :                         lIR.Draw();</span>
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                 glPopMatrix();</span>
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 :         if ((GetVisualType().compare(&quot;none&quot;)!=0) &amp;&amp; m_pVis)</span>
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :                 m_pVis-&gt;Draw();</span>
+<a name="85"><span class="lineNum">      85 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 : std::pair&lt;int,int&gt; Prusa_MK3S::GetWindowSize(){</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :         std::pair&lt;int,int&gt; prSize = { 5 + lcd.GetWidth() * 6,  40 + 5 + lcd.GetHeight() * 9};</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :         return prSize;</span>
+<a name="90"><span class="lineNum">      90 </span>            : }</a>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 : void Prusa_MK3S::OnVisualTypeSet(string type)</span>
+<span class="lineNum">      93 </span>            : {
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :         if (type.compare(&quot;none&quot;) == 0)</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                 return;</span>
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :         m_pVis.reset(new MK3SGL(type,GetHasMMU(),this));</span>
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :         AddHardware(*m_pVis);</span>
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :         m_pVis-&gt;ConnectFrom(X.GetIRQ(TMC2130::POSITION_OUT),MK3SGL::X_IN);</span>
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :         m_pVis-&gt;ConnectFrom(Y.GetIRQ(TMC2130::POSITION_OUT),MK3SGL::Y_IN);</span>
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :         m_pVis-&gt;ConnectFrom(Z.GetIRQ(TMC2130::POSITION_OUT),MK3SGL::Z_IN);</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :         m_pVis-&gt;ConnectFrom(E.GetIRQ(TMC2130::POSITION_OUT),MK3SGL::E_IN);</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :         m_pVis-&gt;ConnectFrom(pinda.GetIRQ(PINDA::SHEET_OUT), MK3SGL::SHEET_IN);</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :         m_pVis-&gt;ConnectFrom(fExtruder.GetIRQ(Fan::SPEED_OUT), MK3SGL::EFAN_IN);</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :         m_pVis-&gt;ConnectFrom(fPrint.GetIRQ(Fan::SPEED_OUT), MK3SGL::PFAN_IN);</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :         m_pVis-&gt;ConnectFrom(hBed.GetIRQ(Heater::ON_OUT), MK3SGL::BED_IN);</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :         m_pVis-&gt;ConnectFrom(sd_card.GetIRQ(SDCard::CARD_PRESENT), MK3SGL::SD_IN);</span>
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :         m_pVis-&gt;ConnectFrom(pinda.GetIRQ(PINDA::TRIGGER_OUT), MK3SGL::PINDA_IN);</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :         m_pVis-&gt;SetLCD(&amp;lcd);</span>
+<a name="112"><span class="lineNum">     112 </span>            : }</a>
+<span class="lineNum">     113 </span>            : 
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 : void Prusa_MK3S::FixSerial(avr_t * avr, avr_io_addr_t addr, uint8_t v)</span>
+<span class="lineNum">     115 </span>            : {
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :         if (v==0x02)// Marlin is done setting up UCSRA0...</span>
+<span class="lineNum">     117 </span>            :         {
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :                 v|=(1&lt;&lt;5); // leave the UDRE0 alone</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :                 printf(&quot;Reset UDRE0 after serial config changed\n&quot;);</span>
+<span class="lineNum">     120 </span>            :         }
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 :         avr_core_watch_write(avr,addr,v);</span>
+<a name="122"><span class="lineNum">     122 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 : void Prusa_MK3S::SetupIR()</span>
+<span class="lineNum">     125 </span>            : {
+<span class="lineNum">     126 </span>            :         // Setup the 3S IR sensor.
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :         printf(&quot;MK3S - adding IR sensor.\n&quot;);</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :         AddHardware(IR, GetPinNumber(VOLT_IR_PIN));</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :         TryConnect(IR,IRSensor::DIGITAL_OUT, IR_SENSOR_PIN);</span>
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :         TryConnect(IR_SENSOR_PIN, lIR, LED::LED_IN);</span>
+<a name="131"><span class="lineNum">     131 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 : void Prusa_MK3S::SetupHardware()</span>
+<span class="lineNum">     134 </span>            : {
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :         EinsyRambo::SetupHardware();</span>
+<span class="lineNum">     136 </span>            : 
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :         SetupIR();</span>
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :         if (GetConnectSerial())</span>
+<a name="140"><span class="lineNum">     140 </span><span class="lineNoCov">          0 :                 UART0.Connect('0');</span></a>
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :         auto fcnSerial = [](avr_t *avr, avr_io_addr_t addr, uint8_t v, void * param)</span>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 :         {Prusa_MK3S *p = (Prusa_MK3S*)param; p-&gt;FixSerial(avr, addr,v);};</span>
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :         avr_register_io_write(m_pAVR, 0xC0, fcnSerial, this);</span>
+<span class="lineNum">     146 </span>            : 
+<a name="147"><span class="lineNum">     147 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 : void Prusa_MK3S::OnAVRCycle()</span>
+<span class="lineNum">     150 </span>            : {
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :         int mouseBtn = m_mouseBtn;                  // copy atomic to local</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :         if (mouseBtn)</span>
+<span class="lineNum">     153 </span>            :         {
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :                 switch (mouseBtn){</span>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :                         case 1:</span>
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :                                 encoder.MousePush();</span>
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :                         case 2:</span>
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :                                 encoder.Release();</span>
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :                         case 3:</span>
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :                                 encoder.Twist(RotaryEncoder::CCW_CLICK);</span>
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :                                 if (m_pVis) m_pVis-&gt;TwistKnob(true);</span>
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :                         case 4:</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :                                 encoder.Twist(RotaryEncoder::CW_CLICK);</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :                                 if (m_pVis) m_pVis-&gt;TwistKnob(false);</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     169 </span>            :                 }
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :                 m_mouseBtn = 0;</span>
+<span class="lineNum">     171 </span>            :         }
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :         int key = m_key;                            // copy atomic to local</span>
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :         if (key)</span>
+<span class="lineNum">     174 </span>            :         {
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                 switch (key) {</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :                         case 'w':</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :                                 printf(&quot;&lt;&quot;);</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                                 encoder.Twist(RotaryEncoder::CCW_CLICK);</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :                                 if (m_pVis) m_pVis-&gt;TwistKnob(true);</span>
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :                         case 's':</span>
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :                                 printf(&quot;&gt;&quot;);</span>
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :                                 encoder.Twist(RotaryEncoder::CW_CLICK);</span>
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :                                 if (m_pVis) m_pVis-&gt;TwistKnob(false);</span>
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :                         case 0xd:</span>
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :                                 printf(&quot;ENTER pushed\n&quot;);</span>
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :                                 encoder.Push();</span>
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :                         case 'r':</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :                                 printf(&quot;RESET/KILL\n&quot;);</span>
+<span class="lineNum">     192 </span>            :                                 // RESET BUTTON
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                                 SetResetFlag();</span>
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                                 encoder.Push(); // I dont' know why this is required to not get stuck in factory reset mode.</span>
+<span class="lineNum">     195 </span>            :                                 // The only thing I can think of is that SimAVR doesn't like IRQ changes that don't have
+<span class="lineNum">     196 </span>            :                                 // any avr_run cycles between them. :-/
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :                         case 't':</span>
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                                 printf(&quot;FACTORY_RESET\n&quot;);</span>
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 :                                 m_bFactoryReset =true;</span>
+<span class="lineNum">     201 </span>            :                                 // Hold the button during boot to get factory reset menu
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :                                 SetResetFlag();</span>
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :                         case 'h':</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                                 encoder.PushAndHold();</span>
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                         case 'm':</span>
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :                                 printf(&quot;Toggled Mute\n&quot;);</span>
+<span class="lineNum">     209 </span><span class="lineNoCov">          0 :                                 m_buzzer.ToggleMute();</span>
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :                         case 'y':</span>
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :                                 pinda.ToggleSheet();</span>
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :                         case 'p':</span>
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :                                 printf(&quot;SIMULATING POWER PANIC\n&quot;);</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                                 PowerPanic.Press(500);</span>
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 :                         case 'f':</span>
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 :                                 ToggleFSensor();</span>
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :                         case 'j':</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :                                 FSensorJam();</span>
+<span class="lineNum">     223 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :                         case 'c':</span>
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                                 if (!sd_card.IsMounted())</span>
+<span class="lineNum">     226 </span>            :                                 {
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :                                         printf(&quot;Mounting SD image...\n&quot;);</span>
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :                                         sd_card.Mount(); // Remounts last image.</span>
+<span class="lineNum">     229 </span>            :                                 }
+<span class="lineNum">     230 </span>            :                                 else
+<span class="lineNum">     231 </span>            :                                 {
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 :                                         printf(&quot;SD card removed...\n&quot;);</span>
+<span class="lineNum">     233 </span><span class="lineNoCov">          0 :                                         sd_card.Unmount();</span>
+<span class="lineNum">     234 </span>            :                                 }
+<span class="lineNum">     235 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :                         case 'q':</span>
+<span class="lineNum">     237 </span><span class="lineNoCov">          0 :                                 Boards::EinsyRambo::SetQuitFlag();</span>
+<span class="lineNum">     238 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     239 </span>            :                 }
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 :                 m_key = 0;</span>
+<span class="lineNum">     241 </span>            :         }
+<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span><span class="lineNoCov">          0 : void Prusa_MK3S::OnMouseMove(int x,int y)</span>
+<span class="lineNum">     245 </span>            : {
+<span class="lineNum">     246 </span>            :         // TODO - passthrough for vis.
+<a name="247"><span class="lineNum">     247 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span><span class="lineNoCov">          0 : void Prusa_MK3S::OnKeyPress(unsigned char key, int x, int y)</span>
+<span class="lineNum">     250 </span>            : {
+<span class="lineNum">     251 </span><span class="lineNoCov">          0 :         switch (key) {</span>
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :                 case 'q':</span>
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :                         m_key = key;</span>
+<span class="lineNum">     254 </span><span class="lineNoCov">          0 :                         m_bPaused = false;</span>
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     256 </span><span class="lineNoCov">          0 :                 case 'd':</span>
+<span class="lineNum">     257 </span>            :                         //gbPrintPC = gbPrintPC==0;
+<span class="lineNum">     258 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 :                 case '1':</span>
+<span class="lineNum">     260 </span><span class="lineNoCov">          0 :                         m_iScheme ^=1;</span>
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     262 </span><span class="lineNoCov">          0 :                 case 'z':</span>
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :                         m_bPaused ^= true;</span>
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :                         printf(&quot;Pause: %u\n&quot;,m_bPaused.load());</span>
+<span class="lineNum">     265 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     266 </span><span class="lineNoCov">          0 :                 case 'l':</span>
+<span class="lineNum">     267 </span><span class="lineNoCov">          0 :                         if (m_pVis)m_pVis-&gt;ClearPrint();</span>
+<span class="lineNum">     268 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     269 </span><span class="lineNoCov">          0 :                 case 'n':</span>
+<span class="lineNum">     270 </span><span class="lineNoCov">          0 :                         if (m_pVis)m_pVis-&gt;ToggleNozzleCam();</span>
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :                 case '`':</span>
+<span class="lineNum">     273 </span><span class="lineNoCov">          0 :                         if (m_pVis)m_pVis-&gt;ResetCamera();</span>
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     275 </span>            :                 /* case 'r':
+<span class="lineNum">     276 </span>            :                         printf(&quot;Starting VCD trace; press 's' to stop\n&quot;);
+<span class="lineNum">     277 </span>            :                         avr_vcd_start(&amp;vcd_file);
+<span class="lineNum">     278 </span>            :                         break;
+<span class="lineNum">     279 </span>            :                 case 's':
+<span class="lineNum">     280 </span>            :                         printf(&quot;Stopping VCD trace\n&quot;);
+<span class="lineNum">     281 </span>            :                         avr_vcd_stop(&amp;vcd_file);
+<span class="lineNum">     282 </span>            :                         break */;
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :                 default:</span>
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :                         m_key = key;</span>
+<span class="lineNum">     285 </span>            :         }
+<a name="286"><span class="lineNum">     286 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     287 </span>            : 
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 : void Prusa_MK3S::OnMousePress(int button, int action, int x, int y)</span>
+<span class="lineNum">     289 </span>            : {
+<span class="lineNum">     290 </span><span class="lineNoCov">          0 :         if (button == GLUT_LEFT_BUTTON || button == GLUT_RIGHT_BUTTON) {</span>
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :                 if (action == GLUT_DOWN) {</span>
+<span class="lineNum">     292 </span><span class="lineNoCov">          0 :                         m_mouseBtn = 1;</span>
+<span class="lineNum">     293 </span><span class="lineNoCov">          0 :                 } else if (action == GLUT_UP) {</span>
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 :                         m_mouseBtn = 2;</span>
+<span class="lineNum">     295 </span>            :                 }
+<span class="lineNum">     296 </span>            :         }
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :         if ((button==3 || button==4) &amp;&amp; action == GLUT_DOWN) // wheel</span>
+<span class="lineNum">     298 </span>            :         {
+<a name="299"><span class="lineNum">     299 </span><span class="lineNoCov">          0 :                 m_mouseBtn = button;</span></a>
+<span class="lineNum">     300 </span>            :         }
+<span class="lineNum">     301 </span><span class="lineCov">         15 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

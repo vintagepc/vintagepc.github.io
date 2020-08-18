@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/components/PINDA.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/components</a> - PINDA.h<span style="font-size: 80%;"> (source / <a href="PINDA.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         PINDA.h - a PINDA sim that can do MBL and axis skew calibrations.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         This file is part of MK404.
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">       9 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      10 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            :         (at your option) any later version.
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      20 </span>            :  */
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #pragma once
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #include &lt;stdint.h&gt;          // for uint32_t
+<span class="lineNum">      25 </span>            : #include &lt;string&gt;            // for string
+<span class="lineNum">      26 </span>            : #include &lt;vector&gt;            // for vector
+<span class="lineNum">      27 </span>            : #include &quot;BasePeripheral.h&quot;  // for BasePeripheral
+<span class="lineNum">      28 </span>            : #include &quot;IScriptable.h&quot;     // for IScriptable::LineStatus
+<span class="lineNum">      29 </span>            : #include &quot;Scriptable.h&quot;      // for Scriptable
+<span class="lineNum">      30 </span>            : #include &quot;sim_avr.h&quot;         // for avr_t
+<span class="lineNum">      31 </span>            : #include &quot;sim_irq.h&quot;         // for avr_irq_t
+<a name="32"><span class="lineNum">      32 </span>            : #include &lt;atomic&gt;</a>
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 : class PINDA:public BasePeripheral,public Scriptable{</span>
+<span class="lineNum">      35 </span>            :     public:
+<span class="lineNum">      36 </span>            :         #define IRQPAIRS _IRQ(X_POS_IN,&quot;&lt;pinda.x_in&quot;) _IRQ(Y_POS_IN,&quot;&lt;pinda.y_in&quot;) _IRQ(Z_POS_IN,&quot;&lt;pinda.Z_in&quot;) _IRQ(TRIGGER_OUT,&quot;&gt;pinda.out&quot;) _IRQ(SHEET_OUT,&quot;&gt;sheet.out&quot;)
+<span class="lineNum">      37 </span>            :         #include &quot;IRQHelper.h&quot;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :     // Creates a new PINDA with X/Y nozzle offsets fX and fY
+<span class="lineNum">      40 </span>            :     PINDA(float fX = 0, float fY = 0);
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            :     // Initializes the PINDA on AVR, and connects it to the X/Y/Z position IRQs
+<span class="lineNum">      43 </span>            :     void Init(avr_t *avr, avr_irq_t *irqX, avr_irq_t *irqY, avr_irq_t *irqZ);
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :     // Toggles steel sheet presence. If it is removed, the PINDA will exhibit XY calibration trigger behaviour.
+<span class="lineNum">      46 </span>            :     void ToggleSheet();
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span>            :         // so we can use initializer syntax later
+<span class="lineNum">      49 </span>            :         typedef struct
+<span class="lineNum">      50 </span>            :         {
+<span class="lineNum">      51 </span>            :                 float points[49];
+<span class="lineNum">      52 </span>            :         } MBLMap_t;
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :         protected:
+<span class="lineNum">      55 </span>            :                 LineStatus ProcessAction(unsigned int iAct, const vector&lt;string&gt; &amp;vArgs);
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span>            : private:
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :         enum Actions
+<span class="lineNum">      60 </span>            :         {
+<span class="lineNum">      61 </span>            :                 ActToggleSheet,
+<span class="lineNum">      62 </span>            :                 ActSetMBLPoint,
+<span class="lineNum">      63 </span>            :                 ActSetXYCalPont
+<span class="lineNum">      64 </span>            :         };
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :     void OnXChanged(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      67 </span>            :     void OnYChanged(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      68 </span>            :     void OnZChanged(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            :     // Checks trigger z if no sheet is present.
+<span class="lineNum">      71 </span>            :     void CheckTriggerNoSheet();
+<span class="lineNum">      72 </span>            : 
+<span class="lineNum">      73 </span>            :     // Checks Z trigger if sheet is present (MBL)
+<span class="lineNum">      74 </span>            :     void CheckTrigger();
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            :     void SetMBLMap();
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            :         float m_fZTrigHeight = 1.0; // Trigger height above Z=0, i.e. the &quot;zip tie&quot; adjustment
+<span class="lineNum">      79 </span>            :     float m_fOffset[2] = {0,0}; // pinda X Y offset  from nozzle
+<span class="lineNum">      80 </span>            :     float m_fPos[3] = {10,10,10}; // Current position tracking.
+<span class="lineNum">      81 </span>            :     MBLMap_t m_mesh;// MBL map
+<span class="lineNum">      82 </span>            :     atomic_bool m_bIsSheetPresent {true}; // Is the steel sheet present? IF yes, PINDA will attempt to simulate the bed sensing point for selfcal instead.
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            :     // pulled from mesh_bed_calibration.cpp
+<span class="lineNum">      85 </span>            :     float _bed_calibration_points[8] = {
+<span class="lineNum">      86 </span>            :         37.f -2.0, 18.4f -9.4 + 2,
+<span class="lineNum">      87 </span>            :         245.f -2.0, 18.4f - 9.4 + 2,
+<span class="lineNum">      88 </span>            :         245.f -2.0, 210.4f - 9.4 + 2,
+<span class="lineNum">      89 </span>            :         37.f -2.0,  210.4f -9.4 + 2
+<span class="lineNum">      90 </span>            :     };
+<span class="lineNum">      91 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

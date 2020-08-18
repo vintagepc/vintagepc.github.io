@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/3rdParty/arcball/Camera.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/3rdParty/arcball</a> - Camera.cpp<span style="font-size: 80%;"> (source / <a href="Camera.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">100</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : //</a>
+<span class="lineNum">       2 </span>            : //    Copyright 2011 Nicholas Pleschko &lt;nicholas@nigi.li&gt;
+<span class="lineNum">       3 </span>            : //
+<span class="lineNum">       4 </span>            : //    ============================================
+<span class="lineNum">       5 </span>            : //
+<span class="lineNum">       6 </span>            : //    This file is part of SimpleArcballCamera.
+<span class="lineNum">       7 </span>            : //
+<span class="lineNum">       8 </span>            : //    SimpleArcballCamera is free software: you can redistribute it and/or
+<span class="lineNum">       9 </span>            : //    modify it under the terms of the GNU General Public License as published
+<span class="lineNum">      10 </span>            : //    by the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            : //    (at your option) any later version.
+<span class="lineNum">      12 </span>            : //
+<span class="lineNum">      13 </span>            : //    SimpleArcballCamera is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            : //    but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            : //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            : //    GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : //
+<span class="lineNum">      18 </span>            : //    You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            : //    along with SimpleArcballCamera.  If not,
+<span class="lineNum">      20 </span>            : //    see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #include &quot;Camera.hpp&quot;
+<span class="lineNum">      23 </span>            : #include &lt;math.h&gt;
+<span class="lineNum">      24 </span>            : 
+<a name="25"><span class="lineNum">      25 </span>            : // ========================= CAMERA SETUP ================================</a>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 : Camera::Camera() : center_(0,0,0), eyeDir_(0,0,-1)</span>
+<span class="lineNum">      28 </span>            : {
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 :     initConstants();</span>
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :     updateViewMatrix();</span>
+<a name="31"><span class="lineNum">      31 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 : Camera::Camera(float eyex, float eyey, float eyez, float centerx, float centery,</span>
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :                float centerz)</span>
+<span class="lineNum">      35 </span>            :     : center_(centerx,centery,centerz),
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :       eyeDir_(centerx-eyex,centery-eyey,centerz-eyez)</span>
+<span class="lineNum">      37 </span>            : {
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :     initConstants();</span>
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :     updateViewMatrix();</span>
+<a name="40"><span class="lineNum">      40 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 : void Camera::initConstants()</span>
+<span class="lineNum">      43 </span>            : {
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :     currentMode_ = IDLE;</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :     zoomSpeed_ = 10.0f;</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :     windowWidth_ = 200;</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :     windowHeight_ = 200;</span>
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : // When explicitly setting the center the global eye position should stay the
+<a name="51"><span class="lineNum">      51 </span>            : // same. Therefore this method first computes the global eye position, then</a>
+<span class="lineNum">      52 </span>            : // moves the center and in the end recomputes the relative eye direction.
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 : void Camera::setCenter(float x, float y, float z)</span>
+<span class="lineNum">      54 </span>            : {
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :     math::vec3 eye = center_ - eyeDir_;</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :     center_.set(x, y, z);</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :     eyeDir_.set(center_[0] - eye[0], center_[1] - eye[1], center_[2] - eye[2]);</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :     updateViewMatrix();</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      60 </span>            : 
+<a name="61"><span class="lineNum">      61 </span>            : // Sets the eye position to x,y,z by computing the relative vector from x,y,z</a>
+<span class="lineNum">      62 </span>            : // to the camera center.
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 : void Camera::setEye(float x, float y, float z)</span>
+<span class="lineNum">      64 </span>            : {
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :     eyeDir_.set(center_[0] - x, center_[1] - y, center_[2] - z);</span>
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :     updateViewMatrix();</span>
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      68 </span>            : 
+<a name="69"><span class="lineNum">      69 </span>            : // Updates the current mouse position. Needs to invert the y coordinate for</a>
+<span class="lineNum">      70 </span>            : // my computations but is ok for the arcball.
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 : void Camera::setCurrentMousePos(float x, float y)</span>
+<span class="lineNum">      72 </span>            : {
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :     arcBall_.set_cur(x, y);</span>
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :     y = windowHeight_ - y;</span>
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :     lastMousePos_ = currentMousePos_;</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :     currentMousePos_.set(x, y);</span>
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :     if (currentMode_ != IDLE) {</span>
+<span class="lineNum">      81 </span>            :         // Compute delta
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :         math::vec2 mouseDelta = currentMousePos_ - lastMousePos_;</span>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :         switch (currentMode_) {</span>
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :             case PANNING:</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :                 pan(mouseDelta[0], mouseDelta[1]);</span>
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :             case ZOOMING:</span>
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :                 zoom(mouseDelta[1]);</span>
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :             default:</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :                 break;</span>
+<span class="lineNum">      93 </span>            :         }
+<span class="lineNum">      94 </span>            :     }else{
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :         updateViewMatrix();</span>
+<span class="lineNum">      96 </span>            :     }
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 : }</span>
+<a name="98"><span class="lineNum">      98 </span>            : </a>
+<span class="lineNum">      99 </span>            : // Updates the window size both in this class and in the arcball.
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 : void Camera::setWindowSize(float w, float h)</span>
+<span class="lineNum">     101 </span>            : {
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :     arcBall_.set_win_size(w, h);</span>
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :     windowWidth_ = w;</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :     windowHeight_ = h;</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : // ========================= CAMERA MOVEMENT =============================
+<span class="lineNum">     109 </span>            : 
+<a name="110"><span class="lineNum">     110 </span>            : </a>
+<span class="lineNum">     111 </span>            : // Starts the arcballs rotation
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 : void Camera::beginRotate()</span>
+<span class="lineNum">     113 </span>            : {
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :     arcBall_.begin_drag();</span>
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 : }</span>
+<a name="116"><span class="lineNum">     116 </span>            : </a>
+<span class="lineNum">     117 </span>            : // End the arcballs rotation
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 : void Camera::endRotate()</span>
+<span class="lineNum">     119 </span>            : {
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :     arcBall_.end_drag();</span>
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 : }</span>
+<a name="122"><span class="lineNum">     122 </span>            : </a>
+<span class="lineNum">     123 </span>            : // Begins the panning mode
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 : void Camera::beginPan()</span>
+<span class="lineNum">     125 </span>            : {
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :     currentMode_ = PANNING;</span>
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 : }</span>
+<a name="128"><span class="lineNum">     128 </span>            : </a>
+<span class="lineNum">     129 </span>            : // Ends the panning mode
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 : void Camera::endPan()</span>
+<span class="lineNum">     131 </span>            : {
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :     currentMode_ = IDLE;</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 : }</span>
+<a name="134"><span class="lineNum">     134 </span>            : </a>
+<span class="lineNum">     135 </span>            : // Begins the panning mode
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 : void Camera::beginZoom()</span>
+<span class="lineNum">     137 </span>            : {
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :     currentMode_ = ZOOMING;</span>
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 : }</span>
+<a name="140"><span class="lineNum">     140 </span>            : </a>
+<span class="lineNum">     141 </span>            : // Ends the panning mode
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 : void Camera::endZoom()</span>
+<span class="lineNum">     143 </span>            : {
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :     currentMode_ = IDLE;</span>
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 : }</span>
+<a name="146"><span class="lineNum">     146 </span>            : </a>
+<span class="lineNum">     147 </span>            : // Moves the center and eye in the viewplane directions
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 : void Camera::pan(float x, float y)</span>
+<span class="lineNum">     149 </span>            : {
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :     x = x / windowWidth_;</span>
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :     y = y / windowHeight_;</span>
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :     float length = 2 * eyeDir_.length() * tan(30*M_PI/180.0f);</span>
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :     math::vec3 deltax = currentRight() * - x * (length * (windowWidth_/windowHeight_));</span>
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :     math::vec3 deltay = currentUp() * - y * length;</span>
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :     center_ += deltax + deltay;</span>
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :     updateViewMatrix();</span>
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     161 </span>            : 
+<a name="162"><span class="lineNum">     162 </span>            : // Moves the camera towards or away from the center with a speed relative</a>
+<span class="lineNum">     163 </span>            : // to the distance from the center.
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 : void Camera::zoom(float deltaz)</span>
+<span class="lineNum">     165 </span>            : {
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :     eyeDir_ = eyeDir_ * (-deltaz * zoomSpeed_ / windowHeight_ + 1);</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :     updateViewMatrix();</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     169 </span>            : 
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            : // ========================= MATRIX GETTER ===============================
+<a name="172"><span class="lineNum">     172 </span>            : </a>
+<span class="lineNum">     173 </span>            : // Returns the OpenGL formatted view matrix
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 : const float * Camera::getViewMatrix()</span>
+<span class="lineNum">     175 </span>            : {
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :     return viewMatrix_.get();</span>
+<span class="lineNum">     177 </span>            : }
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            : // ========================= INTERNAL CAMERA UPDATING ====================
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span>            : // Updates the view matrix:
+<span class="lineNum">     182 </span>            : // * Computes the view rotation for the lookat
+<span class="lineNum">     183 </span>            : // * Gets the arcball rotation matrix
+<span class="lineNum">     184 </span>            : // * Computes the following transformation:
+<span class="lineNum">     185 </span>            : //      translate points by -eye (move origin to eye)
+<span class="lineNum">     186 </span>            : //      rotate by lookatRot
+<span class="lineNum">     187 </span>            : //      translate into the view center (translation)
+<a name="188"><span class="lineNum">     188 </span>            : //      rotate with the arcball rotation</a>
+<span class="lineNum">     189 </span>            : //      translate back out
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 : void Camera::updateViewMatrix()</span>
+<span class="lineNum">     191 </span>            : {
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :     math::vec3 eye = center_ - eyeDir_;</span>
+<span class="lineNum">     193 </span>            : 
+<span class="lineNum">     194 </span>            :     // Get the lookat matrices
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :     math::mat4 lookatRot(center_,eye, math::vec3(0,1,0));</span>
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :     math::mat4 lookAtTranslation(1,0,0,-eye[0],</span>
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 :                      0,1,0,-eye[1],</span>
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :                      0,0,1,-eye[2],</span>
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                      0,0,0,1);</span>
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            :     // Create the translation matrices into and out of the view center
+<span class="lineNum">     202 </span>            :     math::mat4 translation = math::mat4(1,0,0,0,
+<span class="lineNum">     203 </span>            :                                         0,1,0,0,
+<span class="lineNum">     204 </span>            :                                         0,0,1,eyeDir_.length(),
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                                         0,0,0,1);</span>
+<span class="lineNum">     206 </span>            : 
+<span class="lineNum">     207 </span>            :     math::mat4 invtranslation = math::mat4(1,0,0,0,
+<span class="lineNum">     208 </span>            :                                         0,1,0,0,
+<span class="lineNum">     209 </span><span class="lineNoCov">          0 :                                         0,0,1,-eyeDir_.length(),</span>
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 :                                         0,0,0,1);</span>
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :     math::mat4 arcRot = arcBall_.get_mat();</span>
+<span class="lineNum">     213 </span>            : 
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :     viewMatrix_ =  (invtranslation * arcRot.transpose() * translation  * lookatRot * lookAtTranslation).transpose();</span>
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 : }</span>
+<a name="216"><span class="lineNum">     216 </span>            : </a>
+<span class="lineNum">     217 </span>            : // Gets the up vector of the current view plane
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 : math::vec3 Camera::currentUp()</span>
+<span class="lineNum">     219 </span>            : {
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 :     math::vec4 up = viewMatrix_.colvec(1);</span>
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :     return math::vec3(up[0],up[1],up[2]);</span>
+<span class="lineNum">     222 </span>            : }
+<a name="223"><span class="lineNum">     223 </span>            : </a>
+<span class="lineNum">     224 </span>            : // Gets the right vector of the current view plane
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 : math::vec3 Camera::currentRight()</span>
+<span class="lineNum">     226 </span>            : {
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :     math::vec4 right = viewMatrix_.colvec(0);</span>
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :     return math::vec3(right[0],right[1],right[2]);</span>
+<span class="lineNum">     229 </span>            : }
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

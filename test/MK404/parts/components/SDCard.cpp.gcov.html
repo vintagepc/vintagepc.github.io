@@ -1,0 +1,653 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/components/SDCard.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/components</a> - SDCard.cpp<span style="font-size: 80%;"> (source / <a href="SDCard.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">287</td>
+            <td class="headerCovTableEntryLo">0.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryLo">13.3 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         SDCard.cpp - an SD card SPI simulator.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Original  Copyright (C) Philip Withnall 2012 &lt;philip@tecnocode.co.uk&gt; as part of Brewing Logger
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         Modified for use with MK404 in 2020 by leptun &lt;https://github.com/leptun/&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         Rewritten to C++ in 2020 by VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            :         This file is part of MK404.
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">      13 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      14 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      15 </span>            :         (at your option) any later version.
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      18 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      19 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      20 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      23 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      24 </span>            : */
+<span class="lineNum">      25 </span>            : #include &quot;SDCard.h&quot;
+<span class="lineNum">      26 </span>            : #include &lt;assert.h&gt;    // for assert
+<span class="lineNum">      27 </span>            : #include &lt;errno.h&gt;     // for errno
+<span class="lineNum">      28 </span>            : #include &lt;fcntl.h&gt;     // for open, O_CLOEXEC, O_CREAT, O_RDWR
+<span class="lineNum">      29 </span>            : #include &lt;stdio.h&gt;     // for printf, fprintf, NULL, size_t, stderr
+<span class="lineNum">      30 </span>            : #include &lt;string.h&gt;    // for memset
+<span class="lineNum">      31 </span>            : #include &lt;sys/file.h&gt;  // for flock, LOCK_UN, LOCK_EX
+<span class="lineNum">      32 </span>            : #include &lt;sys/mman.h&gt;  // for mmap, msync, munmap, MAP_FAILED, MAP_SHARED
+<span class="lineNum">      33 </span>            : #include &lt;sys/stat.h&gt;  // for fstat, stat, S_IRUSR, S_IWUSR
+<span class="lineNum">      34 </span>            : #include &lt;unistd.h&gt;    // for close, off_t, ftruncate
+<a name="35"><span class="lineNum">      35 </span>            : #include &quot;TelemetryHost.h&quot;</a>
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 : static uint8_t CRC7(const uint8_t data[], size_t count)</span>
+<span class="lineNum">      38 </span>            : {
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :         const uint8_t poly = 0b10001001;</span>
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :         uint8_t crc = 0;</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :         size_t i =0;</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :         int j = 0;</span>
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :         for (i = 0; i &lt; count; i++) {</span>
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :                 crc ^= data[i];</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                 for (j = 0; j &lt; 8; j++) {</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :                         crc = (crc &amp; 0x80u) ? ((crc &lt;&lt; 1) ^ (poly &lt;&lt; 1)) : (crc &lt;&lt; 1);</span>
+<span class="lineNum">      47 </span>            :                 }
+<span class="lineNum">      48 </span>            :         }
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :         return crc | 0x01;</span>
+<a name="50"><span class="lineNum">      50 </span>            : }</a>
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 : Scriptable::LineStatus SDCard::ProcessAction(unsigned int iAct, const vector&lt;string&gt; &amp;vArgs)</span>
+<span class="lineNum">      53 </span>            : {
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :         switch (iAct)</span>
+<span class="lineNum">      55 </span>            :         {
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :                 case ActUnmount:</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :                         Unmount();</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :                         return LineStatus::Finished;</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                 case ActMountLast:</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                         Mount();</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :                         return LineStatus::Finished;</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                 case ActMountFile:</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :                         return Mount(vArgs.at(0)) ? LineStatus::Error : LineStatus::Finished; // 0 = success.</span>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :         };
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         return LineStatus::Unhandled;</span>
+<a name="67"><span class="lineNum">      67 </span>            : }</a>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 : inline void SDCard::COMMAND_RESPONSE_R1(uint8_t status)</span>
+<span class="lineNum">      70 </span>            : {
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :         m_command_response.data[0] = status &amp; 0x7f;</span>
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :         m_command_response.length = 1;</span>
+<a name="73"><span class="lineNum">      73 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 : inline void SDCard::COMMAND_RESPONSE_R3(uint8_t status, uint32_t payload)</span>
+<span class="lineNum">      76 </span>            : {
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :         m_command_response.data[0] = (status &amp; 0x7f);</span>
+<span class="lineNum">      78 </span><span class="lineNoCov">          0 :         m_command_response.data[1] = (payload &gt;&gt; 24);</span>
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :         m_command_response.data[2] = (payload &gt;&gt; 16);</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :         m_command_response.data[3] = (payload &gt;&gt; 8);</span>
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :         m_command_response.data[4] = payload;</span>
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :         m_command_response.length= 5;</span>
+<span class="lineNum">      83 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : const uint16_t SDCard::m_crctab[256] = {
+<span class="lineNum">      86 </span>            :         0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
+<span class="lineNum">      87 </span>            :         0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
+<span class="lineNum">      88 </span>            :         0x1231, 0x0210, 0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
+<span class="lineNum">      89 </span>            :         0x9339, 0x8318, 0xB37B, 0xA35A, 0xD3BD, 0xC39C, 0xF3FF, 0xE3DE,
+<span class="lineNum">      90 </span>            :         0x2462, 0x3443, 0x0420, 0x1401, 0x64E6, 0x74C7, 0x44A4, 0x5485,
+<span class="lineNum">      91 </span>            :         0xA56A, 0xB54B, 0x8528, 0x9509, 0xE5EE, 0xF5CF, 0xC5AC, 0xD58D,
+<span class="lineNum">      92 </span>            :         0x3653, 0x2672, 0x1611, 0x0630, 0x76D7, 0x66F6, 0x5695, 0x46B4,
+<span class="lineNum">      93 </span>            :         0xB75B, 0xA77A, 0x9719, 0x8738, 0xF7DF, 0xE7FE, 0xD79D, 0xC7BC,
+<span class="lineNum">      94 </span>            :         0x48C4, 0x58E5, 0x6886, 0x78A7, 0x0840, 0x1861, 0x2802, 0x3823,
+<span class="lineNum">      95 </span>            :         0xC9CC, 0xD9ED, 0xE98E, 0xF9AF, 0x8948, 0x9969, 0xA90A, 0xB92B,
+<span class="lineNum">      96 </span>            :         0x5AF5, 0x4AD4, 0x7AB7, 0x6A96, 0x1A71, 0x0A50, 0x3A33, 0x2A12,
+<span class="lineNum">      97 </span>            :         0xDBFD, 0xCBDC, 0xFBBF, 0xEB9E, 0x9B79, 0x8B58, 0xBB3B, 0xAB1A,
+<span class="lineNum">      98 </span>            :         0x6CA6, 0x7C87, 0x4CE4, 0x5CC5, 0x2C22, 0x3C03, 0x0C60, 0x1C41,
+<span class="lineNum">      99 </span>            :         0xEDAE, 0xFD8F, 0xCDEC, 0xDDCD, 0xAD2A, 0xBD0B, 0x8D68, 0x9D49,
+<span class="lineNum">     100 </span>            :         0x7E97, 0x6EB6, 0x5ED5, 0x4EF4, 0x3E13, 0x2E32, 0x1E51, 0x0E70,
+<span class="lineNum">     101 </span>            :         0xFF9F, 0xEFBE, 0xDFDD, 0xCFFC, 0xBF1B, 0xAF3A, 0x9F59, 0x8F78,
+<span class="lineNum">     102 </span>            :         0x9188, 0x81A9, 0xB1CA, 0xA1EB, 0xD10C, 0xC12D, 0xF14E, 0xE16F,
+<span class="lineNum">     103 </span>            :         0x1080, 0x00A1, 0x30C2, 0x20E3, 0x5004, 0x4025, 0x7046, 0x6067,
+<span class="lineNum">     104 </span>            :         0x83B9, 0x9398, 0xA3FB, 0xB3DA, 0xC33D, 0xD31C, 0xE37F, 0xF35E,
+<span class="lineNum">     105 </span>            :         0x02B1, 0x1290, 0x22F3, 0x32D2, 0x4235, 0x5214, 0x6277, 0x7256,
+<span class="lineNum">     106 </span>            :         0xB5EA, 0xA5CB, 0x95A8, 0x8589, 0xF56E, 0xE54F, 0xD52C, 0xC50D,
+<span class="lineNum">     107 </span>            :         0x34E2, 0x24C3, 0x14A0, 0x0481, 0x7466, 0x6447, 0x5424, 0x4405,
+<span class="lineNum">     108 </span>            :         0xA7DB, 0xB7FA, 0x8799, 0x97B8, 0xE75F, 0xF77E, 0xC71D, 0xD73C,
+<span class="lineNum">     109 </span>            :         0x26D3, 0x36F2, 0x0691, 0x16B0, 0x6657, 0x7676, 0x4615, 0x5634,
+<span class="lineNum">     110 </span>            :         0xD94C, 0xC96D, 0xF90E, 0xE92F, 0x99C8, 0x89E9, 0xB98A, 0xA9AB,
+<span class="lineNum">     111 </span>            :         0x5844, 0x4865, 0x7806, 0x6827, 0x18C0, 0x08E1, 0x3882, 0x28A3,
+<span class="lineNum">     112 </span>            :         0xCB7D, 0xDB5C, 0xEB3F, 0xFB1E, 0x8BF9, 0x9BD8, 0xABBB, 0xBB9A,
+<span class="lineNum">     113 </span>            :         0x4A75, 0x5A54, 0x6A37, 0x7A16, 0x0AF1, 0x1AD0, 0x2AB3, 0x3A92,
+<span class="lineNum">     114 </span>            :         0xFD2E, 0xED0F, 0xDD6C, 0xCD4D, 0xBDAA, 0xAD8B, 0x9DE8, 0x8DC9,
+<span class="lineNum">     115 </span>            :         0x7C26, 0x6C07, 0x5C64, 0x4C45, 0x3CA2, 0x2C83, 0x1CE0, 0x0CC1,
+<span class="lineNum">     116 </span>            :         0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8,
+<span class="lineNum">     117 </span>            :         0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0
+<span class="lineNum">     118 </span>            : };
+<span class="lineNum">     119 </span>            : 
+<span class="lineNum">     120 </span>            : /* Debug macros. */
+<span class="lineNum">     121 </span>            : // #define SD_CARD_DEBUG
+<span class="lineNum">     122 </span>            : #ifdef SD_CARD_DEBUG
+<span class="lineNum">     123 </span>            : #define DEBUG(m, ...) fprintf (stderr, &quot;%lu: sdcard: &quot; m &quot;\n&quot;, avr-&gt;cycle, __VA_ARGS__);
+<span class="lineNum">     124 </span>            : #else
+<span class="lineNum">     125 </span>            : #define DEBUG(m, ...) do{}while(0)
+<span class="lineNum">     126 </span>            : #endif
+<a name="127"><span class="lineNum">     127 </span>            : </a>
+<span class="lineNum">     128 </span>            : /* Process the command currently in the command_header and emit a response. */
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 : SDCard::State SDCard::ProcessCommand()</span>
+<span class="lineNum">     130 </span>            : {
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :         SDCard::State next_state = State::IDLE;</span>
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            :         DEBUG (&quot;Processing command %u.&quot;, m_CmdIn.bits.cmd);
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :         switch (m_CmdIn.bits.cmd) {</span>
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :                 case Command::CMD0:</span>
+<span class="lineNum">     137 </span>            :                         /* GO_IDLE_STATE. Return that we are in the idle state if we have a disk mounted; return an error otherwise. */
+<span class="lineNum">     138 </span>            :                         /* TODO: checksum isn't checked */
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :                         if (m_data == NULL) {</span>
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :                                 COMMAND_RESPONSE_R1 (0xff);</span>
+<span class="lineNum">     141 </span>            :                         } else {
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :                                 COMMAND_RESPONSE_R1 (R1_IN_IDLE_STATE);</span>
+<span class="lineNum">     143 </span>            :                         }
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :                 case Command::CMD8:</span>
+<span class="lineNum">     147 </span>            :                         /* State that we support SDv2 by returning 0x01 as the first byte, followed by an (arbitrary) 4-byte trailer. This is an R7
+<span class="lineNum">     148 </span>            :                          * response. The last 12 bits signify that the card can operate at a Vdd range of 2.7--3.6V. */
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :                         m_command_response.data[0] = R1_IN_IDLE_STATE;</span>
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 :                         m_command_response.data[1] = 0x00;</span>
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :                         m_command_response.data[2] = 0x00;</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :                         m_command_response.data[3] = 0x01;</span>
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :                         m_command_response.data[4] = m_CmdIn.bytes[1];</span>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :                         m_command_response.length = 5;</span>
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :                 case Command::CMD9:</span>
+<span class="lineNum">     157 </span>            :                         /* SEND_CSD. */
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :                         COMMAND_RESPONSE_R1 (0x00);</span>
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 :                         next_state = State::DATA_READ_TOKEN;</span>
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :                         read_bytes_remaining = 16;</span>
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :                         read_ptr = m_csd;</span>
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :                 case Command::CMD12:</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :                         m_command_response.data[0] = 0x01;</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :                         m_command_response.data[1] = 0x00;</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :                         m_command_response.length = 2;</span>
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :                 case Command::CMD13: {</span>
+<span class="lineNum">     171 </span>            :                         /* SEND_STATUS. TODO: Hackily implemented and without reference to any data sheets. */
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :                         m_command_response.data[0] = 0x00;</span>
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :                         m_command_response.data[1] = 0x00;</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :                         m_command_response.length = 2;</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     176 </span>            :                 }
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :                 case Command::CMD16: {</span>
+<span class="lineNum">     178 </span>            :                         /* SET_BLOCKLEN. */
+<span class="lineNum">     179 </span>            :                         uint32_t blocklen;
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :                         blocklen = m_CmdIn.bits.address;</span>
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :                         if (blocklen !=512)</span>
+<span class="lineNum">     183 </span>            :                         {
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :                                 fprintf(stderr,&quot;Tried to change blocklen to %u but only 512 is supported.\n&quot;,blocklen);</span>
+<span class="lineNum">     185 </span>            :                         }
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :                         assert (blocklen == 512);</span>
+<span class="lineNum">     187 </span>            :                         /* TODO: only 512B blocks are supported at the moment. */
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :                         COMMAND_RESPONSE_R1 (0x00);</span>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     192 </span>            :                 }
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                 case Command::CMD17: {</span>
+<span class="lineNum">     194 </span>            :                         off_t addr;
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span>            :                         /* READ_SINGLE_BLOCK. Reads a block of the size selected by the SET_BLOCKLEN command.
+<span class="lineNum">     197 </span>            :                          * Initiate a 512B read (TODO: we ignore SET_BLOCKLEN) from the address provided in the command. */
+<span class="lineNum">     198 </span><span class="lineNoCov">          0 :                         addr = AddressToDataIdx(m_CmdIn.bits.address);</span>
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span>            :                         DEBUG (&quot;Read single block (CMD17) from address %lu.&quot;, addr);
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :                         if (!IsBlockAligned(addr)) {</span>
+<span class="lineNum">     203 </span>            :                                 /* Address misaligned. */
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :                                 COMMAND_RESPONSE_R1 (R1_ADDRESS_MISALIGN);</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                         } else if (addr &gt; m_data_length) {</span>
+<span class="lineNum">     206 </span>            :                                 /* Address out of range. */
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                                 COMMAND_RESPONSE_R1 (R1_ADDRESS_OUT_OF_RANGE);</span>
+<span class="lineNum">     208 </span>            :                         } else {
+<span class="lineNum">     209 </span>            :                                 /* Success. Proceed to read the data. */
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 :                                 COMMAND_RESPONSE_R1 (0x00);</span>
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 :                                 next_state = State::DATA_READ_TOKEN;</span>
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                                 read_ptr = m_data + addr;</span>
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :                                 read_bytes_remaining = BLOCK_SIZE;</span>
+<span class="lineNum">     215 </span>            :                         }
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     218 </span>            :                 }
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 :                 case Command::CMD24: {</span>
+<span class="lineNum">     220 </span>            :                         off_t addr;
+<span class="lineNum">     221 </span>            : 
+<span class="lineNum">     222 </span>            :                         /* WRITE_BLOCK. Writes a block of the size selected by the SET_BLOCKLEN command.
+<span class="lineNum">     223 </span>            :                          * TODO: we ignore SET_BLOCKLEN. */
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :                         addr = AddressToDataIdx(m_CmdIn.bits.address);</span>
+<span class="lineNum">     225 </span>            : 
+<span class="lineNum">     226 </span>            :                         DEBUG (&quot;Write block (CMD24) from address %lu.&quot;, addr);
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :                         if (!IsBlockAligned(addr)) {</span>
+<span class="lineNum">     229 </span>            :                                 /* Address misaligned. */
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 :                                 COMMAND_RESPONSE_R1 (R1_ADDRESS_MISALIGN);</span>
+<span class="lineNum">     231 </span><span class="lineNoCov">          0 :                         } else if (addr &gt; m_data_length) {</span>
+<span class="lineNum">     232 </span>            :                                 /* Address out of range. */
+<span class="lineNum">     233 </span><span class="lineNoCov">          0 :                                 COMMAND_RESPONSE_R1 (R1_ADDRESS_OUT_OF_RANGE);</span>
+<span class="lineNum">     234 </span>            :                         } else {
+<span class="lineNum">     235 </span>            :                                 /* Success. Proceed to write the data. */
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :                                 COMMAND_RESPONSE_R1 (0x00);</span>
+<span class="lineNum">     237 </span>            : 
+<span class="lineNum">     238 </span><span class="lineNoCov">          0 :                                 next_state = State::DATA_WRITE_TOKEN;</span>
+<span class="lineNum">     239 </span><span class="lineNoCov">          0 :                                 write_ptr = m_data + addr;</span>
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 :                                 write_bytes_remaining = BLOCK_SIZE;</span>
+<span class="lineNum">     241 </span>            :                         }
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     244 </span>            :                 }
+<span class="lineNum">     245 </span><span class="lineNoCov">          0 :                 case Command::CMD41:</span>
+<span class="lineNum">     246 </span>            :                         /* Application-specific. TODO: No idea what this does. */
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :                         COMMAND_RESPONSE_R1 (0x00);</span>
+<span class="lineNum">     248 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     249 </span><span class="lineNoCov">          0 :                 case Command::CMD55:</span>
+<span class="lineNum">     250 </span>            :                         /* APP_CMD. Indicates to the card that the next command is an application specific command. */
+<span class="lineNum">     251 </span><span class="lineNoCov">          0 :                         COMMAND_RESPONSE_R1 (0x00);</span>
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :                 case Command::CMD58:</span>
+<span class="lineNum">     254 </span>            :                         /* READ_OCR. */
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :                         COMMAND_RESPONSE_R3 (0x00, m_ocr);</span>
+<span class="lineNum">     256 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     257 </span><span class="lineNoCov">          0 :                 default:</span>
+<span class="lineNum">     258 </span>            :                         /* Illegal command. */
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 :                         COMMAND_RESPONSE_R1 (R1_ILLEGAL_COMMAND);</span>
+<span class="lineNum">     260 </span><span class="lineNoCov">          0 :                         fprintf (stderr, &quot;%lu: sdcard: Unknown SD card command ‘%u’.\n&quot;, static_cast&lt;unsigned long&gt;(m_pAVR-&gt;cycle), m_CmdIn.bits.cmd);</span>
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     262 </span>            :         }
+<span class="lineNum">     263 </span>            : 
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :         return next_state;</span>
+<span class="lineNum">     265 </span>            : }
+<a name="266"><span class="lineNum">     266 </span>            : </a>
+<span class="lineNum">     267 </span>            : /* Called when the nSS IRQ is fired. */
+<span class="lineNum">     268 </span><span class="lineNoCov">          0 : void SDCard::OnCSELIn (struct avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     269 </span>            : {
+<span class="lineNum">     270 </span><span class="lineNoCov">          0 :         m_bSelected = value==0;</span>
+<span class="lineNum">     271 </span>            :         DEBUG (&quot;SD card selected: %u. In state: %d&quot;, m_bSelected, m_state);
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :         if (!m_bSelected)</span>
+<span class="lineNum">     273 </span><span class="lineNoCov">          0 :                 m_state = State::IDLE;</span>
+<a name="274"><span class="lineNum">     274 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     275 </span>            : 
+<span class="lineNum">     276 </span><span class="lineNoCov">          0 : uint8_t SDCard::OnSPIIn(struct avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     277 </span>            : {
+<span class="lineNum">     278 </span>            :         DEBUG (&quot;Received byte %x (in state %u).&quot;, value, m_state);
+<span class="lineNum">     279 </span><span class="lineNoCov">          0 :         uint8_t uiReply = 0xFF;</span>
+<span class="lineNum">     280 </span>            :         /* Handle the command. */
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :         switch (m_state) {</span>
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :                 case State::IDLE:</span>
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :                         if (value == 0xff) {</span>
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :                                 SetSendReplyFlag(); // Sends 0xFF</span>
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     286 </span>            :                         } else {
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :                                 m_state = State::COMMAND_REQUEST;</span>
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 :                                 m_CmdCount = 0;</span>
+<span class="lineNum">     289 </span>            : 
+<span class="lineNum">     290 </span>            :                                 /* Fall through. */
+<span class="lineNum">     291 </span>            :                         }
+<span class="lineNum">     292 </span>            : 
+<span class="lineNum">     293 </span>            :                         /* Fall through. */
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 :                 case State::COMMAND_REQUEST:</span>
+<span class="lineNum">     295 </span>            :                         /* Receive a 6-byte command header. */
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :                         m_CmdIn.all&lt;&lt;=8;</span>
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :                         m_CmdIn.all |= (uint8_t)value;</span>
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span><span class="lineNoCov">          0 :                         if (++m_CmdCount &gt; 5) {</span>
+<span class="lineNum">     300 </span>            :                                 /* If we've finished receiving the packet, process it and move to the response state. */
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 :                                 m_state = State::COMMAND_RESPONSE;</span>
+<span class="lineNum">     302 </span><span class="lineNoCov">          0 :                                 m_CmdCount = 0;</span>
+<span class="lineNum">     303 </span>            :                         }
+<span class="lineNum">     304 </span>            : 
+<span class="lineNum">     305 </span>            :                         /* Dummy response for each of the header bytes. */
+<span class="lineNum">     306 </span><span class="lineNoCov">          0 :                         uiReply = 0x00;</span>
+<span class="lineNum">     307 </span><span class="lineNoCov">          0 :                         SetSendReplyFlag();</span>
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     310 </span><span class="lineNoCov">          0 :                 case State::COMMAND_RESPONSE: {</span>
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :                         State next_state = State::IDLE;</span>
+<span class="lineNum">     312 </span>            : 
+<span class="lineNum">     313 </span>            :                         /* Process the command. We do this here so that we can move directly into the DATA_READ state afterwards if required. */
+<span class="lineNum">     314 </span><span class="lineNoCov">          0 :                         if (m_CmdCount == 0) {</span>
+<span class="lineNum">     315 </span><span class="lineNoCov">          0 :                                 next_state = ProcessCommand();</span>
+<span class="lineNum">     316 </span>            :                         }
+<span class="lineNum">     317 </span>            : 
+<span class="lineNum">     318 </span>            :                         /* Output the response stored in m_command_response. */
+<span class="lineNum">     319 </span><span class="lineNoCov">          0 :                         if (m_CmdCount &lt; m_command_response.length) {</span>
+<span class="lineNum">     320 </span>            :                                 /* Outputting response bytes. */
+<span class="lineNum">     321 </span><span class="lineNoCov">          0 :                                 uiReply = m_command_response.data[m_CmdCount];</span>
+<span class="lineNum">     322 </span>            :                         }  // Else sends 0xFF
+<span class="lineNum">     323 </span><span class="lineNoCov">          0 :                         SetSendReplyFlag();</span>
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span><span class="lineNoCov">          0 :                         if (++m_CmdCount &gt;= m_command_response.length) {</span>
+<span class="lineNum">     326 </span>            :                                 /* Have we finished transmitting the response? */
+<span class="lineNum">     327 </span><span class="lineNoCov">          0 :                                 m_state = next_state;</span>
+<span class="lineNum">     328 </span>            :                         }
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     331 </span>            :                 }
+<span class="lineNum">     332 </span><span class="lineNoCov">          0 :                 case State::DATA_READ_TOKEN:</span>
+<span class="lineNum">     333 </span>            :                         /* Output the data token. */
+<span class="lineNum">     334 </span><span class="lineNoCov">          0 :                         uiReply = 0xfe;</span>
+<span class="lineNum">     335 </span><span class="lineNoCov">          0 :                         SetSendReplyFlag();</span>
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 :                         m_state = State::DATA_READ;</span>
+<span class="lineNum">     337 </span><span class="lineNoCov">          0 :                         m_CRC = 0;</span>
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     339 </span><span class="lineNoCov">          0 :                 case State::DATA_READ:</span>
+<span class="lineNum">     340 </span>            :                         /* Pump out data to the microcontroller. */
+<span class="lineNum">     341 </span><span class="lineNoCov">          0 :                         uiReply = *(read_ptr);</span>
+<span class="lineNum">     342 </span><span class="lineNoCov">          0 :                         CRC_ADD(*(read_ptr));</span>
+<span class="lineNum">     343 </span><span class="lineNoCov">          0 :                         read_ptr++;</span>
+<span class="lineNum">     344 </span><span class="lineNoCov">          0 :                         SetSendReplyFlag();</span>
+<span class="lineNum">     345 </span><span class="lineNoCov">          0 :                         if (--read_bytes_remaining == 0) {</span>
+<span class="lineNum">     346 </span>            :                                 /* Have we finished? */
+<span class="lineNum">     347 </span><span class="lineNoCov">          0 :                                 m_state = State::DATA_READ_CRC;</span>
+<span class="lineNum">     348 </span><span class="lineNoCov">          0 :                                 read_bytes_remaining = 2;</span>
+<span class="lineNum">     349 </span>            :                         }
+<span class="lineNum">     350 </span>            : 
+<span class="lineNum">     351 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     352 </span><span class="lineNoCov">          0 :                 case State::DATA_READ_CRC:</span>
+<span class="lineNum">     353 </span>            :                         /* Output the trailing CRC for a read. */
+<span class="lineNum">     354 </span><span class="lineNoCov">          0 :                         uiReply = m_CRC &gt;&gt; (8 * (--read_bytes_remaining));</span>
+<span class="lineNum">     355 </span><span class="lineNoCov">          0 :                         SetSendReplyFlag();</span>
+<span class="lineNum">     356 </span>            : 
+<span class="lineNum">     357 </span><span class="lineNoCov">          0 :                         if (read_bytes_remaining == 0) {</span>
+<span class="lineNum">     358 </span>            :                                 /* Have we outputted both bytes of the CRC? */
+<span class="lineNum">     359 </span><span class="lineNoCov">          0 :                                 m_state = State::IDLE;</span>
+<span class="lineNum">     360 </span>            :                         }
+<span class="lineNum">     361 </span>            : 
+<span class="lineNum">     362 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     363 </span><span class="lineNoCov">          0 :                 case State::DATA_WRITE_TOKEN:</span>
+<span class="lineNum">     364 </span>            :                         /* Receive the data token. */
+<span class="lineNum">     365 </span>            :                         /* TODO: We don't check the token is valid. */
+<span class="lineNum">     366 </span><span class="lineNoCov">          0 :                         if (value == 0xfe) {</span>
+<span class="lineNum">     367 </span>            :                                 /* Valid write token. */
+<span class="lineNum">     368 </span><span class="lineNoCov">          0 :                                 m_state = State::DATA_WRITE;</span>
+<span class="lineNum">     369 </span>            :                         }
+<span class="lineNum">     370 </span>            :                         /* The microcontroller is waiting for us to be ready. */
+<span class="lineNum">     371 </span><span class="lineNoCov">          0 :                         SetSendReplyFlag(); // Sends 0xFF</span>
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     374 </span><span class="lineNoCov">          0 :                 case State::DATA_WRITE:</span>
+<span class="lineNum">     375 </span>            :                         /* Receive data from the microcontroller. */
+<span class="lineNum">     376 </span><span class="lineNoCov">          0 :                         *(write_ptr++) = value;</span>
+<span class="lineNum">     377 </span><span class="lineNoCov">          0 :                         SetSendReplyFlag(); // Sends 0xFF</span>
+<span class="lineNum">     378 </span>            : 
+<span class="lineNum">     379 </span><span class="lineNoCov">          0 :                         if (--write_bytes_remaining == 0) {</span>
+<span class="lineNum">     380 </span>            :                                 /* Have we finished? */
+<span class="lineNum">     381 </span><span class="lineNoCov">          0 :                                 m_state = State::DATA_WRITE_CRC;</span>
+<span class="lineNum">     382 </span><span class="lineNoCov">          0 :                                 write_bytes_remaining = 2;</span>
+<span class="lineNum">     383 </span>            :                         }
+<span class="lineNum">     384 </span>            : 
+<span class="lineNum">     385 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     386 </span><span class="lineNoCov">          0 :                 case State::DATA_WRITE_CRC:</span>
+<span class="lineNum">     387 </span>            :                         /* Receive the trailing CRC for a write. */
+<span class="lineNum">     388 </span>            :                         /* TODO: check the CRC. */
+<span class="lineNum">     389 </span><span class="lineNoCov">          0 :                         uiReply = 0x05;</span>
+<span class="lineNum">     390 </span>            :                         // if (write_bytes_remaining &gt; 0) {
+<span class="lineNum">     391 </span>            :                         //      /* Write out two bytes to receive both bytes of the CRC. */
+<span class="lineNum">     392 </span>            :                         //      _sd_card_miso_send_byte (self, 0x05);
+<span class="lineNum">     393 </span>            :                         // } else {
+<span class="lineNum">     394 </span>            :                         //      /* Write out our CRC status. *//* TODO: no idea what this means */
+<span class="lineNum">     395 </span>            :                         //      _sd_card_miso_send_byte (self, 0x05);
+<span class="lineNum">     396 </span>            :                         // }
+<span class="lineNum">     397 </span><span class="lineNoCov">          0 :                         SetSendReplyFlag();</span>
+<span class="lineNum">     398 </span>            : 
+<span class="lineNum">     399 </span><span class="lineNoCov">          0 :                         if (write_bytes_remaining-- == 0) {</span>
+<span class="lineNum">     400 </span>            :                                 /* Have we received both bytes of the CRC and transmitted our response? */
+<span class="lineNum">     401 </span><span class="lineNoCov">          0 :                                 m_state = State::IDLE;</span>
+<span class="lineNum">     402 </span><span class="lineNoCov">          0 :                                 write_bytes_remaining = 0;</span>
+<span class="lineNum">     403 </span>            :                         }
+<span class="lineNum">     404 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     405 </span><span class="lineNoCov">          0 :                 default:</span>
+<span class="lineNum">     406 </span>            :                         /* Shouldn't be reached. */
+<span class="lineNum">     407 </span><span class="lineNoCov">          0 :                         assert (0);</span>
+<span class="lineNum">     408 </span>            :         }
+<span class="lineNum">     409 </span><span class="lineNoCov">          0 :         return uiReply;</span>
+<a name="410"><span class="lineNum">     410 </span>            : }</a>
+<span class="lineNum">     411 </span>            : 
+<span class="lineNum">     412 </span><span class="lineNoCov">          0 : void SDCard::InitCSD()</span>
+<span class="lineNum">     413 </span>            : {
+<span class="lineNum">     414 </span><span class="lineNoCov">          0 :         memset(&amp;m_csd, 0, sizeof(m_csd));</span>
+<span class="lineNum">     415 </span>            : 
+<span class="lineNum">     416 </span><span class="lineNoCov">          0 :         const uint16_t CCC = 0x5B5;</span>
+<span class="lineNum">     417 </span><span class="lineNoCov">          0 :         const uint8_t SECTOR_SIZE = 0x7F;</span>
+<span class="lineNum">     418 </span><span class="lineNoCov">          0 :         const uint8_t WP_GRP_SIZE = 0x00;</span>
+<span class="lineNum">     419 </span><span class="lineNoCov">          0 :         const uint8_t WRITE_BL_LEN = 9;</span>
+<span class="lineNum">     420 </span>            : 
+<span class="lineNum">     421 </span><span class="lineNoCov">          0 :         m_csd[0] = 0b01 &lt;&lt; 6; //CSD_STRUCTURE</span>
+<span class="lineNum">     422 </span><span class="lineNoCov">          0 :         m_csd[1] = 0x0E; //(TAAC)</span>
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 :         m_csd[2] = 0x00; //(NSAC)</span>
+<span class="lineNum">     424 </span><span class="lineNoCov">          0 :         m_csd[3] = 0x32; //(TRAN_SPEED)</span>
+<span class="lineNum">     425 </span><span class="lineNoCov">          0 :         m_csd[4] = CCC &gt;&gt; 4; //CCC MSB</span>
+<span class="lineNum">     426 </span><span class="lineNoCov">          0 :         m_csd[5] = (CCC &amp; 0xF) &lt;&lt; 4; //CCC LSB</span>
+<span class="lineNum">     427 </span><span class="lineNoCov">          0 :         m_csd[5] |= READ_BL_LEN &amp; 0xF; //(READ_BL_LEN)</span>
+<span class="lineNum">     428 </span><span class="lineNoCov">          0 :         m_csd[10] = (1 &lt;&lt; 6); //(ERASE_BLK_EN)</span>
+<span class="lineNum">     429 </span><span class="lineNoCov">          0 :         m_csd[10] |= SECTOR_SIZE &gt;&gt; 1; // (SECTOR_SIZE MSB)</span>
+<span class="lineNum">     430 </span><span class="lineNoCov">          0 :         m_csd[11] = (uint8_t)(SECTOR_SIZE &lt;&lt; 7); // (SECTOR_SIZE LSB)</span>
+<span class="lineNum">     431 </span><span class="lineNoCov">          0 :         m_csd[11] |= WP_GRP_SIZE; //(WP_GRP_SIZE)</span>
+<span class="lineNum">     432 </span><span class="lineNoCov">          0 :         m_csd[12] |= 0 &lt;&lt; 7; //(WP_GRP_ENABLE)</span>
+<span class="lineNum">     433 </span><span class="lineNoCov">          0 :         m_csd[12] = 0x02 &lt;&lt; 2; //(R2W_FACTOR)</span>
+<span class="lineNum">     434 </span><span class="lineNoCov">          0 :         m_csd[12] |= WRITE_BL_LEN &gt;&gt; 2; //(WRITE_BL_LEN MSB)</span>
+<span class="lineNum">     435 </span><span class="lineNoCov">          0 :         m_csd[13] = (uint8_t)(WRITE_BL_LEN &lt;&lt; 6); //(WRITE_BL_LEN LSB)</span>
+<span class="lineNum">     436 </span><span class="lineNoCov">          0 :         m_csd[13] |= 0 &lt;&lt; 5; //(WRITE_BL_PARTIAL)</span>
+<span class="lineNum">     437 </span><span class="lineNoCov">          0 :         m_csd[14] = 0 &lt;&lt; 7; //(FILE_FORMAT_GRP)</span>
+<span class="lineNum">     438 </span><span class="lineNoCov">          0 :         m_csd[14] |= 1 &lt;&lt; 6; //COPY</span>
+<span class="lineNum">     439 </span><span class="lineNoCov">          0 :         m_csd[14] |= 0 &lt;&lt; 5; //PERM_WRITE_PROTECT</span>
+<span class="lineNum">     440 </span><span class="lineNoCov">          0 :         m_csd[14] |= 0 &lt;&lt; 4; //TMP_WRITE_PROTECT</span>
+<span class="lineNum">     441 </span><span class="lineNoCov">          0 :         m_csd[14] |= 0 &lt;&lt; 2; //(FILE_FORMAT)</span>
+<span class="lineNum">     442 </span><span class="lineNoCov">          0 :         m_csd[15] = CRC7(m_csd, sizeof(m_csd) - 1);</span>
+<a name="443"><span class="lineNum">     443 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     444 </span>            : 
+<span class="lineNum">     445 </span><span class="lineNoCov">          0 : void SDCard::SetCSDCSize(off_t c_size)</span>
+<span class="lineNum">     446 </span>            : {
+<span class="lineNum">     447 </span><span class="lineNoCov">          0 :         assert((c_size % (512 * 1024)) == 0);</span>
+<span class="lineNum">     448 </span>            : 
+<span class="lineNum">     449 </span><span class="lineNoCov">          0 :         const uint32_t C_SIZE = c_size / (512 * 1024);</span>
+<span class="lineNum">     450 </span><span class="lineNoCov">          0 :         assert ((C_SIZE &gt;&gt; 16) == 0); //limit of 32GB</span>
+<span class="lineNum">     451 </span>            : 
+<span class="lineNum">     452 </span><span class="lineNoCov">          0 :         m_csd[9] |= (C_SIZE);</span>
+<span class="lineNum">     453 </span><span class="lineNoCov">          0 :         m_csd[8] |= (C_SIZE &gt;&gt; 8);</span>
+<span class="lineNum">     454 </span><span class="lineNoCov">          0 :         m_csd[7] |= (C_SIZE &gt;&gt; 16);</span>
+<span class="lineNum">     455 </span><span class="lineNoCov">          0 :         m_csd[15] = CRC7(m_csd, sizeof(m_csd) - 1);</span>
+<span class="lineNum">     456 </span>            : #ifdef SD_CARD_DEBUG
+<span class="lineNum">     457 </span>            :         printf(&quot;CSD: &quot;);
+<span class="lineNum">     458 </span>            :         for (int i = 0; i &lt; sizeof(m_csd); i++)
+<span class="lineNum">     459 </span>            :         {
+<span class="lineNum">     460 </span>            :                 printf(&quot;%02hX&quot;, m_csd[i]);
+<span class="lineNum">     461 </span>            :         }
+<span class="lineNum">     462 </span>            :         printf(&quot;\n&quot;);
+<span class="lineNum">     463 </span>            : #endif //SD_CARD_DEBUG
+<a name="464"><span class="lineNum">     464 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     465 </span>            : 
+<span class="lineNum">     466 </span><span class="lineNoCov">          0 : void SDCard::Init(struct avr_t *avr)</span>
+<span class="lineNum">     467 </span>            : {
+<span class="lineNum">     468 </span><span class="lineNoCov">          0 :         _Init(avr,this);</span>
+<span class="lineNum">     469 </span>            : 
+<span class="lineNum">     470 </span><span class="lineNoCov">          0 :         m_ocr |= 1 &lt;&lt; 30; //SDHC</span>
+<span class="lineNum">     471 </span><span class="lineNoCov">          0 :         m_ocr |= 1 &lt;&lt; 31; //Card power up status bit</span>
+<span class="lineNum">     472 </span>            : 
+<span class="lineNum">     473 </span><span class="lineNoCov">          0 :         InitCSD();</span>
+<span class="lineNum">     474 </span><span class="lineNoCov">          0 :         auto pTH = TelemetryHost::GetHost();</span>
+<span class="lineNum">     475 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, SPI_BYTE_IN,{TC::SPI, TC::Storage},8);</span>
+<span class="lineNum">     476 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, SPI_BYTE_OUT,{TC::SPI, TC::Storage},8);</span>
+<span class="lineNum">     477 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, SPI_CSEL, {TC::SPI, TC::Storage, TC::OutputPin});</span>
+<span class="lineNum">     478 </span><span class="lineNoCov">          0 :         pTH-&gt;AddTrace(this, CARD_PRESENT, {TC::InputPin, TC::Storage});</span>
+<a name="479"><span class="lineNum">     479 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     480 </span>            : 
+<span class="lineNum">     481 </span><span class="lineNoCov">          0 : int SDCard::Mount(const std::string &amp;filename, off_t image_size)</span>
+<span class="lineNum">     482 </span>            : {
+<span class="lineNum">     483 </span><span class="lineNoCov">          0 :         int fd = 0;</span>
+<a name="484"><span class="lineNum">     484 </span>            :         void *mapped;</a>
+<span class="lineNum">     485 </span>            : 
+<span class="lineNum">     486 </span><span class="lineNoCov">          0 :         auto OnError  = [fd](int err, bool bLocked = false)</span>
+<span class="lineNum">     487 </span><span class="lineNoCov">          0 :         {</span>
+<span class="lineNum">     488 </span>            :                 /* Clean up after an error. */
+<span class="lineNum">     489 </span><span class="lineNoCov">          0 :                 if (bLocked) {</span>
+<span class="lineNum">     490 </span><span class="lineNoCov">          0 :                         flock (fd, LOCK_UN);</span>
+<span class="lineNum">     491 </span>            :                 }
+<span class="lineNum">     492 </span><span class="lineNoCov">          0 :                 close (fd);</span>
+<span class="lineNum">     493 </span><span class="lineNoCov">          0 :                 return err;</span>
+<span class="lineNum">     494 </span><span class="lineNoCov">          0 :         };</span>
+<span class="lineNum">     495 </span>            : 
+<span class="lineNum">     496 </span>            :         struct stat stat_buf;
+<span class="lineNum">     497 </span><span class="lineNoCov">          0 :         if (!filename.empty())</span>
+<span class="lineNum">     498 </span><span class="lineNoCov">          0 :                 m_strFile = filename; // New file given.</span>
+<span class="lineNum">     499 </span>            : 
+<span class="lineNum">     500 </span>            :         /* Open the specified disk image. */
+<span class="lineNum">     501 </span><span class="lineNoCov">          0 :         fd = open (m_strFile.c_str(), O_RDWR | O_CREAT | O_CLOEXEC, S_IRUSR | S_IWUSR);</span>
+<span class="lineNum">     502 </span>            : 
+<span class="lineNum">     503 </span><span class="lineNoCov">          0 :         if (fd == -1)</span>
+<span class="lineNum">     504 </span><span class="lineNoCov">          0 :                 return errno;</span>
+<span class="lineNum">     505 </span>            : 
+<span class="lineNum">     506 </span>            :         /* Lock it for exclusive access. */
+<span class="lineNum">     507 </span><span class="lineNoCov">          0 :         if (flock (fd, LOCK_EX) == -1)</span>
+<span class="lineNum">     508 </span><span class="lineNoCov">          0 :                 return OnError(errno);</span>
+<span class="lineNum">     509 </span>            : 
+<span class="lineNum">     510 </span>            :         /* Check its size. If it's smaller than the requested size, expand it. Otherwise, ignore any excess size. */
+<span class="lineNum">     511 </span><span class="lineNoCov">          0 :         if (fstat (fd, &amp;stat_buf) == -1)</span>
+<span class="lineNum">     512 </span><span class="lineNoCov">          0 :                 return OnError(errno,true);</span>
+<span class="lineNum">     513 </span>            : 
+<span class="lineNum">     514 </span><span class="lineNoCov">          0 :         if (image_size == 0)</span>
+<span class="lineNum">     515 </span>            :         {
+<span class="lineNum">     516 </span><span class="lineNoCov">          0 :                 image_size = stat_buf.st_size;</span>
+<span class="lineNum">     517 </span><span class="lineNoCov">          0 :                 if (image_size==0)</span>
+<span class="lineNum">     518 </span>            :                 {
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 :                         printf(&quot;No SD image found. Aborting mount.\n&quot;);</span>
+<span class="lineNum">     520 </span><span class="lineNoCov">          0 :                         return OnError(-1,true);</span>
+<span class="lineNum">     521 </span>            :                 }
+<span class="lineNum">     522 </span><span class="lineNoCov">          0 :                 printf(&quot;Autodetected SD image size as %lu Mb\n&quot;, static_cast&lt;unsigned long&gt;(image_size&gt;&gt;20)); // &gt;&gt;20 = div by 1024*1024</span>
+<span class="lineNum">     523 </span>            :         }
+<span class="lineNum">     524 </span><span class="lineNoCov">          0 :         else if (stat_buf.st_size &lt; image_size)</span>
+<span class="lineNum">     525 </span>            :         {
+<span class="lineNum">     526 </span><span class="lineNoCov">          0 :                 if (ftruncate (fd, image_size) == -1)</span>
+<span class="lineNum">     527 </span><span class="lineNoCov">          0 :                         return OnError(errno, true);</span>
+<span class="lineNum">     528 </span>            :         }
+<span class="lineNum">     529 </span>            : 
+<span class="lineNum">     530 </span>            :         /* Map it into memory. */
+<span class="lineNum">     531 </span><span class="lineNoCov">          0 :         mapped = mmap (NULL, image_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);</span>
+<span class="lineNum">     532 </span>            : 
+<span class="lineNum">     533 </span><span class="lineNoCov">          0 :         if (mapped == MAP_FAILED)</span>
+<span class="lineNum">     534 </span><span class="lineNoCov">          0 :                 return OnError(errno,true);</span>
+<span class="lineNum">     535 </span>            : 
+<span class="lineNum">     536 </span>            :         /* Success. */
+<span class="lineNum">     537 </span><span class="lineNoCov">          0 :         m_data = (uint8_t*)mapped;</span>
+<span class="lineNum">     538 </span><span class="lineNoCov">          0 :         m_data_length = image_size;</span>
+<span class="lineNum">     539 </span><span class="lineNoCov">          0 :         m_data_fd = fd;</span>
+<span class="lineNum">     540 </span>            : 
+<span class="lineNum">     541 </span>            :         /* Update the C_SIZE field (number of sectors) in the CSD register. Reference for size calculations: JESD84-A44, Section 8.3, 'C_SIZE'. */
+<span class="lineNum">     542 </span><span class="lineNoCov">          0 :         SetCSDCSize(image_size);</span>
+<span class="lineNum">     543 </span>            : 
+<span class="lineNum">     544 </span><span class="lineNoCov">          0 :         m_bMounted = true;</span>
+<span class="lineNum">     545 </span><span class="lineNoCov">          0 :         RaiseIRQ(CARD_PRESENT,0);</span>
+<span class="lineNum">     546 </span>            : 
+<span class="lineNum">     547 </span><span class="lineNoCov">          0 :         return 0;</span>
+<a name="548"><span class="lineNum">     548 </span>            : }</a>
+<span class="lineNum">     549 </span>            : 
+<span class="lineNum">     550 </span><span class="lineNoCov">          0 : int SDCard::Unmount()</span>
+<span class="lineNum">     551 </span>            : {
+<span class="lineNum">     552 </span><span class="lineNoCov">          0 :         if (m_data == nullptr) {</span>
+<span class="lineNum">     553 </span>            :                 /* No disk mounted. */
+<span class="lineNum">     554 </span><span class="lineNoCov">          0 :                 m_bMounted = false;</span>
+<span class="lineNum">     555 </span><span class="lineNoCov">          0 :                 return 0;</span>
+<span class="lineNum">     556 </span>            :         }
+<span class="lineNum">     557 </span>            : 
+<span class="lineNum">     558 </span>            :         /* Synchronise changes. */
+<span class="lineNum">     559 </span><span class="lineNoCov">          0 :         msync (m_data, m_data_length, MS_SYNC | MS_INVALIDATE);</span>
+<span class="lineNum">     560 </span>            : 
+<span class="lineNum">     561 </span>            :         /* Unlock the file. */
+<span class="lineNum">     562 </span><span class="lineNoCov">          0 :         flock (m_data_fd, LOCK_UN);</span>
+<span class="lineNum">     563 </span>            : 
+<span class="lineNum">     564 </span>            :         /* munmap() and close. */
+<span class="lineNum">     565 </span><span class="lineNoCov">          0 :         munmap (m_data, m_data_length);</span>
+<span class="lineNum">     566 </span><span class="lineNoCov">          0 :         close (m_data_fd);</span>
+<span class="lineNum">     567 </span>            : 
+<span class="lineNum">     568 </span><span class="lineNoCov">          0 :         m_data = nullptr;</span>
+<span class="lineNum">     569 </span><span class="lineNoCov">          0 :         m_data_length = 0;</span>
+<span class="lineNum">     570 </span><span class="lineNoCov">          0 :         m_data_fd = -1;</span>
+<span class="lineNum">     571 </span>            : 
+<span class="lineNum">     572 </span><span class="lineNoCov">          0 :         m_bMounted = false;</span>
+<span class="lineNum">     573 </span><span class="lineNoCov">          0 :         InitCSD();</span>
+<span class="lineNum">     574 </span><span class="lineNoCov">          0 :         SetCSDCSize(0);</span>
+<a name="575"><span class="lineNum">     575 </span><span class="lineNoCov">          0 :         RaiseIRQ(CARD_PRESENT,1);</span></a>
+<span class="lineNum">     576 </span><span class="lineNoCov">          0 :         return 0;</span>
+<span class="lineNum">     577 </span><span class="lineCov">         15 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

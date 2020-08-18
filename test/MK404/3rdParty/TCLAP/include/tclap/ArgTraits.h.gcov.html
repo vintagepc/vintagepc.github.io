@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/3rdParty/TCLAP/include/tclap/ArgTraits.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">MK404/3rdParty/TCLAP/include/tclap</a> - ArgTraits.h<span style="font-size: 80%;"> (source / <a href="ArgTraits.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">50.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryLo">33.3 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // -*- Mode: c++; c-basic-offset: 4; tab-width: 4; -*-</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : /******************************************************************************
+<span class="lineNum">       4 </span>            :  *
+<span class="lineNum">       5 </span>            :  *  file:  ArgTraits.h
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  *  Copyright (c) 2007, Daniel Aarno, Michael E. Smoot .
+<span class="lineNum">       8 </span>            :  *  All rights reserved.
+<span class="lineNum">       9 </span>            :  *
+<span class="lineNum">      10 </span>            :  *  See the file COPYING in the top directory of this distribution for
+<span class="lineNum">      11 </span>            :  *  more information.
+<span class="lineNum">      12 </span>            :  *
+<span class="lineNum">      13 </span>            :  *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS
+<span class="lineNum">      14 </span>            :  *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+<span class="lineNum">      15 </span>            :  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+<span class="lineNum">      16 </span>            :  *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+<span class="lineNum">      17 </span>            :  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+<span class="lineNum">      18 </span>            :  *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+<span class="lineNum">      19 </span>            :  *  DEALINGS IN THE SOFTWARE.
+<span class="lineNum">      20 </span>            :  *
+<span class="lineNum">      21 </span>            :  *****************************************************************************/
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : // This is an internal tclap file, you should probably not have to
+<span class="lineNum">      24 </span>            : // include this directly
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : #ifndef TCLAP_ARGTRAITS_H
+<span class="lineNum">      27 </span>            : #define TCLAP_ARGTRAITS_H
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : namespace TCLAP {
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : // We use two empty structs to get compile type specialization
+<span class="lineNum">      32 </span>            : // function to work
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : /**
+<span class="lineNum">      35 </span>            :  * A value like argument value type is a value that can be set using
+<a name="36"><span class="lineNum">      36 </span>            :  * operator&gt;&gt;. This is the default value type.</a>
+<span class="lineNum">      37 </span>            :  */
+<a name="38"><span class="lineNum">      38 </span><span class="lineNoCov">          0 : struct ValueLike {</span></a>
+<span class="lineNum">      39 </span>            :     typedef ValueLike ValueCategory;
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :         virtual ~ValueLike() {}</span>
+<span class="lineNum">      41 </span>            : };
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : /**
+<span class="lineNum">      44 </span>            :  * A string like argument value type is a value that can be set using
+<span class="lineNum">      45 </span>            :  * operator=(string). Useful if the value type contains spaces which
+<a name="46"><span class="lineNum">      46 </span>            :  * will be broken up into individual tokens by operator&gt;&gt;.</a>
+<a name="47"><span class="lineNum">      47 </span>            :  */</a>
+<span class="lineNum">      48 </span><span class="lineCov">         15 : struct StringLike {</span>
+<span class="lineNum">      49 </span><span class="lineCov">         15 :         virtual ~StringLike() {}</span>
+<span class="lineNum">      50 </span>            : };
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : /**
+<span class="lineNum">      53 </span>            :  * A class can inherit from this object to make it have string like
+<span class="lineNum">      54 </span>            :  * traits. This is a compile time thing and does not add any overhead
+<span class="lineNum">      55 </span>            :  * to the inherenting class.
+<span class="lineNum">      56 </span>            :  */
+<span class="lineNum">      57 </span>            : struct StringLikeTrait {
+<span class="lineNum">      58 </span>            :     typedef StringLike ValueCategory;
+<span class="lineNum">      59 </span>            :         virtual ~StringLikeTrait() {}
+<span class="lineNum">      60 </span>            : };
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            : /**
+<span class="lineNum">      63 </span>            :  * A class can inherit from this object to make it have value like
+<span class="lineNum">      64 </span>            :  * traits. This is a compile time thing and does not add any overhead
+<span class="lineNum">      65 </span>            :  * to the inherenting class.
+<span class="lineNum">      66 </span>            :  */
+<span class="lineNum">      67 </span>            : struct ValueLikeTrait {
+<span class="lineNum">      68 </span>            :     typedef ValueLike ValueCategory;
+<span class="lineNum">      69 </span>            :         virtual ~ValueLikeTrait() {}
+<span class="lineNum">      70 </span>            : };
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            : /**
+<span class="lineNum">      73 </span>            :  * Arg traits are used to get compile type specialization when parsing
+<span class="lineNum">      74 </span>            :  * argument values. Using an ArgTraits you can specify the way that
+<span class="lineNum">      75 </span>            :  * values gets assigned to any particular type during parsing. The two
+<span class="lineNum">      76 </span>            :  * supported types are StringLike and ValueLike.
+<span class="lineNum">      77 </span>            :  */
+<span class="lineNum">      78 </span>            : template&lt;typename T&gt;
+<span class="lineNum">      79 </span>            : struct ArgTraits {
+<span class="lineNum">      80 </span>            :     typedef typename T::ValueCategory ValueCategory;
+<span class="lineNum">      81 </span>            :         virtual ~ArgTraits() {}
+<span class="lineNum">      82 </span>            :     //typedef ValueLike ValueCategory;
+<span class="lineNum">      83 </span>            : };
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            : } // namespace
+<span class="lineNum">      86 </span>            : 
+<span class="lineNum">      87 </span>            : #endif
+<span class="lineNum">      88 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

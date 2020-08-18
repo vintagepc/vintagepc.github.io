@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/boards/MM_Control_01.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/boards</a> - MM_Control_01.cpp<span style="font-size: 80%;"> (source / <a href="MM_Control_01.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">61</td>
+            <td class="headerCovTableEntryLo">1.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">66.7 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         MM_Control_01.cpp - Board definition for the Prusa MMU2
+<span class="lineNum">       3 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            :         This file is part of MK404.
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">       8 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">       9 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      10 </span>            :         (at your option) any later version.
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      13 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      14 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      15 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      18 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      19 </span>            :  */
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #include &lt;boards/MM_Control_01.h&gt;
+<span class="lineNum">      22 </span>            : #include &quot;PinNames.h&quot;  // for Pin::FINDA_PIN, Pin::I_TMC2130_DIAG, Pin::P_TM...
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : namespace Boards
+<a name="25"><span class="lineNum">      25 </span>            : {</a>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 :         void MM_Control_01::SetupHardware()</span>
+<span class="lineNum">      28 </span>            :         {
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 :                 DisableInterruptLevelPoll(5);</span>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :                 AddSerialPty(m_UART,'1');</span>
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :                 AddUARTTrace('1');</span>
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 :                 AddHardware(m_shift);</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :                 TryConnect(SHIFT_LATCH,m_shift,HC595::IN_LATCH);</span>
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :                 TryConnect(SHIFT_DATA,m_shift,HC595::IN_DATA);</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :                 TryConnect(SHIFT_CLOCK,m_shift,HC595::IN_CLOCK);</span>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :                 TMC2130::TMC2130_cfg_t cfg;</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :                 cfg.uiStepsPerMM = 25;</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :                 cfg.fStartPos = 0;</span>
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :                 cfg.bHasNoEndStops = true;</span>
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                 m_Extr.SetConfig(cfg);</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :                 AddHardware(m_Extr);</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :                 TryConnect(P_TMC2130_CS, m_Extr, TMC2130::SPI_CSEL);</span>
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :                 TryConnect(P_STEP_PIN, m_Extr, TMC2130::STEP_IN);</span>
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :                 TryConnect(m_Extr,TMC2130::DIAG_OUT,P_TMC2130_DIAG);</span>
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :                 SetPin(P_TMC2130_DIAG,0);</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :                 m_Extr.ConnectFrom(m_shift.GetIRQ(HC595::BIT0), TMC2130::DIR_IN);</span>
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :                 m_Extr.ConnectFrom(m_shift.GetIRQ(HC595::BIT1), TMC2130::ENABLE_IN);</span>
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :                 cfg.uiStepsPerMM = 50;</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :                 cfg.iMaxMM = 70;</span>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :                 cfg.bInverted = true;</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :                 cfg.bHasNoEndStops = false;</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :                 m_Sel.SetConfig(cfg);</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                 AddHardware(m_Sel);</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                 TryConnect(S_TMC2130_CS,m_Sel,TMC2130::SPI_CSEL);</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :                 TryConnect(S_STEP_PIN,m_Sel,TMC2130::STEP_IN);</span>
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                 TryConnect(m_Sel,TMC2130::DIAG_OUT,S_TMC2130_DIAG);</span>
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :                 SetPin(S_TMC2130_DIAG,0);</span>
+<span class="lineNum">      64 </span><span class="lineNoCov">          0 :                 m_Sel.ConnectFrom(m_shift.GetIRQ(HC595::BIT2), TMC2130::DIR_IN);</span>
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :                 m_Sel.ConnectFrom(m_shift.GetIRQ(HC595::BIT3), TMC2130::ENABLE_IN);</span>
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span><span class="lineNoCov">          0 :                 cfg.uiStepsPerMM = 8;</span>
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :                 cfg.iMaxMM = 200;</span>
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 :                 m_Idl.SetConfig(cfg);</span>
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :                 AddHardware(m_Idl);</span>
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :                 TryConnect(I_TMC2130_CS,m_Idl,TMC2130::SPI_CSEL);</span>
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :                 TryConnect(I_STEP_PIN,m_Idl,TMC2130::STEP_IN);</span>
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 :                 TryConnect(m_Idl,TMC2130::DIAG_OUT,I_TMC2130_DIAG);</span>
+<span class="lineNum">      74 </span><span class="lineNoCov">          0 :                 SetPin(I_TMC2130_DIAG,0);</span>
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :                 m_Idl.ConnectFrom(m_shift.GetIRQ(HC595::BIT5), TMC2130::ENABLE_IN);</span>
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :                 m_Idl.ConnectFrom(m_shift.GetIRQ(HC595::BIT4), TMC2130::DIR_IN);</span>
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :                 for (int i=0; i&lt;5; i++)</span>
+<span class="lineNum">      80 </span>            :                 {
+<span class="lineNum">      81 </span>            : //                      m_lGreen[i] = {0x00FF00FF};
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                         AddHardware(m_lGreen[i]);</span>
+<span class="lineNum">      83 </span>            : //                      m_lRed[i] = {0xFF0000FF};
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :                         AddHardware(m_lRed[i]);</span>
+<span class="lineNum">      85 </span>            :                 }
+<span class="lineNum">      86 </span>            : //              m_lFINDA = LED(0xFFCC00FF,'F');
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :                 AddHardware(m_lFINDA);</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :                 TryConnect(FINDA_PIN,m_lFINDA,LED::LED_IN);</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :                 SetPin(FINDA_PIN,0);</span>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :                 m_lGreen[0].ConnectFrom(m_shift.GetIRQ(HC595::BIT6), LED::LED_IN);</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :                 m_lRed[0].ConnectFrom(  m_shift.GetIRQ(HC595::BIT7), LED::LED_IN);</span>
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :                 m_lGreen[4].ConnectFrom(m_shift.GetIRQ(HC595::BIT8), LED::LED_IN);</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                 m_lRed[4].ConnectFrom(  m_shift.GetIRQ(HC595::BIT9), LED::LED_IN);</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                 m_lGreen[3].ConnectFrom(m_shift.GetIRQ(HC595::BIT10), LED::LED_IN);</span>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                 m_lRed[3].ConnectFrom(  m_shift.GetIRQ(HC595::BIT11), LED::LED_IN);</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :                 m_lGreen[2].ConnectFrom(m_shift.GetIRQ(HC595::BIT12), LED::LED_IN);</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :                 m_lRed[2].ConnectFrom(  m_shift.GetIRQ(HC595::BIT13), LED::LED_IN);</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :                 m_lGreen[1].ConnectFrom(m_shift.GetIRQ(HC595::BIT14), LED::LED_IN);</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :                 m_lRed[1].ConnectFrom(  m_shift.GetIRQ(HC595::BIT15), LED::LED_IN);</span>
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :                 AddHardware(m_buttons,5);</span>
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">     105 </span>            : 
+<a name="106"><span class="lineNum">     106 </span>            : </a>
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span><span class="lineCov">         15 : };</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

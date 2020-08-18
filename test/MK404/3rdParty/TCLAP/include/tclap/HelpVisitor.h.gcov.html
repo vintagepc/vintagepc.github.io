@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/3rdParty/TCLAP/include/tclap/HelpVisitor.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">MK404/3rdParty/TCLAP/include/tclap</a> - HelpVisitor.h<span style="font-size: 80%;"> (source / <a href="HelpVisitor.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryMed">75.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryMed">75.0 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : </a>
+<span class="lineNum">       2 </span>            : /****************************************************************************** 
+<span class="lineNum">       3 </span>            :  * 
+<span class="lineNum">       4 </span>            :  *  file:  HelpVisitor.h
+<span class="lineNum">       5 </span>            :  * 
+<span class="lineNum">       6 </span>            :  *  Copyright (c) 2003, Michael E. Smoot .
+<span class="lineNum">       7 </span>            :  *  All rights reserved.
+<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       9 </span>            :  *  See the file COPYING in the top directory of this distribution for
+<span class="lineNum">      10 </span>            :  *  more information.
+<span class="lineNum">      11 </span>            :  *  
+<span class="lineNum">      12 </span>            :  *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+<span class="lineNum">      13 </span>            :  *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+<span class="lineNum">      14 </span>            :  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+<span class="lineNum">      15 </span>            :  *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+<span class="lineNum">      16 </span>            :  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+<span class="lineNum">      17 </span>            :  *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+<span class="lineNum">      18 </span>            :  *  DEALINGS IN THE SOFTWARE.  
+<span class="lineNum">      19 </span>            :  *  
+<span class="lineNum">      20 </span>            :  *****************************************************************************/ 
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #ifndef TCLAP_HELP_VISITOR_H
+<span class="lineNum">      23 </span>            : #define TCLAP_HELP_VISITOR_H
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #include &lt;tclap/CmdLineInterface.h&gt;
+<span class="lineNum">      26 </span>            : #include &lt;tclap/CmdLineOutput.h&gt;
+<span class="lineNum">      27 </span>            : #include &lt;tclap/Visitor.h&gt;
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : namespace TCLAP {
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : /**
+<span class="lineNum">      32 </span>            :  * A Visitor object that calls the usage method of the given CmdLineOutput
+<a name="33"><span class="lineNum">      33 </span>            :  * object for the specified CmdLine object.</a>
+<span class="lineNum">      34 </span>            :  */
+<span class="lineNum">      35 </span><span class="lineCov">         10 : class HelpVisitor: public Visitor</span>
+<span class="lineNum">      36 </span>            : {
+<span class="lineNum">      37 </span>            :         private:
+<span class="lineNum">      38 </span>            :                 /**
+<span class="lineNum">      39 </span>            :                  * Prevent accidental copying.
+<span class="lineNum">      40 </span>            :                  */
+<span class="lineNum">      41 </span>            :                 HelpVisitor(const HelpVisitor&amp; rhs);
+<span class="lineNum">      42 </span>            :                 HelpVisitor&amp; operator=(const HelpVisitor&amp; rhs);
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :         protected:
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :                 /**
+<span class="lineNum">      47 </span>            :                  * The CmdLine the output will be generated for. 
+<span class="lineNum">      48 </span>            :                  */
+<span class="lineNum">      49 </span>            :                 CmdLineInterface* _cmd;
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            :                 /**
+<span class="lineNum">      52 </span>            :                  * The output object. 
+<span class="lineNum">      53 </span>            :                  */
+<span class="lineNum">      54 </span>            :                 CmdLineOutput** _out;
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :         public:
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :                 /**
+<span class="lineNum">      59 </span>            :                  * Constructor.
+<span class="lineNum">      60 </span>            :                  * \param cmd - The CmdLine the output will be generated for.
+<a name="61"><span class="lineNum">      61 </span>            :                  * \param out - The type of output. </a>
+<span class="lineNum">      62 </span>            :                  */
+<span class="lineNum">      63 </span><span class="lineCov">          5 :                 HelpVisitor(CmdLineInterface* cmd, CmdLineOutput** out) </span>
+<span class="lineNum">      64 </span><span class="lineCov">          5 :                                 : Visitor(), _cmd( cmd ), _out( out ) { }</span>
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :                 /**
+<span class="lineNum">      67 </span>            :                  * Calls the usage method of the CmdLineOutput for the 
+<a name="68"><span class="lineNum">      68 </span>            :                  * specified CmdLine.</a>
+<span class="lineNum">      69 </span>            :                  */
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :                 void visit() { (*_out)-&gt;usage(*_cmd); throw ExitException(0); }</span>
+<span class="lineNum">      71 </span>            :                 
+<span class="lineNum">      72 </span>            : };
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            : }
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

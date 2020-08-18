@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/utility/MK3S_Full.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">MK404/utility</a> - MK3S_Full.h<span style="font-size: 80%;"> (source / <a href="MK3S_Full.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">13</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         MK3S_Full.h - Object collection for the standard visuals.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         This file is part of MK404.
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">       9 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      10 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            :         (at your option) any later version.
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      20 </span>            :  */
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : #pragma once
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #include &quot;GLObj.h&quot;
+<span class="lineNum">      25 </span>            : #include &quot;OBJCollection.h&quot;
+<span class="lineNum">      26 </span>            : #include &quot;MK3S_Lite.h&quot;
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : using namespace std;
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : class MK3S_Full: public MK3S_Lite
+<a name="32"><span class="lineNum">      32 </span>            : {</a>
+<span class="lineNum">      33 </span>            :         public:
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :                 MK3S_Full(bool bMMU):MK3S_Lite(bMMU)</span>
+<span class="lineNum">      35 </span>            :                 {
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :                         float fXCorr = -0.044;</span>
+<span class="lineNum">      37 </span>            :                         // float fYCorr = -0.141;
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :                         float fZCorr = -0.210;</span>
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :                         SetName(&quot;Full&quot;);</span>
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :                         AddObject(ObjClass::Z, &quot;assets/Z_AXIS.obj&quot;, 0,fZCorr,0);</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :                         if (bMMU)</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :                                 AddObject(ObjClass::X, &quot;assets/E_MMU.obj&quot;,fXCorr,fZCorr,0,MM_TO_M)-&gt;SetKeepNormalsIfScaling(true);</span>
+<span class="lineNum">      43 </span>            :                         else
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :                                 AddObject(ObjClass::X, &quot;assets/E_STD.obj&quot;,fXCorr,fZCorr,0,MM_TO_M)-&gt;SetKeepNormalsIfScaling(true);</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                          m_pBaseObj = AddObject(ObjClass::Fixed, &quot;assets/Stationary.obj&quot;);</span>
+<a name="46"><span class="lineNum">      46 </span><span class="lineNoCov">          0 :                 };</span></a>
+<span class="lineNum">      47 </span>            : 
+<a name="48"><span class="lineNum">      48 </span><span class="lineNoCov">          0 :                 void OnLoadComplete() override {};</span></a>
+<span class="lineNum">      49 </span>            : 
+<a name="50"><span class="lineNum">      50 </span><span class="lineNoCov">          0 :                 inline float GetScaleFactor() override { return m_pBaseObj-&gt;GetScaleFactor();};</span></a>
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :                 virtual void GetBaseCenter(float fTrans[3]) override {m_pBaseObj-&gt;GetCenteringTransform(fTrans);}</span>
+<span class="lineNum">      53 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

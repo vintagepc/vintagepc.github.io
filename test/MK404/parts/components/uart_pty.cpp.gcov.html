@@ -1,0 +1,401 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/components/uart_pty.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/components</a> - uart_pty.cpp<span style="font-size: 80%;"> (source / <a href="uart_pty.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">153</td>
+            <td class="headerCovTableEntryLo">0.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">28</td>
+            <td class="headerCovTableEntryLo">7.1 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         uart_pty.cpp
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Copyright 2012 Michel Pollet &lt;buserror@gmail.com&gt; as uart_pty.c
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         Rewritten 2020 to C++ by VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         This file is part of MK404.
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">      11 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      12 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      13 </span>            :         (at your option) any later version.
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      16 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      17 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      18 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      21 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      22 </span>            :  */
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #include &quot;uart_pty.h&quot;
+<span class="lineNum">      26 </span>            : #include &lt;sys/time.h&gt;                   // IWYU pragma: keep
+<span class="lineNum">      27 </span>            : #include &lt;errno.h&gt;                      // for errno
+<span class="lineNum">      28 </span>            : #include &lt;pthread.h&gt;                    // for pthread_create, pthread_join
+<span class="lineNum">      29 </span>            : #if defined(__APPLE__)
+<span class="lineNum">      30 </span>            : // utils/Util.h clashes with this system file.
+<span class="lineNum">      31 </span>            : //#  include &lt;util.h&gt;                     // for openpty
+<span class="lineNum">      32 </span>            : // hack, prototype from `man openpty`
+<span class="lineNum">      33 </span>            : extern &quot;C&quot; {
+<span class="lineNum">      34 </span>            : int
+<span class="lineNum">      35 </span>            :     openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct winsize *winp);
+<span class="lineNum">      36 </span>            : }
+<span class="lineNum">      37 </span>            : #else
+<span class="lineNum">      38 </span>            : # include &lt;pty.h&gt;                       // for openpty
+<span class="lineNum">      39 </span>            : #endif
+<span class="lineNum">      40 </span>            : #include &lt;stdio.h&gt;                      // for printf, NULL, fprintf, sprintf
+<span class="lineNum">      41 </span>            : #include &lt;stdlib.h&gt;                     // for getenv, atoi, system
+<span class="lineNum">      42 </span>            : #include &lt;string.h&gt;                     // for memset, strerror
+<span class="lineNum">      43 </span>            : #include &lt;sys/select.h&gt;                 // for select, FD_ISSET, FD_SET, FD_...
+<span class="lineNum">      44 </span>            : #include &lt;termios.h&gt;                    // for cfmakeraw, tcgetattr, tcsetattr
+<span class="lineNum">      45 </span>            : #include &lt;unistd.h&gt;                     // for close, read, symlink, unlink
+<span class="lineNum">      46 </span>            : #include &quot;avr_uart.h&quot;                   // for AVR_IOCTL_UART_GETIRQ, ::AVR_...
+<span class="lineNum">      47 </span>            : #include &quot;sim_io.h&quot;                     // for avr_io_getirq, avr_ioctl
+<span class="lineNum">      48 </span>            : #include &quot;sim_time.h&quot;                   // for avr_hz_to_cycles
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : //#define TRACE(_w) _w
+<span class="lineNum">      51 </span>            : #ifndef TRACE
+<span class="lineNum">      52 </span>            : #define TRACE(_w)
+<span class="lineNum">      53 </span>            : #endif
+<a name="54"><span class="lineNum">      54 </span>            : </a>
+<span class="lineNum">      55 </span>            : extern &quot;C&quot; {
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 : DEFINE_FIFO(uint8_t,uart_pty_fifo);</span>
+<span class="lineNum">      57 </span>            : }
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : /*
+<a name="60"><span class="lineNum">      60 </span>            :  * called when a byte is send via the uart on the AVR</a>
+<span class="lineNum">      61 </span>            :  */
+<span class="lineNum">      62 </span><span class="lineNoCov">          0 : void uart_pty::OnByteIn(struct avr_irq_t * irq, uint32_t value)</span>
+<span class="lineNum">      63 </span>            : {
+<span class="lineNum">      64 </span>            :         TRACE(printf(&quot;uart_pty_in_hook %02x\n&quot;, value);)
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :         std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         uart_pty_fifo_write(&amp;pty.in, value);</span>
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :         if (tap.s) {</span>
+<span class="lineNum">      69 </span><span class="lineNoCov">          0 :                 if (tap.crlf &amp;&amp; value == '\n')</span>
+<span class="lineNum">      70 </span><span class="lineNoCov">          0 :                         uart_pty_fifo_write(&amp;tap.in, '\r');</span>
+<span class="lineNum">      71 </span><span class="lineNoCov">          0 :                 uart_pty_fifo_write(&amp;tap.in, value);</span>
+<span class="lineNum">      72 </span>            :         }
+<span class="lineNum">      73 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">      74 </span>            : 
+<a name="75"><span class="lineNum">      75 </span>            : // try to empty our fifo, the uart_pty_xoff_hook() will be called when</a>
+<span class="lineNum">      76 </span>            : // other side is full
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 : void uart_pty::FlushData()</span>
+<span class="lineNum">      78 </span>            : {
+<span class="lineNum">      79 </span><span class="lineNoCov">          0 :         std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :         while (m_bXOn &amp;&amp; !uart_pty_fifo_isempty(&amp;pty.out)) {</span>
+<span class="lineNum">      81 </span>            :                 TRACE(int r = p-&gt;pty.out.read;)
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                 uint8_t byte = uart_pty_fifo_read(&amp;pty.out);</span>
+<span class="lineNum">      83 </span>            :                 TRACE(printf(&quot;uart_pty_flush_incoming send r %03d:%02x\n&quot;, r, byte);)
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 :                 if (m_chrLast == '\n' &amp;&amp; byte == '\n')</span>
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :                         printf(&quot;Swallowing repeated newlines\n&quot;);</span>
+<span class="lineNum">      86 </span>            :                 else
+<span class="lineNum">      87 </span>            :                 {
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :                         if (byte !='\n')</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :                                 m_chrLast = byte;</span>
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :                         RaiseIRQ(BYTE_OUT, byte);</span>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            :                 }
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                 if (tap.s) {</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                         if (tap.crlf &amp;&amp; byte == '\n')</span>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                                 uart_pty_fifo_write(&amp;tap.in, '\r');</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :                         uart_pty_fifo_write(&amp;tap.in, byte);</span>
+<span class="lineNum">      98 </span>            :                 }
+<span class="lineNum">      99 </span>            :         }
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :         if (tap.s) {</span>
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :                 while (m_bXOn &amp;&amp; !uart_pty_fifo_isempty(&amp;tap.out)) {</span>
+<span class="lineNum">     102 </span><span class="lineNoCov">          0 :                         uint8_t byte = uart_pty_fifo_read(&amp;tap.out);</span>
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :                         if (tap.crlf &amp;&amp; byte == '\r') {</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :                                 uart_pty_fifo_write(&amp;tap.in, '\n');</span>
+<span class="lineNum">     105 </span>            :                         }
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :                         if (byte == '\n')</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :                                 continue;</span>
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                         uart_pty_fifo_write(&amp;tap.in, byte);</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :                         if (m_chrLast == '\n' &amp;&amp; byte == '\n')</span>
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :                                 printf(&quot;2Swallowing repeated newlines\n&quot;);</span>
+<span class="lineNum">     111 </span>            :                         else
+<span class="lineNum">     112 </span>            :                         {
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 :                                 if (byte !='\n')</span>
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :                                         m_chrLast = byte;</span>
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :                                 RaiseIRQ(BYTE_OUT, byte);</span>
+<span class="lineNum">     116 </span>            : 
+<span class="lineNum">     117 </span>            :                         }
+<span class="lineNum">     118 </span>            :                         }
+<span class="lineNum">     119 </span>            :         }
+<a name="120"><span class="lineNum">     120 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 : avr_cycle_count_t uart_pty::OnFlushTimer(struct avr_t * avr, avr_cycle_count_t when)</span>
+<span class="lineNum">     123 </span>            : {
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :         FlushData();</span>
+<span class="lineNum">     125 </span>            :         /* always return a cycle NUMBER not a cycle count */
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :         return m_bXOn ? when + avr_hz_to_cycles(m_pAVR, 1000) : 0;</span>
+<span class="lineNum">     127 </span>            : }
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : /*
+<span class="lineNum">     130 </span>            :  * Called when the uart has room in it's input buffer. This is called repeateadly
+<a name="131"><span class="lineNum">     131 </span>            :  * if necessary, while the xoff is called only when the uart fifo is FULL</a>
+<span class="lineNum">     132 </span>            :  */
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 : void uart_pty::OnXOnIn(struct avr_irq_t * irq,uint32_t value)</span>
+<span class="lineNum">     134 </span>            : {
+<span class="lineNum">     135 </span>            :         TRACE(if (!m_bXOn) printf(&quot;uart_pty_xon_hook\n&quot;);)
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :         m_bXOn = true;</span>
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :         FlushData();</span>
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            :         // if the buffer is not flushed, try to do it later
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :         if (m_bXOn)</span>
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :                         RegisterTimer(m_fcnFlush,avr_hz_to_cycles(m_pAVR, 1000),this);</span>
+<span class="lineNum">     143 </span><span class="lineNoCov">          0 : }</span>
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            : /*
+<a name="146"><span class="lineNum">     146 </span>            :  * Called when the uart ran out of room in it's input buffer</a>
+<span class="lineNum">     147 </span>            :  */
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 : void uart_pty::OnXOffIn(struct avr_irq_t * irq, uint32_t value)</span>
+<span class="lineNum">     149 </span>            : {
+<span class="lineNum">     150 </span>            :         TRACE(if (m_bXOn) printf(&quot;uart_pty_xoff_hook\n&quot;);)
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :         m_bXOn = false;</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 :         CancelTimer(m_fcnFlush,this);</span>
+<a name="153"><span class="lineNum">     153 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 : uart_pty::uart_pty()</span>
+<span class="lineNum">     156 </span>            : {
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :         memset(&amp;port[0], 0, sizeof(port[0]));</span>
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :         memset(&amp;port[1], 0, sizeof(port[1]));</span>
+<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 : void* uart_pty::Run()</span>
+<span class="lineNum">     162 </span>            : {
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :         while (!m_bQuit) {</span>
+<span class="lineNum">     164 </span>            :                 fd_set read_set, write_set;
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :                 int max = 0;</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :                 FD_ZERO(&amp;read_set);</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :                 FD_ZERO(&amp;write_set);</span>
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :                 for (int ti = 0; ti &lt; 2; ti++) if (port[ti].s) {</span>
+<span class="lineNum">     170 </span>            :                         // read more only if buffer was flushed
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :                         std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :                         if (port[ti].buffer_len == port[ti].buffer_done) {</span>
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :                                 FD_SET(port[ti].s, &amp;read_set);</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :                                 max = port[ti].s &gt; max ? port[ti].s : max;</span>
+<span class="lineNum">     175 </span>            :                         }
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :                         if (!uart_pty_fifo_isempty(&amp;port[ti].in)) {</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :                                 FD_SET(port[ti].s, &amp;write_set);</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                                 max = port[ti].s &gt; max ? port[ti].s : max;</span>
+<span class="lineNum">     179 </span>            :                         }
+<span class="lineNum">     180 </span>            :                 }
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span>            :                 // short, but not too short interval
+<span class="lineNum">     183 </span><span class="lineNoCov">          0 :                 struct timeval timo = { 0, 500 };</span>
+<span class="lineNum">     184 </span><span class="lineNoCov">          0 :                 int ret = select(max+1, &amp;read_set, &amp;write_set, NULL, &amp;timo);</span>
+<span class="lineNum">     185 </span>            : 
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :                 if (ret &lt; 0)</span>
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :                         break;</span>
+<span class="lineNum">     188 </span>            : 
+<span class="lineNum">     189 </span><span class="lineNoCov">          0 :                 for (int ti = 0; ti &lt; 2; ti++) if (port[ti].s) {</span>
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :                         if (FD_ISSET(port[ti].s, &amp;read_set)) {</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :                                 std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 :                                 ssize_t r = read(port[ti].s, port[ti].buffer,</span>
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                                                                         sizeof(port[ti].buffer)-1);</span>
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                                 port[ti].buffer_len = r;</span>
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :                                 port[ti].buffer_done = 0;</span>
+<span class="lineNum">     196 </span>            :                                 TRACE(if (!port[ti].tap)
+<span class="lineNum">     197 </span>            :                                                 hdump(&quot;pty recv&quot;, port[ti].buffer, r);)
+<span class="lineNum">     198 </span>            :                         }
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                         if (port[ti].buffer_done &lt; port[ti].buffer_len) {</span>
+<span class="lineNum">     200 </span>            :                                 // write them in fifo
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :                                 std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :                                 while (port[ti].buffer_done &lt; port[ti].buffer_len &amp;&amp;</span>
+<span class="lineNum">     203 </span><span class="lineNoCov">          0 :                                                 !uart_pty_fifo_isfull(&amp;port[ti].out)) {</span>
+<span class="lineNum">     204 </span><span class="lineNoCov">          0 :                                         int index = port[ti].buffer_done++;</span>
+<span class="lineNum">     205 </span>            :                                         TRACE(int wi = port[ti].out.write;)
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :                                         uart_pty_fifo_write(&amp;port[ti].out,</span>
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                                                         port[ti].buffer[index]);</span>
+<span class="lineNum">     208 </span>            :                                         TRACE(printf(&quot;w %3d:%02x (%d/%d) %s\n&quot;,
+<span class="lineNum">     209 </span>            :                                                                 wi, port[ti].buffer[index],
+<span class="lineNum">     210 </span>            :                                                                 port[ti].out.read,
+<span class="lineNum">     211 </span>            :                                                                 port[ti].out.write,
+<span class="lineNum">     212 </span>            :                                                                 m_bXOn ? &quot;XON&quot; : &quot;XOFF&quot;);)
+<span class="lineNum">     213 </span>            :                                 }
+<span class="lineNum">     214 </span>            :                         }
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :                         if (FD_ISSET(port[ti].s, &amp;write_set)) {</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                                 std::lock_guard&lt;std::mutex&gt; lock(m_lock);</span>
+<span class="lineNum">     217 </span>            :                                 uint8_t buffer[512];
+<span class="lineNum">     218 </span>            :                                 // write them in fifo
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 :                                 uint8_t * dst = buffer;</span>
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 :                                 while (!uart_pty_fifo_isempty(&amp;port[ti].in) &amp;&amp;</span>
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :                                                 (size_t)(dst - buffer) &lt; sizeof(buffer)) {</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :                                         *dst = uart_pty_fifo_read(&amp;port[ti].in);</span>
+<span class="lineNum">     223 </span><span class="lineNoCov">          0 :                                         dst++;</span>
+<span class="lineNum">     224 </span>            :                                 }
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                                 size_t len = dst - buffer;</span>
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :                                 size_t r = write(port[ti].s, buffer, len);</span>
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :                                 if (r!=len)</span>
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :                                         fprintf(stderr,&quot;Failed to write to PTY\n&quot;);</span>
+<span class="lineNum">     229 </span>            :                                 TRACE(if (!port[ti].tap) hdump(&quot;pty send&quot;, buffer, r);)
+<span class="lineNum">     230 </span>            :                         }
+<span class="lineNum">     231 </span>            :                 }
+<span class="lineNum">     232 </span>            :                 /* DO NOT call this, this create a concurency issue with the
+<span class="lineNum">     233 </span>            :                  * FIFO that can't be solved cleanly with a memory barrier
+<span class="lineNum">     234 </span>            :                         uart_pty_flush_incoming(p);
+<span class="lineNum">     235 </span>            :                   */
+<span class="lineNum">     236 </span>            :         }
+<span class="lineNum">     237 </span><span class="lineNoCov">          0 :         return NULL;</span>
+<a name="238"><span class="lineNum">     238 </span>            : }</a>
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 : void uart_pty::Init(struct avr_t * avr)</span>
+<span class="lineNum">     241 </span>            : {
+<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 :         _Init(avr,this);</span></a>
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span><span class="lineNoCov">          0 :         RegisterNotify(BYTE_IN, MAKE_C_CALLBACK(uart_pty,OnByteIn), this);</span>
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span><span class="lineNoCov">          0 :         int hastap = (getenv(&quot;SIMAVR_UART_TAP&quot;) &amp;&amp; atoi(getenv(&quot;SIMAVR_UART_TAP&quot;))) ||</span>
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :                         (getenv(&quot;SIMAVR_UART_XTERM&quot;) &amp;&amp; atoi(getenv(&quot;SIMAVR_UART_XTERM&quot;))) ;</span>
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span><span class="lineNoCov">          0 :         for (int ti = 0; ti &lt; 1 + hastap; ti++) {</span>
+<span class="lineNum">     250 </span>            :                 int m, s;
+<span class="lineNum">     251 </span>            : 
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :                 if (openpty(&amp;m, &amp;s, port[ti].slavename, NULL, NULL) &lt; 0) {</span>
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :                         fprintf(stderr, &quot;%s: Can't create pty: %s&quot;, __FUNCTION__, strerror(errno));</span>
+<span class="lineNum">     254 </span><span class="lineNoCov">          0 :                         return ;</span>
+<span class="lineNum">     255 </span>            :                 }
+<span class="lineNum">     256 </span>            :                 struct termios tio;
+<span class="lineNum">     257 </span><span class="lineNoCov">          0 :                 tcgetattr(m, &amp;tio);</span>
+<span class="lineNum">     258 </span><span class="lineNoCov">          0 :                 cfmakeraw(&amp;tio);</span>
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 :                 tcsetattr(m, TCSANOW, &amp;tio);</span>
+<span class="lineNum">     260 </span><span class="lineNoCov">          0 :                 port[ti].s = m;</span>
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 :                 port[ti].tap = ti != 0;</span>
+<span class="lineNum">     262 </span><span class="lineNoCov">          0 :                 port[ti].crlf = ti != 0;</span>
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :                 printf(&quot;uart_pty_init %s on port *** %s ***\n&quot;,</span>
+<span class="lineNum">     264 </span>            :                                 ti == 0 ? &quot;bridge&quot; : &quot;tap&quot;, port[ti].slavename);
+<a name="265"><span class="lineNum">     265 </span>            :         }</a>
+<span class="lineNum">     266 </span>            : 
+<span class="lineNum">     267 </span><span class="lineNoCov">          0 :         auto fRunCB =[](void * param) { uart_pty* p = (uart_pty*)param; return p-&gt;Run();};</span>
+<span class="lineNum">     268 </span><span class="lineNoCov">          0 :         pthread_create(&amp;m_thread, NULL, fRunCB, this);</span>
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span>            : }
+<a name="271"><span class="lineNum">     271 </span>            : </a>
+<span class="lineNum">     272 </span>            : // Shuts down the thread on destruction.
+<span class="lineNum">     273 </span><span class="lineNoCov">          0 : uart_pty::~uart_pty()</span>
+<span class="lineNum">     274 </span>            : {
+<span class="lineNum">     275 </span><span class="lineNoCov">          0 :         if (!m_thread)</span>
+<span class="lineNum">     276 </span><span class="lineNoCov">          0 :                 return;</span>
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :         puts(__func__);</span>
+<span class="lineNum">     278 </span><span class="lineNoCov">          0 :         m_bQuit = true; // Signal thread it's time to quit.</span>
+<span class="lineNum">     279 </span><span class="lineNoCov">          0 :         for (int ti = 0; ti &lt; 2; ti++)</span>
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :                 if (port[ti].s)</span>
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :                         close(port[ti].s);</span>
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :         pthread_join(m_thread, NULL);</span>
+<a name="283"><span class="lineNum">     283 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">     284 </span>            : 
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 : void uart_pty::Connect(char uart)</span>
+<span class="lineNum">     286 </span>            : {
+<span class="lineNum">     287 </span>            :         // disable the stdio dump, as we are sending binary there
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 :         uint32_t f = 0;</span>
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 :         avr_ioctl(m_pAVR, AVR_IOCTL_UART_GET_FLAGS(uart), &amp;f);</span>
+<span class="lineNum">     290 </span><span class="lineNoCov">          0 :         f &amp;= ~AVR_UART_FLAG_STDIO;</span>
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :         avr_ioctl(m_pAVR, AVR_IOCTL_UART_SET_FLAGS(uart), &amp;f);</span>
+<span class="lineNum">     292 </span>            : 
+<span class="lineNum">     293 </span><span class="lineNoCov">          0 :         avr_irq_t * src = avr_io_getirq(m_pAVR, AVR_IOCTL_UART_GETIRQ(uart), UART_IRQ_OUTPUT);</span>
+<span class="lineNum">     294 </span><span class="lineNoCov">          0 :         avr_irq_t * dst = avr_io_getirq(m_pAVR, AVR_IOCTL_UART_GETIRQ(uart), UART_IRQ_INPUT);</span>
+<span class="lineNum">     295 </span><span class="lineNoCov">          0 :         avr_irq_t * xon = avr_io_getirq(m_pAVR, AVR_IOCTL_UART_GETIRQ(uart), UART_IRQ_OUT_XON);</span>
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :         avr_irq_t * xoff = avr_io_getirq(m_pAVR, AVR_IOCTL_UART_GETIRQ(uart), UART_IRQ_OUT_XOFF);</span>
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :         if (src &amp;&amp; dst) {</span>
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :                 ConnectFrom(src, BYTE_IN);</span>
+<span class="lineNum">     299 </span><span class="lineNoCov">          0 :                 ConnectTo(BYTE_OUT, dst);</span>
+<a name="300"><span class="lineNum">     300 </span>            :         }</a>
+<span class="lineNum">     301 </span><span class="lineNoCov">          0 :         if (xon)</span>
+<a name="302"><span class="lineNum">     302 </span><span class="lineNoCov">          0 :                 avr_irq_register_notify(xon, MAKE_C_CALLBACK(uart_pty,OnXOnIn), this);</span></a>
+<span class="lineNum">     303 </span><span class="lineNoCov">          0 :         if (xoff)</span>
+<span class="lineNum">     304 </span><span class="lineNoCov">          0 :                 avr_irq_register_notify(xoff, MAKE_C_CALLBACK(uart_pty,OnXOffIn),this);</span>
+<span class="lineNum">     305 </span>            : 
+<span class="lineNum">     306 </span><span class="lineNoCov">          0 :         for (int ti = 0; ti &lt; 1; ti++)</span>
+<span class="lineNum">     307 </span><span class="lineNoCov">          0 :                 if (port[ti].s) {</span>
+<span class="lineNum">     308 </span>            :                         char link[128];
+<span class="lineNum">     309 </span><span class="lineNoCov">          0 :                         sprintf(link, &quot;/tmp/simavr-uart%s%c&quot;, ti == 1 ? &quot;tap&quot; : &quot;&quot;, uart);</span>
+<span class="lineNum">     310 </span><span class="lineNoCov">          0 :                         unlink(link);</span>
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :                         if (symlink(port[ti].slavename, link) != 0) {</span>
+<span class="lineNum">     312 </span><span class="lineNoCov">          0 :                                 fprintf(stderr, &quot;WARN %s: Can't create %s: %s&quot;, __func__, link, strerror(errno));</span>
+<span class="lineNum">     313 </span>            :                         } else {
+<span class="lineNum">     314 </span><span class="lineNoCov">          0 :                                 printf(&quot;%s: %s now points to %s\n&quot;, __func__, link, port[ti].slavename);</span>
+<span class="lineNum">     315 </span>            :                         }
+<span class="lineNum">     316 </span>            :                 }
+<span class="lineNum">     317 </span><span class="lineNoCov">          0 :         if (getenv(&quot;SIMAVR_UART_XTERM&quot;) &amp;&amp; atoi(getenv(&quot;SIMAVR_UART_XTERM&quot;))) {</span>
+<span class="lineNum">     318 </span>            :                 char cmd[256];
+<span class="lineNum">     319 </span><span class="lineNoCov">          0 :                 sprintf(cmd, &quot;xterm -e picocom -b 115200 %s &gt;/dev/null 2&gt;&amp;1 &amp;&quot;,</span>
+<span class="lineNum">     320 </span>            :                                 tap.slavename);
+<span class="lineNum">     321 </span><span class="lineNoCov">          0 :                 if (system(cmd)&lt;0)</span>
+<span class="lineNum">     322 </span><span class="lineNoCov">          0 :                         printf(&quot;Could not launch xterm\n&quot;);</span>
+<a name="323"><span class="lineNum">     323 </span>            :         } else</a>
+<span class="lineNum">     324 </span><span class="lineNoCov">          0 :                 printf(&quot;note: export SIMAVR_UART_XTERM=1 and install picocom to get a terminal\n&quot;);</span>
+<span class="lineNum">     325 </span><span class="lineCov">         15 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

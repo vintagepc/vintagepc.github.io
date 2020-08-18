@@ -1,0 +1,678 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/3rdParty/arcball/Matrix.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/3rdParty/arcball</a> - Matrix.hpp<span style="font-size: 80%;"> (source / <a href="Matrix.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">73</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : //</a>
+<span class="lineNum">       2 </span>            : //    Copyright 2011 Nicholas Pleschko &lt;nicholas@nigi.li&gt;
+<span class="lineNum">       3 </span>            : //
+<span class="lineNum">       4 </span>            : //    ============================================
+<span class="lineNum">       5 </span>            : //
+<span class="lineNum">       6 </span>            : //    This file is part of SimpleArcballCamera.
+<span class="lineNum">       7 </span>            : //
+<span class="lineNum">       8 </span>            : //    SimpleArcballCamera is free software: you can redistribute it and/or 
+<span class="lineNum">       9 </span>            : //    modify it under the terms of the GNU General Public License as published
+<span class="lineNum">      10 </span>            : //    by the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      11 </span>            : //    (at your option) any later version.
+<span class="lineNum">      12 </span>            : //    
+<span class="lineNum">      13 </span>            : //    SimpleArcballCamera is distributed in the hope that it will be useful,
+<span class="lineNum">      14 </span>            : //    but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      15 </span>            : //    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      16 </span>            : //    GNU General Public License for more details.
+<span class="lineNum">      17 </span>            : //
+<span class="lineNum">      18 </span>            : //    You should have received a copy of the GNU General Public License
+<span class="lineNum">      19 </span>            : //    along with SimpleArcballCamera.  If not, 
+<span class="lineNum">      20 </span>            : //    see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      21 </span>            : //
+<span class="lineNum">      22 </span>            : //    This file is based on the Arcball implementation of Mario Konrad
+<span class="lineNum">      23 </span>            : //                    &lt;http://www.mario-konrad.ch/index.php?page=20408&gt;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #ifndef SimpleArcballCamera_Matrix_hpp
+<span class="lineNum">      26 </span>            : #define SimpleArcballCamera_Matrix_hpp
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : #include &quot;Vectors.hpp&quot;
+<span class="lineNum">      29 </span>            : #include &lt;cstring&gt;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : namespace math {
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            : class mat2
+<span class="lineNum">      34 </span>            : {
+<span class="lineNum">      35 </span>            :         public:
+<span class="lineNum">      36 </span>            :                 mat2(void)
+<span class="lineNum">      37 </span>            :                         { load_identity(); }
+<span class="lineNum">      38 </span>            :                 mat2(const mat2 &amp; m)
+<span class="lineNum">      39 </span>            :                         { for (int i=0; i&lt;4; ++i) x[i]=m.x[i]; }
+<span class="lineNum">      40 </span>            :                 mat2(float x11, float x12,
+<span class="lineNum">      41 </span>            :                                 float x21, float x22)
+<span class="lineNum">      42 </span>            :                         { x[0]=x11; x[1]=x12; x[2]=x21; x[3]=x22; }
+<span class="lineNum">      43 </span>            :                 mat2(float m[4])
+<span class="lineNum">      44 </span>            :                         { for (int i=0; i&lt;4; ++i) x[i]=m[i]; }
+<span class="lineNum">      45 </span>            :                 inline void load_identity(void)
+<span class="lineNum">      46 </span>            :                         { for (int i=0; i&lt;4; ++i) x[i]=(i%3)?0.0:1.0; }
+<span class="lineNum">      47 </span>            :                 inline float det(void) const
+<span class="lineNum">      48 </span>            :                         { return        (x[0]*x[3] - x[2]*x[1]); }
+<span class="lineNum">      49 </span>            :                 inline mat2 &amp; operator *= (float f)
+<span class="lineNum">      50 </span>            :                         { for (int i=0; i&lt;4; ++i) x[i]*=f; return *this; }
+<span class="lineNum">      51 </span>            :                 inline mat2 &amp; operator += (const mat2 &amp; m)
+<span class="lineNum">      52 </span>            :                         { for (int i=0; i&lt;4; ++i) x[i]+=m.x[i]; return *this; }
+<span class="lineNum">      53 </span>            :                 inline mat2 &amp; operator -= (const mat2 &amp; m)
+<span class="lineNum">      54 </span>            :                         { for (int i=0; i&lt;4; ++i) x[i]-=m.x[i]; return *this; }
+<span class="lineNum">      55 </span>            :                 inline mat2 &amp; operator *= (const mat2 &amp; m)
+<span class="lineNum">      56 </span>            :                         {
+<span class="lineNum">      57 </span>            :                                 float c[4] =
+<span class="lineNum">      58 </span>            :                                 {
+<span class="lineNum">      59 </span>            :                                         x[0]*m.x[0] + x[1]*m.x[2], x[0]*m.x[1] + x[1]*m.x[3],
+<span class="lineNum">      60 </span>            :                                         x[2]*m.x[0] + x[3]*m.x[2], x[2]*m.x[1] + x[3]*m.x[3]
+<span class="lineNum">      61 </span>            :                                 };
+<span class="lineNum">      62 </span>            :                                 for (int i=0; i&lt;4; ++i) x[i]=c[i];
+<span class="lineNum">      63 </span>            :                                 return *this;
+<span class="lineNum">      64 </span>            :                         }
+<span class="lineNum">      65 </span>            :                 inline float spur(void) const
+<span class="lineNum">      66 </span>            :                         { return x[0]+x[3]; }
+<span class="lineNum">      67 </span>            :                 inline mat2 inv(void) const
+<span class="lineNum">      68 </span>            :                         {
+<span class="lineNum">      69 </span>            :                                 float d = det();
+<span class="lineNum">      70 </span>            :                                 if (d &lt; 1.0e-7 &amp;&amp; d &gt; -1.0e-7) return mat2();
+<span class="lineNum">      71 </span>            :                                 return (1.0 / d) * mat2(x[3], -x[1], -x[2], x[0]);
+<span class="lineNum">      72 </span>            :                         }
+<span class="lineNum">      73 </span>            :                 inline mat2 transpose(void) const
+<span class="lineNum">      74 </span>            :                         { return mat2(x[0], x[2], x[1], x[3]); }
+<span class="lineNum">      75 </span>            :                 inline vec2 rowvec(int row) const       // row in [0..1]
+<span class="lineNum">      76 </span>            :                         { row *= 2; return vec2(x[row], x[row+1]); }
+<span class="lineNum">      77 </span>            :                 inline vec2 colvec(int col) const       // col in [0..1]
+<span class="lineNum">      78 </span>            :                         { return vec2(x[col], x[col+2]); }
+<span class="lineNum">      79 </span>            :                 friend mat2 operator * (float f, const mat2 &amp; m)
+<span class="lineNum">      80 </span>            :                         { return mat2(m) *= f; }
+<span class="lineNum">      81 </span>            :                 friend mat2 operator + (const mat2 &amp; a, const mat2 &amp; b)
+<span class="lineNum">      82 </span>            :                         { return mat2(a) += b; }
+<span class="lineNum">      83 </span>            :                 friend mat2 operator - (const mat2 &amp; a, const mat2 &amp; b)
+<span class="lineNum">      84 </span>            :                         { return mat2(a) -= b; }
+<span class="lineNum">      85 </span>            :                 friend mat2 operator * (const mat2 &amp; a, const mat2 &amp; b)
+<span class="lineNum">      86 </span>            :                         { return mat2(a) *= b; }
+<span class="lineNum">      87 </span>            :                 friend mat2 operator * (const vec2 &amp; v, const mat2 &amp; m)
+<span class="lineNum">      88 </span>            :                         {
+<span class="lineNum">      89 </span>            :                                 float c1 = m.x[0]+m.x[2];
+<span class="lineNum">      90 </span>            :                                 float c2 = m.x[1]+m.x[3];
+<span class="lineNum">      91 </span>            :                                 return mat2(
+<span class="lineNum">      92 </span>            :                                         v[0]*c1, v[0]*c2,
+<span class="lineNum">      93 </span>            :                                         v[1]*c1, v[1]*c2);
+<span class="lineNum">      94 </span>            :                         }
+<span class="lineNum">      95 </span>            :                 friend vec2 operator * (const mat2 &amp; m, const vec2 &amp; v)
+<span class="lineNum">      96 </span>            :                         {
+<span class="lineNum">      97 </span>            :                                 return vec2(
+<span class="lineNum">      98 </span>            :                                         m.x[0]*v[0] + m.x[1]*v[1],
+<span class="lineNum">      99 </span>            :                                         m.x[2]*v[0] + m.x[3]*v[1]);
+<span class="lineNum">     100 </span>            :                         }
+<span class="lineNum">     101 </span>            :         private:
+<span class="lineNum">     102 </span>            :                 float x[4];
+<span class="lineNum">     103 </span>            : };
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            : class mat3
+<span class="lineNum">     106 </span>            : {
+<span class="lineNum">     107 </span>            :         public:
+<span class="lineNum">     108 </span>            :                 mat3(void)
+<span class="lineNum">     109 </span>            :                         { load_identity(); }
+<span class="lineNum">     110 </span>            :                 mat3(const mat3 &amp; m)
+<span class="lineNum">     111 </span>            :                         { for (int i=0; i&lt;9; ++i) x[i]=m.x[i]; }
+<span class="lineNum">     112 </span>            :                 mat3(float x11, float x12, float x13,
+<span class="lineNum">     113 </span>            :                                 float x21, float x22, float x23,
+<span class="lineNum">     114 </span>            :                                 float x31, float x32, float x33)
+<span class="lineNum">     115 </span>            :                         {
+<span class="lineNum">     116 </span>            :                                 x[0]=x11; x[1]=x12; x[2]=x13;
+<span class="lineNum">     117 </span>            :                                 x[3]=x21; x[4]=x22; x[5]=x23;
+<span class="lineNum">     118 </span>            :                                 x[6]=x31; x[7]=x32; x[8]=x33;
+<span class="lineNum">     119 </span>            :                         }
+<span class="lineNum">     120 </span>            :                 mat3(float m[9])
+<span class="lineNum">     121 </span>            :                         { for (int i=0; i&lt;9; ++i) x[i]=m[i]; }
+<span class="lineNum">     122 </span>            :                 inline void load_identity(void)
+<span class="lineNum">     123 </span>            :                         { for (int i=0; i&lt;9; ++i) x[i]=(i%4)?0.0:1.0; }
+<span class="lineNum">     124 </span>            :                 inline float det(void) const
+<span class="lineNum">     125 </span>            :                         {
+<span class="lineNum">     126 </span>            :                                 return  x[0] * (x[4]*x[8] - x[7]*x[5])
+<span class="lineNum">     127 </span>            :                                         -       x[1] * (x[3]*x[8] - x[6]*x[5])
+<span class="lineNum">     128 </span>            :                                         +       x[2] * (x[3]*x[7] - x[6]*x[4]);
+<span class="lineNum">     129 </span>            :                         }
+<span class="lineNum">     130 </span>            :                 inline mat3 &amp; operator *= (float f)
+<span class="lineNum">     131 </span>            :                         { for (int i=0; i&lt;9; ++i) x[i]*=f; return *this; }
+<span class="lineNum">     132 </span>            :                 inline mat3 &amp; operator += (const mat3 &amp; m)
+<span class="lineNum">     133 </span>            :                         { for (int i=0; i&lt;9; ++i) x[i]+=m.x[i]; return *this; }
+<span class="lineNum">     134 </span>            :                 inline mat3 &amp; operator -= (const mat3 &amp; m)
+<span class="lineNum">     135 </span>            :                         { for (int i=0; i&lt;9; ++i) x[i]-=m.x[i]; return *this; }
+<span class="lineNum">     136 </span>            :                 inline mat3 &amp; operator *= (const mat3 &amp; m)
+<span class="lineNum">     137 </span>            :                         {
+<span class="lineNum">     138 </span>            :                                 float c[9] =
+<span class="lineNum">     139 </span>            :                                 {
+<span class="lineNum">     140 </span>            :                                         x[0]*m.x[0] + x[1]*m.x[3] + x[2]*m.x[6],
+<span class="lineNum">     141 </span>            :                                         x[0]*m.x[1] + x[1]*m.x[4] + x[2]*m.x[7],
+<span class="lineNum">     142 </span>            :                                         x[0]*m.x[2] + x[1]*m.x[5] + x[2]*m.x[8],
+<span class="lineNum">     143 </span>            :                                         x[3]*m.x[0] + x[4]*m.x[3] + x[5]*m.x[6],
+<span class="lineNum">     144 </span>            :                                         x[3]*m.x[1] + x[4]*m.x[4] + x[5]*m.x[7],
+<span class="lineNum">     145 </span>            :                                         x[3]*m.x[2] + x[4]*m.x[5] + x[5]*m.x[8],
+<span class="lineNum">     146 </span>            :                                         x[6]*m.x[0] + x[7]*m.x[3] + x[8]*m.x[6],
+<span class="lineNum">     147 </span>            :                                         x[6]*m.x[1] + x[7]*m.x[4] + x[8]*m.x[7],
+<span class="lineNum">     148 </span>            :                                         x[6]*m.x[2] + x[7]*m.x[5] + x[8]*m.x[8]
+<span class="lineNum">     149 </span>            :                                 };
+<span class="lineNum">     150 </span>            :                                 for (int i=0; i&lt;9; ++i) x[i]=((c[i]&lt;1.0e-10)&amp;&amp;(c[i]&gt;-1.0e-10))?0.0:c[i];
+<span class="lineNum">     151 </span>            :                                 return *this;
+<span class="lineNum">     152 </span>            :                         }
+<span class="lineNum">     153 </span>            :                 inline float spur(void) const
+<span class="lineNum">     154 </span>            :                         { return x[0]+x[4]+x[8]; }
+<span class="lineNum">     155 </span>            :                 inline mat3 transpose(void) const
+<span class="lineNum">     156 </span>            :                         {
+<span class="lineNum">     157 </span>            :                                 return mat3(
+<span class="lineNum">     158 </span>            :                                         x[0], x[3], x[6],
+<span class="lineNum">     159 </span>            :                                         x[1], x[4], x[7],
+<span class="lineNum">     160 </span>            :                                         x[2], x[5], x[8]);
+<span class="lineNum">     161 </span>            :                         }
+<span class="lineNum">     162 </span>            :                 inline vec3 rowvec(int row) const       // row in [0..2]
+<span class="lineNum">     163 </span>            :                         { row *= 3; return vec3(x[row], x[row+1], x[row+2]); }
+<span class="lineNum">     164 </span>            :                 inline vec3 colvec(int col) const       // col in [0..2]
+<span class="lineNum">     165 </span>            :                         { return vec3(x[col], x[col+3], x[col+6]); }
+<span class="lineNum">     166 </span>            :                 inline mat3 inv(void) const
+<span class="lineNum">     167 </span>            :                         {
+<span class="lineNum">     168 </span>            :                                 float d = det();
+<span class="lineNum">     169 </span>            :                                 if ((d &lt; 1.0e-7) &amp;&amp; (d &gt; -1.0e-7)) return mat3();
+<span class="lineNum">     170 </span>            :                                 mat3 m(*this), I;
+<span class="lineNum">     171 </span>            :                                 int i0, i1;
+<span class="lineNum">     172 </span>            :                                 float q;
+<span class="lineNum">     173 </span>            :                                 for (int j = 0; j &lt; 3; ++j)
+<span class="lineNum">     174 </span>            :                                 {
+<span class="lineNum">     175 </span>            :                                         // Diagonalfeld normalisieren
+<span class="lineNum">     176 </span>            :                                         q = m.x[j*3+j];
+<span class="lineNum">     177 </span>            :                                         if (q == 0.0) {
+<span class="lineNum">     178 </span>            :                                                 // Es darf keine 0 mehr in der Diagonalen stehen
+<span class="lineNum">     179 </span>            :                                                 for (int i = j+1; i &lt; 3; ++i) {
+<span class="lineNum">     180 </span>            :                                                         // Suche Reihe mit einem Feld != 0.0 und addiere
+<span class="lineNum">     181 </span>            :                                                         if (m.x[i*3+j] != 0.0) {
+<span class="lineNum">     182 </span>            :                                                                 for (int k = 0; k &lt; 3; ++k) {
+<span class="lineNum">     183 </span>            :                                                                         i0 = j*3+k; i1 = i*3+k;
+<span class="lineNum">     184 </span>            :                                                                         m.x[i0] += m.x[i1];
+<span class="lineNum">     185 </span>            :                                                                         I.x[i0] += I.x[i1];
+<span class="lineNum">     186 </span>            :                                                                 }
+<span class="lineNum">     187 </span>            :                                                                 q = m.x[j*3+j];
+<span class="lineNum">     188 </span>            :                                                                 break;
+<span class="lineNum">     189 </span>            :                                                         }
+<span class="lineNum">     190 </span>            :                                                 }
+<span class="lineNum">     191 </span>            :                                         } else {
+<span class="lineNum">     192 </span>            :                                                 // Diagonalen auf 1 bringen
+<span class="lineNum">     193 </span>            :                                                 for (int k = 0; k &lt; 3; ++k) {
+<span class="lineNum">     194 </span>            :                                                         i0 = j*3+k;
+<span class="lineNum">     195 </span>            :                                                         m.x[i0] /= q;
+<span class="lineNum">     196 </span>            :                                                         I.x[i0] /= q;
+<span class="lineNum">     197 </span>            :                                                 }
+<span class="lineNum">     198 </span>            :                                         }
+<span class="lineNum">     199 </span>            :                                         // Spalten ausserhalb der Diagonalen auf 0 bringen
+<span class="lineNum">     200 </span>            :                                         for (int i = 0; i &lt; 3; ++i) {
+<span class="lineNum">     201 </span>            :                                                 if (i != j) {
+<span class="lineNum">     202 </span>            :                                                         q = m.x[i*3+j];
+<span class="lineNum">     203 </span>            :                                                         for (int k = 0; k &lt; 3; ++k) {
+<span class="lineNum">     204 </span>            :                                                                 i0 = i*3+k; i1 = j*3+k;
+<span class="lineNum">     205 </span>            :                                                                 m.x[i0] -= q * m.x[i1];
+<span class="lineNum">     206 </span>            :                                                                 I.x[i0] -= q * I.x[i1];
+<span class="lineNum">     207 </span>            :                                                         }
+<span class="lineNum">     208 </span>            :                                                 }
+<span class="lineNum">     209 </span>            :                                         }
+<span class="lineNum">     210 </span>            :                                 }
+<span class="lineNum">     211 </span>            :                                 // Test auf Einheitsmatrix, falls nicht =&gt; Berechnung nicht gelungen
+<span class="lineNum">     212 </span>            :                                 for (int i = 0; i &lt; 3; ++i)
+<span class="lineNum">     213 </span>            :                                         for (int j = 0; j &lt; 3; ++j)
+<span class="lineNum">     214 </span>            :                                                 if (m.x[i*3+j] != ((i==j) ? 1:0)) return mat3();
+<span class="lineNum">     215 </span>            :                                 return I;
+<span class="lineNum">     216 </span>            :                         }
+<span class="lineNum">     217 </span>            :                 friend mat3 operator * (float f, const mat3 &amp; m)
+<span class="lineNum">     218 </span>            :                         { return mat3(m) *= f; }
+<span class="lineNum">     219 </span>            :                 friend mat3 operator + (const mat3 &amp; a, const mat3 &amp; b)
+<span class="lineNum">     220 </span>            :                         { return mat3(a) += b; }
+<span class="lineNum">     221 </span>            :                 friend mat3 operator - (const mat3 &amp; a, const mat3 &amp; b)
+<span class="lineNum">     222 </span>            :                         { return mat3(a) -= b; }
+<span class="lineNum">     223 </span>            :                 friend mat3 operator * (const mat3 &amp; a, const mat3 &amp; b)
+<span class="lineNum">     224 </span>            :                         { return mat3(a) *= b; }
+<span class="lineNum">     225 </span>            :                 friend mat3 operator * (const vec3 &amp; v, const mat3 &amp; m)
+<span class="lineNum">     226 </span>            :                         {
+<span class="lineNum">     227 </span>            :                                 float c1 = m.x[0]+m.x[3]+m.x[6];
+<span class="lineNum">     228 </span>            :                                 float c2 = m.x[1]+m.x[4]+m.x[7];
+<span class="lineNum">     229 </span>            :                                 float c3 = m.x[2]+m.x[5]+m.x[8];
+<span class="lineNum">     230 </span>            :                                 return mat3(
+<span class="lineNum">     231 </span>            :                                         v[0]*c1, v[0]*c2, v[0]*c3,
+<span class="lineNum">     232 </span>            :                                         v[1]*c1, v[1]*c2, v[1]*c3,
+<span class="lineNum">     233 </span>            :                                         v[2]*c1, v[2]*c2, v[2]*c3);
+<span class="lineNum">     234 </span>            :                         }
+<span class="lineNum">     235 </span>            :                 friend vec3 operator * (const mat3 &amp; m, const vec3 &amp; v)
+<span class="lineNum">     236 </span>            :                         {
+<span class="lineNum">     237 </span>            :                                 return vec3(
+<span class="lineNum">     238 </span>            :                                         m.x[0]*v[0] + m.x[1]*v[1] + m.x[2]*v[2],
+<span class="lineNum">     239 </span>            :                                         m.x[3]*v[0] + m.x[4]*v[1] + m.x[5]*v[2],
+<span class="lineNum">     240 </span>            :                                         m.x[6]*v[0] + m.x[7]*v[1] + m.x[8]*v[2]);
+<span class="lineNum">     241 </span>            :                         }
+<span class="lineNum">     242 </span>            :         private:
+<span class="lineNum">     243 </span>            :                 float x[9];
+<span class="lineNum">     244 </span>            : };
+<span class="lineNum">     245 </span>            : 
+<span class="lineNum">     246 </span>            : class mat4
+<a name="247"><span class="lineNum">     247 </span>            : {</a>
+<span class="lineNum">     248 </span>            :         public:
+<a name="249"><span class="lineNum">     249 </span><span class="lineNoCov">          0 :                 mat4(void)</span></a>
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 :                         { load_identity(); }</span>
+<a name="251"><span class="lineNum">     251 </span><span class="lineNoCov">          0 :                 mat4(const mat4 &amp; m)</span></a>
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :                         { *this = m; }</span>
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :                 mat4(float x11, float x12, float x13, float x14,</span>
+<span class="lineNum">     254 </span>            :                                 float x21, float x22, float x23, float x24,
+<span class="lineNum">     255 </span>            :                                 float x31, float x32, float x33, float x34,
+<span class="lineNum">     256 </span>            :                                 float x41, float x42, float x43, float x44)
+<span class="lineNum">     257 </span><span class="lineNoCov">          0 :                         {</span>
+<span class="lineNum">     258 </span><span class="lineNoCov">          0 :                                 x[ 0]=x11; x[ 1]=x12; x[ 2]=x13; x[ 3]=x14;</span>
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 :                                 x[ 4]=x21; x[ 5]=x22; x[ 6]=x23; x[ 7]=x24;</span>
+<span class="lineNum">     260 </span><span class="lineNoCov">          0 :                                 x[ 8]=x31; x[ 9]=x32; x[10]=x33; x[11]=x34;</span>
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 :                                 x[12]=x41; x[13]=x42; x[14]=x43; x[15]=x44;</span>
+<span class="lineNum">     262 </span><span class="lineNoCov">          0 :                         }</span>
+<span class="lineNum">     263 </span>            :                 mat4(const float m[16])
+<a name="264"><span class="lineNum">     264 </span>            :                         { for (int i=0; i&lt;16; ++i) x[i]=m[i]; }</a>
+<span class="lineNum">     265 </span>            :     
+<span class="lineNum">     266 </span><span class="lineNoCov">          0 :         mat4(vec3 modelcenter, vec3 cameraeye, vec3 cameraup)</span>
+<span class="lineNum">     267 </span><span class="lineNoCov">          0 :     {</span>
+<span class="lineNum">     268 </span>            :         // creates the lookat ROTATION WITHOUT TRANSLATION
+<span class="lineNum">     269 </span>            :         
+<span class="lineNum">     270 </span>            :         
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :         vec3 F = (modelcenter - cameraeye);</span>
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :         vec3 f = F.normalize();</span>
+<span class="lineNum">     273 </span>            :         
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :         vec3 s = f.cross(cameraup);</span>
+<span class="lineNum">     275 </span><span class="lineNoCov">          0 :         s = s.normalize();</span>
+<span class="lineNum">     276 </span>            :         
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :         vec3 u = s.cross(f);</span>
+<span class="lineNum">     278 </span>            :         
+<span class="lineNum">     279 </span>            :         
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :         x[0]= s[0]; </span>
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :         x[1]= s[1]; </span>
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :         x[2]= s[2]; </span>
+<span class="lineNum">     283 </span>            :         
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :         x[3]= 0;</span>
+<span class="lineNum">     285 </span>            :         
+<span class="lineNum">     286 </span><span class="lineNoCov">          0 :         x[4]= u[0];</span>
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :         x[5]= u[1];</span>
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 :         x[6]= u[2];</span>
+<span class="lineNum">     289 </span>            :         
+<span class="lineNum">     290 </span><span class="lineNoCov">          0 :         x[7]= 0;</span>
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :         x[8]= -f[0];</span>
+<span class="lineNum">     292 </span><span class="lineNoCov">          0 :         x[9]= -f[1];</span>
+<span class="lineNum">     293 </span><span class="lineNoCov">          0 :         x[10]= -f[2];</span>
+<span class="lineNum">     294 </span>            :         
+<span class="lineNum">     295 </span><span class="lineNoCov">          0 :         x[11]= 0;</span>
+<span class="lineNum">     296 </span><span class="lineNoCov">          0 :         x[12]= 0; </span>
+<span class="lineNum">     297 </span><span class="lineNoCov">          0 :         x[13]= 0; </span>
+<span class="lineNum">     298 </span><span class="lineNoCov">          0 :         x[14]= 0; </span>
+<span class="lineNum">     299 </span><span class="lineNoCov">          0 :         x[15]= 1;</span>
+<span class="lineNum">     300 </span>            :       
+<span class="lineNum">     301 </span>            :         
+<span class="lineNum">     302 </span>            :        
+<span class="lineNum">     303 </span>            :         
+<span class="lineNum">     304 </span>            :         // First translate the eye position into the center then rotate
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :         *this =  *this;</span>
+<span class="lineNum">     306 </span>            :     
+<span class="lineNum">     307 </span>            :         
+<a name="308"><span class="lineNum">     308 </span><span class="lineNoCov">          0 :     }</span></a>
+<span class="lineNum">     309 </span>            :     
+<span class="lineNum">     310 </span><span class="lineNoCov">          0 :                 inline void load_identity(void)</span>
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :                         { for (int i=0; i&lt;16; ++i) x[i]=(i%5)?0.0:1.0; }</span>
+<span class="lineNum">     312 </span>            :                 inline float det(void) const
+<span class="lineNum">     313 </span>            :                         {       
+<span class="lineNum">     314 </span>            :                                 return  // Regel von Sarrus
+<span class="lineNum">     315 </span>            :                                                 x[ 0]*x[ 5]*x[10]*x[15]
+<span class="lineNum">     316 </span>            :                                         -       x[12]*x[ 9]*x[ 6]*x[ 3]
+<span class="lineNum">     317 </span>            :                                         +       x[ 1]*x[ 6]*x[11]*x[12]
+<span class="lineNum">     318 </span>            :                                         -       x[13]*x[10]*x[ 7]*x[ 0]
+<span class="lineNum">     319 </span>            :                                         +       x[ 2]*x[ 7]*x[ 8]*x[13]
+<span class="lineNum">     320 </span>            :                                         -       x[14]*x[11]*x[ 4]*x[ 1]
+<span class="lineNum">     321 </span>            :                                         +       x[ 3]*x[ 4]*x[ 9]*x[14]
+<a name="322"><span class="lineNum">     322 </span>            :                                         -       x[15]*x[ 8]*x[ 5]*x[ 2];</a>
+<span class="lineNum">     323 </span>            :                         }
+<span class="lineNum">     324 </span><span class="lineNoCov">          0 :                 inline mat4 &amp; operator = (const mat4 &amp; m)</span>
+<span class="lineNum">     325 </span><span class="lineNoCov">          0 :                         { for (int i=0; i&lt;16; ++i) x[i]=m.x[i]; return *this; }</span>
+<span class="lineNum">     326 </span>            :                 inline mat4 &amp; operator *= (float f)
+<span class="lineNum">     327 </span>            :                         { for (int i=0; i&lt;16; ++i) x[i]*=f; return *this; }
+<span class="lineNum">     328 </span>            :                 inline mat4 &amp; operator += (const mat4 &amp; m)
+<span class="lineNum">     329 </span>            :                         { for (int i=0; i&lt;16; ++i) x[i]+=m.x[i]; return *this; }
+<a name="330"><span class="lineNum">     330 </span>            :                 inline mat4 &amp; operator -= (const mat4 &amp; m)</a>
+<span class="lineNum">     331 </span>            :                         { for (int i=0; i&lt;16; ++i) x[i]-=m.x[i]; return *this; }
+<span class="lineNum">     332 </span><span class="lineNoCov">          0 :                 inline mat4 &amp; operator *= (const mat4 &amp; m)</span>
+<span class="lineNum">     333 </span>            :                         {
+<span class="lineNum">     334 </span>            :                                 float c[16] =
+<span class="lineNum">     335 </span>            :                                 {
+<span class="lineNum">     336 </span><span class="lineNoCov">          0 :                                         x[ 0]*m.x[ 0] + x[ 1]*m.x[ 4] + x[ 2]*m.x[ 8] + x[ 3]*m.x[12],</span>
+<span class="lineNum">     337 </span><span class="lineNoCov">          0 :                                         x[ 0]*m.x[ 1] + x[ 1]*m.x[ 5] + x[ 2]*m.x[ 9] + x[ 3]*m.x[13],</span>
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :                                         x[ 0]*m.x[ 2] + x[ 1]*m.x[ 6] + x[ 2]*m.x[10] + x[ 3]*m.x[14],</span>
+<span class="lineNum">     339 </span><span class="lineNoCov">          0 :                                         x[ 0]*m.x[ 3] + x[ 1]*m.x[ 7] + x[ 2]*m.x[11] + x[ 3]*m.x[15],</span>
+<span class="lineNum">     340 </span><span class="lineNoCov">          0 :                                         x[ 4]*m.x[ 0] + x[ 5]*m.x[ 4] + x[ 6]*m.x[ 8] + x[ 7]*m.x[12],</span>
+<span class="lineNum">     341 </span><span class="lineNoCov">          0 :                                         x[ 4]*m.x[ 1] + x[ 5]*m.x[ 5] + x[ 6]*m.x[ 9] + x[ 7]*m.x[13],</span>
+<span class="lineNum">     342 </span><span class="lineNoCov">          0 :                                         x[ 4]*m.x[ 2] + x[ 5]*m.x[ 6] + x[ 6]*m.x[10] + x[ 7]*m.x[14],</span>
+<span class="lineNum">     343 </span><span class="lineNoCov">          0 :                                         x[ 4]*m.x[ 3] + x[ 5]*m.x[ 7] + x[ 6]*m.x[11] + x[ 7]*m.x[15],</span>
+<span class="lineNum">     344 </span><span class="lineNoCov">          0 :                                         x[ 8]*m.x[ 0] + x[ 9]*m.x[ 4] + x[10]*m.x[ 8] + x[11]*m.x[12],</span>
+<span class="lineNum">     345 </span><span class="lineNoCov">          0 :                                         x[ 8]*m.x[ 1] + x[ 9]*m.x[ 5] + x[10]*m.x[ 9] + x[11]*m.x[13],</span>
+<span class="lineNum">     346 </span><span class="lineNoCov">          0 :                                         x[ 8]*m.x[ 2] + x[ 9]*m.x[ 6] + x[10]*m.x[10] + x[11]*m.x[14],</span>
+<span class="lineNum">     347 </span><span class="lineNoCov">          0 :                                         x[ 8]*m.x[ 3] + x[ 9]*m.x[ 7] + x[10]*m.x[11] + x[11]*m.x[15],</span>
+<span class="lineNum">     348 </span><span class="lineNoCov">          0 :                                         x[12]*m.x[ 0] + x[13]*m.x[ 4] + x[14]*m.x[ 8] + x[15]*m.x[12],</span>
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 :                                         x[12]*m.x[ 1] + x[13]*m.x[ 5] + x[14]*m.x[ 9] + x[15]*m.x[13],</span>
+<span class="lineNum">     350 </span><span class="lineNoCov">          0 :                                         x[12]*m.x[ 2] + x[13]*m.x[ 6] + x[14]*m.x[10] + x[15]*m.x[14],</span>
+<span class="lineNum">     351 </span><span class="lineNoCov">          0 :                                         x[12]*m.x[ 3] + x[13]*m.x[ 7] + x[14]*m.x[11] + x[15]*m.x[15]</span>
+<span class="lineNum">     352 </span><span class="lineNoCov">          0 :                                 };</span>
+<span class="lineNum">     353 </span><span class="lineNoCov">          0 :                                 for (int i=0; i&lt;16; ++i) x[i]=((c[i]&lt;1.0e-10)&amp;&amp;(c[i]&gt;-1.0e-10))?0.0:c[i];</span>
+<a name="354"><span class="lineNum">     354 </span><span class="lineNoCov">          0 :                                 return *this;</span></a>
+<span class="lineNum">     355 </span>            :                         }
+<span class="lineNum">     356 </span><span class="lineNoCov">          0 :                 inline float &amp; operator[](size_t i)</span>
+<span class="lineNum">     357 </span><span class="lineNoCov">          0 :                         { return x[i]; }</span>
+<a name="358"><span class="lineNum">     358 </span>            :                 inline float operator[](size_t i) const</a>
+<span class="lineNum">     359 </span>            :                         { return x[i]; }
+<span class="lineNum">     360 </span><span class="lineNoCov">          0 :                 inline const float * get(void) const</span>
+<span class="lineNum">     361 </span><span class="lineNoCov">          0 :                         { return x; }</span>
+<a name="362"><span class="lineNum">     362 </span>            :                 inline float spur(void) const</a>
+<span class="lineNum">     363 </span>            :                         { return x[0]+x[5]+x[10]+x[15]; }
+<span class="lineNum">     364 </span><span class="lineNoCov">          0 :                 inline mat4 transpose(void) const</span>
+<span class="lineNum">     365 </span>            :                         {
+<span class="lineNum">     366 </span>            :                                 return mat4(
+<span class="lineNum">     367 </span><span class="lineNoCov">          0 :                                         x[ 0], x[ 4], x[ 8], x[12],</span>
+<span class="lineNum">     368 </span><span class="lineNoCov">          0 :                                         x[ 1], x[ 5], x[ 9], x[13],</span>
+<span class="lineNum">     369 </span><span class="lineNoCov">          0 :                                         x[ 2], x[ 6], x[10], x[14],</span>
+<span class="lineNum">     370 </span><span class="lineNoCov">          0 :                                         x[ 3], x[ 7], x[11], x[15]);</span>
+<span class="lineNum">     371 </span>            :                         }
+<a name="372"><span class="lineNum">     372 </span>            :                 inline vec4 rowvec(int row) const       // row in [0..3]</a>
+<span class="lineNum">     373 </span>            :                         { row *= 4; return vec4(x[row], x[row+1], x[row+2], x[row+3]); }
+<span class="lineNum">     374 </span><span class="lineNoCov">          0 :                 inline vec4 colvec(int col) const       // col in [0..3]</span>
+<span class="lineNum">     375 </span><span class="lineNoCov">          0 :                         { return vec4(x[col], x[col+4], x[col+8], x[col+12]); }</span>
+<span class="lineNum">     376 </span>            :                 inline mat4 inv(void) const
+<span class="lineNum">     377 </span>            :                         {
+<span class="lineNum">     378 </span>            :                                 float d = det();
+<span class="lineNum">     379 </span>            :                                 if ((d &lt; 1.0e-7) &amp;&amp; (d &gt; -1.0e-7)) return mat4();
+<span class="lineNum">     380 </span>            :                                 mat4 m(*this), I;
+<span class="lineNum">     381 </span>            :                                 int i0, i1;
+<span class="lineNum">     382 </span>            :                                 for (int j = 0; j &lt; 4; ++j) {
+<span class="lineNum">     383 </span>            :                                         // Diagonalfeld normalisieren
+<span class="lineNum">     384 </span>            :                                         float q = m.x[j*4+j];
+<span class="lineNum">     385 </span>            :                                         if (q == 0.0) {
+<span class="lineNum">     386 </span>            :                                                 // Es darf keine 0 mehr in der Diagonalen stehen
+<span class="lineNum">     387 </span>            :                                                 for (int i = j+1; i &lt; 4; ++i) {
+<span class="lineNum">     388 </span>            :                                                         // Suche Reihe mit einem Feld != 0.0 und addiere
+<span class="lineNum">     389 </span>            :                                                         if (m.x[i*4+j] != 0.0) {
+<span class="lineNum">     390 </span>            :                                                                 for (int k = 0; k &lt; 4; ++k) {
+<span class="lineNum">     391 </span>            :                                                                         i0 = j*4+k; i1 = i*4+k;
+<span class="lineNum">     392 </span>            :                                                                         m.x[i0] += m.x[i1];
+<span class="lineNum">     393 </span>            :                                                                         I.x[i0] += I.x[i1];
+<span class="lineNum">     394 </span>            :                                                                 }
+<span class="lineNum">     395 </span>            :                                                                 q = m.x[j*4+j];
+<span class="lineNum">     396 </span>            :                                                                 break;
+<span class="lineNum">     397 </span>            :                                                         }
+<span class="lineNum">     398 </span>            :                                                 }
+<span class="lineNum">     399 </span>            :                                         } else {
+<span class="lineNum">     400 </span>            :                                                 // Diagonalen auf 1 bringen
+<span class="lineNum">     401 </span>            :                                                 for (int k = 0; k &lt; 4; ++k) {
+<span class="lineNum">     402 </span>            :                                                         i0 = j*4+k;
+<span class="lineNum">     403 </span>            :                                                         m.x[i0] /= q;
+<span class="lineNum">     404 </span>            :                                                         I.x[i0] /= q;
+<span class="lineNum">     405 </span>            :                                                 }
+<span class="lineNum">     406 </span>            :                                         }
+<span class="lineNum">     407 </span>            :                                         // Spalten ausserhalb der Diagonalen auf 0 bringen
+<span class="lineNum">     408 </span>            :                                         for (int i = 0; i &lt; 4; ++i) {
+<span class="lineNum">     409 </span>            :                                                 if (i != j) {
+<span class="lineNum">     410 </span>            :                                                         q = m.x[i*4+j];
+<span class="lineNum">     411 </span>            :                                                         for (int k = 0; k &lt; 4; ++k) {
+<span class="lineNum">     412 </span>            :                                                                 i0 = i*4+k; i1 = j*4+k;
+<span class="lineNum">     413 </span>            :                                                                 m.x[i0] -= q * m.x[i1];
+<span class="lineNum">     414 </span>            :                                                                 I.x[i0] -= q * I.x[i1];
+<span class="lineNum">     415 </span>            :                                                         }
+<span class="lineNum">     416 </span>            :                                                 }
+<span class="lineNum">     417 </span>            :                                         }
+<span class="lineNum">     418 </span>            :                                 }
+<span class="lineNum">     419 </span>            :                                 // Test auf Einheitsmatrix, falls nicht =&gt; Berechnung nicht gelungen
+<span class="lineNum">     420 </span>            :                                 for (int i = 0; i &lt; 4; ++i) 
+<span class="lineNum">     421 </span>            :                                         for (int j = 0; j &lt; 4; ++j)
+<span class="lineNum">     422 </span>            :                                                 if (m.x[i*4+j] != ((i==j) ? 1:0)) return mat4();
+<span class="lineNum">     423 </span>            :                                 return I;
+<span class="lineNum">     424 </span>            :                         }
+<span class="lineNum">     425 </span>            :                 friend mat4 operator * (float f, const mat4 &amp; m)
+<span class="lineNum">     426 </span>            :                         { return mat4(m) *= f; }
+<span class="lineNum">     427 </span>            :                 friend mat4 operator + (const mat4 &amp; a, const mat4 &amp; b)
+<span class="lineNum">     428 </span>            :                         { return mat4(a) += b; }
+<a name="429"><span class="lineNum">     429 </span>            :                 friend mat4 operator - (const mat4 &amp; a, const mat4 &amp; b)</a>
+<span class="lineNum">     430 </span>            :                         { return mat4(a) -= b; }
+<span class="lineNum">     431 </span><span class="lineNoCov">          0 :                 friend mat4 operator * (const mat4 &amp; a, const mat4 &amp; b)</span>
+<span class="lineNum">     432 </span><span class="lineNoCov">          0 :                         { return mat4(a) *= b; }</span>
+<span class="lineNum">     433 </span>            :                 friend mat4 operator * (const vec4 &amp; v, const mat4 &amp; m)
+<span class="lineNum">     434 </span>            :                         {
+<span class="lineNum">     435 </span>            :                                 float c1 = m.x[ 0]+m.x[ 4]+m.x[ 8]+m.x[12];
+<span class="lineNum">     436 </span>            :                                 float c2 = m.x[ 1]+m.x[ 5]+m.x[ 9]+m.x[13];
+<span class="lineNum">     437 </span>            :                                 float c3 = m.x[ 2]+m.x[ 6]+m.x[10]+m.x[14];
+<span class="lineNum">     438 </span>            :                                 float c4 = m.x[ 3]+m.x[ 7]+m.x[11]+m.x[15];
+<span class="lineNum">     439 </span>            :                                 return mat4(
+<span class="lineNum">     440 </span>            :                                         v[0]*c1, v[0]*c2, v[0]*c3, v[0]*c4,
+<span class="lineNum">     441 </span>            :                                         v[1]*c1, v[1]*c2, v[1]*c3, v[1]*c4,
+<span class="lineNum">     442 </span>            :                                         v[2]*c1, v[2]*c2, v[2]*c3, v[2]*c4,
+<span class="lineNum">     443 </span>            :                                         v[3]*c1, v[3]*c2, v[3]*c3, v[3]*c4);
+<span class="lineNum">     444 </span>            :                         }
+<span class="lineNum">     445 </span>            :                 friend vec4 operator * (const mat4 &amp; m, const vec4 &amp; v)
+<span class="lineNum">     446 </span>            :                         {
+<span class="lineNum">     447 </span>            :                                 return vec4(
+<span class="lineNum">     448 </span>            :                                         m.x[ 0]*v[0] + m.x[ 1]*v[1] + m.x[ 2]*v[2] + m.x[ 3]*v[3],
+<span class="lineNum">     449 </span>            :                                         m.x[ 4]*v[0] + m.x[ 5]*v[1] + m.x[ 6]*v[2] + m.x[ 7]*v[3],
+<span class="lineNum">     450 </span>            :                                         m.x[ 8]*v[0] + m.x[ 9]*v[1] + m.x[10]*v[2] + m.x[11]*v[3],
+<span class="lineNum">     451 </span>            :                                         m.x[12]*v[0] + m.x[13]*v[1] + m.x[14]*v[2] + m.x[15]*v[3]);
+<span class="lineNum">     452 </span>            :                         }
+<span class="lineNum">     453 </span>            :         private:
+<span class="lineNum">     454 </span>            :                 float x[16];
+<span class="lineNum">     455 </span>            : };
+<span class="lineNum">     456 </span>            : 
+<span class="lineNum">     457 </span>            : template &lt;unsigned int N&gt; class matn      // N &gt;= 1
+<span class="lineNum">     458 </span>            : {
+<span class="lineNum">     459 </span>            :         public:
+<span class="lineNum">     460 </span>            :                 matn(void)
+<span class="lineNum">     461 </span>            :                         { load_identity(); }
+<span class="lineNum">     462 </span>            :                 matn(const matn&lt;N&gt; &amp; m)
+<span class="lineNum">     463 </span>            :                         { for (unsigned int i=0; i&lt;N*N; ++i) x[i]=m.x[i]; }
+<span class="lineNum">     464 </span>            :                 matn(float m[])
+<span class="lineNum">     465 </span>            :                         { for (unsigned int i=0; i&lt;N*N; ++i) x[i]=m[i]; }
+<span class="lineNum">     466 </span>            :                 inline void load_identity(void)
+<span class="lineNum">     467 </span>            :                         { for (unsigned int i=0; i&lt;N*N; ++i) x[i]=(i%(N+1))?0.0:1.0; }
+<span class="lineNum">     468 </span>            :                 inline matn&lt;N&gt; &amp; operator *= (float f)
+<span class="lineNum">     469 </span>            :                         { for (unsigned int i=0; i&lt;N*N; ++i) x[i]*=f; return *this; }
+<span class="lineNum">     470 </span>            :                 inline matn&lt;N&gt; &amp; operator += (const matn&lt;N&gt; &amp; m)
+<span class="lineNum">     471 </span>            :                         { for (unsigned int i=0; i&lt;N*N; ++i) x[i]+=m.x[i]; return *this; }
+<span class="lineNum">     472 </span>            :                 inline matn&lt;N&gt; &amp; operator -= (const matn&lt;N&gt; &amp; m)
+<span class="lineNum">     473 </span>            :                         { for (unsigned int i=0; i&lt;N*N; ++i) x[i]-=m.x[i]; return *this; }
+<span class="lineNum">     474 </span>            :                 inline float spur(void) const
+<span class="lineNum">     475 </span>            :                         { float s = 0.0; for (unsigned int i=0; i&lt;N; ++i) s+=x[i*N+i]; return s; }
+<span class="lineNum">     476 </span>            :                 inline matn&lt;N&gt; transpose(void) const
+<span class="lineNum">     477 </span>            :                         {
+<span class="lineNum">     478 </span>            :                                 matn&lt;N&gt; r;
+<span class="lineNum">     479 </span>            :                                 for (unsigned int i=0; i&lt;N; ++i)
+<span class="lineNum">     480 </span>            :                                         for (unsigned int j=0; j&lt;N; ++j)
+<span class="lineNum">     481 </span>            :                                                 r.x[i*N+j] = x[j*N+i];
+<span class="lineNum">     482 </span>            :                                 return r;
+<span class="lineNum">     483 </span>            :                         }
+<span class="lineNum">     484 </span>            :                 inline matn&lt;N&gt; &amp; operator *= (const matn&lt;N&gt; &amp; m)
+<span class="lineNum">     485 </span>            :                         {
+<span class="lineNum">     486 </span>            :                                 float c[N*N];
+<span class="lineNum">     487 </span>            :                                 unsigned int idx;
+<span class="lineNum">     488 </span>            :                                 for (unsigned int i=0; i&lt;N; ++i)
+<span class="lineNum">     489 </span>            :                                         for (unsigned int j=0; j&lt;N; ++j) {
+<span class="lineNum">     490 </span>            :                                                 idx = i*N+j;
+<span class="lineNum">     491 </span>            :                                                 c[idx] = 0.0;
+<span class="lineNum">     492 </span>            :                                                 for (unsigned int k=0; k&lt;N; ++k) c[idx] += x[i*N+k]*m.x[k*N+j];
+<span class="lineNum">     493 </span>            :                                         }
+<span class="lineNum">     494 </span>            :                                 for (unsigned int i=0; i&lt;N*N; ++i) x[i]=((c[i]&lt;1.0e-10)&amp;&amp;(c[i]&gt;-1.0e-10))?0.0:c[i];
+<span class="lineNum">     495 </span>            :                                 return *this;
+<span class="lineNum">     496 </span>            :                         }
+<span class="lineNum">     497 </span>            :                 inline float det(void) const
+<span class="lineNum">     498 </span>            :                         {       // Regel von Sarrus
+<span class="lineNum">     499 </span>            :                                 float r = 0.0;
+<span class="lineNum">     500 </span>            :                                 float ap, am;
+<span class="lineNum">     501 </span>            :                                 unsigned int k;
+<span class="lineNum">     502 </span>            :                                 for (unsigned int j=0; j&lt;N; ++j)
+<span class="lineNum">     503 </span>            :                                 {
+<span class="lineNum">     504 </span>            :                                         ap = am = 1.0;
+<span class="lineNum">     505 </span>            :                                         for (unsigned int i=0; i&lt;N; ++i)
+<span class="lineNum">     506 </span>            :                                         {
+<span class="lineNum">     507 </span>            :                                                 k = (j+i)%N;
+<span class="lineNum">     508 </span>            :                                                 ap *= x[i*N+k];
+<span class="lineNum">     509 </span>            :                                                 am *= x[(N-1-i)*N+k];
+<span class="lineNum">     510 </span>            :                                         }
+<span class="lineNum">     511 </span>            :                                         r += ap - am;
+<span class="lineNum">     512 </span>            :                                 }
+<span class="lineNum">     513 </span>            :                                 return r;
+<span class="lineNum">     514 </span>            :                         }
+<span class="lineNum">     515 </span>            :                 inline matn&lt;N&gt; inv(void) const
+<span class="lineNum">     516 </span>            :                         {
+<span class="lineNum">     517 </span>            :                                 float d = det();
+<span class="lineNum">     518 </span>            :                                 if ((d &lt; 1.0e-7) &amp;&amp; (d &gt; -1.0e-7)) return matn&lt;N&gt;();
+<span class="lineNum">     519 </span>            :                                 matn&lt;N&gt; m(*this), I;
+<span class="lineNum">     520 </span>            :                                 unsigned int i0, i1;
+<span class="lineNum">     521 </span>            :                                 float q;
+<span class="lineNum">     522 </span>            :                                 for (unsigned int j = 0; j &lt; N; ++j)
+<span class="lineNum">     523 </span>            :                                 {
+<span class="lineNum">     524 </span>            :                                         // Diagonalfeld normalisieren
+<span class="lineNum">     525 </span>            :                                         q = m.x[j*N+j];
+<span class="lineNum">     526 </span>            :                                         if (q == 0.0) {
+<span class="lineNum">     527 </span>            :                                                 // Es darf keine 0 mehr in der Diagonalen stehen
+<span class="lineNum">     528 </span>            :                                                 for (unsigned int i = j+1; i &lt; N; ++i) {
+<span class="lineNum">     529 </span>            :                                                         // Suche Reihe mit einem Feld != 0.0 und addiere
+<span class="lineNum">     530 </span>            :                                                         if (m.x[i*N+j] != 0.0) {
+<span class="lineNum">     531 </span>            :                                                                 for (unsigned int k = 0; k &lt; N; ++k) {
+<span class="lineNum">     532 </span>            :                                                                         i0 = j*N+k; i1 = i*N+k;
+<span class="lineNum">     533 </span>            :                                                                         m.x[i0] += m.x[i1];
+<span class="lineNum">     534 </span>            :                                                                         I.x[i0] += I.x[i1];
+<span class="lineNum">     535 </span>            :                                                                 }
+<span class="lineNum">     536 </span>            :                                                                 q = m.x[j*N+j];
+<span class="lineNum">     537 </span>            :                                                                 break;
+<span class="lineNum">     538 </span>            :                                                         }
+<span class="lineNum">     539 </span>            :                                                 }
+<span class="lineNum">     540 </span>            :                                         } else { // Diagonalen auf 1 bringen
+<span class="lineNum">     541 </span>            :                                                 for (unsigned int k = 0; k &lt; N; ++k) {
+<span class="lineNum">     542 </span>            :                                                         i0 = j*N+k;
+<span class="lineNum">     543 </span>            :                                                         m.x[i0] /= q;
+<span class="lineNum">     544 </span>            :                                                         I.x[i0] /= q;
+<span class="lineNum">     545 </span>            :                                                 }
+<span class="lineNum">     546 </span>            :                                         }
+<span class="lineNum">     547 </span>            :                                         // Spalten ausserhalb der Diagonalen auf 0 bringen
+<span class="lineNum">     548 </span>            :                                         for (unsigned int i = 0; i &lt; N; ++i) {
+<span class="lineNum">     549 </span>            :                                                 if (i != j) {
+<span class="lineNum">     550 </span>            :                                                         q = m.x[i*N+j];
+<span class="lineNum">     551 </span>            :                                                         for (unsigned int k = 0; k &lt; N; ++k) {
+<span class="lineNum">     552 </span>            :                                                                 i0 = i*N+k; i1 = j*N+k;
+<span class="lineNum">     553 </span>            :                                                                 m.x[i0] -= q * m.x[i1];
+<span class="lineNum">     554 </span>            :                                                                 I.x[i0] -= q * I.x[i1];
+<span class="lineNum">     555 </span>            :                                                         }
+<span class="lineNum">     556 </span>            :                                                 }
+<span class="lineNum">     557 </span>            :                                         }
+<span class="lineNum">     558 </span>            :                                 }
+<span class="lineNum">     559 </span>            :                                 // Test auf Einheitsmatrix, falls nicht =&gt; Berechnung nicht gelungen
+<span class="lineNum">     560 </span>            :                                 for (unsigned int i = 0; i &lt; N; ++i)
+<span class="lineNum">     561 </span>            :                                         for (unsigned int j = 0; j &lt; N; ++j)
+<span class="lineNum">     562 </span>            :                                                 if (m.x[i*N+j] != ((i==j) ? 1:0)) return matn&lt;N&gt;();
+<span class="lineNum">     563 </span>            :                                 return I;
+<span class="lineNum">     564 </span>            :                         }
+<span class="lineNum">     565 </span>            :                 inline vecn&lt;N&gt; rowvec(int row) const      // row in [0..N-1]
+<span class="lineNum">     566 </span>            :                         { vecn&lt;N&gt; v; row*=N; for (unsigned int i=0; i&lt;N; ++i) v[i]=x[row+i]; return v; }
+<span class="lineNum">     567 </span>            :                 inline vecn&lt;N&gt; colvec(int col) const      // col in [0..N-1]
+<span class="lineNum">     568 </span>            :                         { vecn&lt;N&gt; v; for (unsigned int i=0; i&lt;N; ++i) v[i]=x[col+i*N]; return v; }
+<span class="lineNum">     569 </span>            :                 friend matn&lt;N&gt; operator * (float f, const matn&lt;N&gt; &amp; m)
+<span class="lineNum">     570 </span>            :                         { return matn&lt;N&gt;(m) *= f; }
+<span class="lineNum">     571 </span>            :                 friend matn&lt;N&gt; operator + (const matn&lt;N&gt; &amp; a, const matn&lt;N&gt; &amp; b)
+<span class="lineNum">     572 </span>            :                         { return matn&lt;N&gt;(a) += b; }
+<span class="lineNum">     573 </span>            :                 friend matn&lt;N&gt; operator - (const matn&lt;N&gt; &amp; a, const matn&lt;N&gt; &amp; b)
+<span class="lineNum">     574 </span>            :                         { return matn&lt;N&gt;(a) -= b; }
+<span class="lineNum">     575 </span>            :                 friend matn&lt;N&gt; operator * (const matn&lt;N&gt; &amp; a, const matn&lt;N&gt; &amp; b)
+<span class="lineNum">     576 </span>            :                         { return matn&lt;N&gt;(a) *= b; }
+<span class="lineNum">     577 </span>            :                 friend matn&lt;N&gt; operator * (const vecn&lt;N&gt; &amp; v, const matn&lt;N&gt; &amp; m)
+<span class="lineNum">     578 </span>            :                         {
+<span class="lineNum">     579 </span>            :                                 matn&lt;N&gt; r;
+<span class="lineNum">     580 </span>            :                                 vecn&lt;N&gt; c;
+<span class="lineNum">     581 </span>            :                                 for (unsigned int i=0; i&lt;N; ++i)
+<span class="lineNum">     582 </span>            :                                         for (unsigned int j=0; j&lt;N; ++j)
+<span class="lineNum">     583 </span>            :                                                 c[i] += m.x[i*N+j];
+<span class="lineNum">     584 </span>            :                                 for (unsigned int i=0; i&lt;N; ++i)
+<span class="lineNum">     585 </span>            :                                         for (unsigned int j=0; j&lt;N; ++j)
+<span class="lineNum">     586 </span>            :                                                 r.x[i*N+j] = c[j] * v[i];
+<span class="lineNum">     587 </span>            :                                 return r;
+<span class="lineNum">     588 </span>            :                         }
+<span class="lineNum">     589 </span>            :                 friend vecn&lt;N&gt; operator * (const matn&lt;N&gt; &amp; m, const vecn&lt;N&gt; &amp; v)
+<span class="lineNum">     590 </span>            :                         {
+<span class="lineNum">     591 </span>            :                                 vecn&lt;N&gt; r;
+<span class="lineNum">     592 </span>            :                                 for (unsigned int i=0; i&lt;N; ++i)
+<span class="lineNum">     593 </span>            :                                         for (unsigned int j=0; j&lt;N; ++j) r[i] += m.x[j+i*N]*v[i];
+<span class="lineNum">     594 </span>            :                                 return r;
+<span class="lineNum">     595 </span>            :                         }
+<span class="lineNum">     596 </span>            :         private:
+<span class="lineNum">     597 </span>            :                 float x[N*N];
+<span class="lineNum">     598 </span>            : };
+<span class="lineNum">     599 </span>            : 
+<span class="lineNum">     600 </span>            : }
+<span class="lineNum">     601 </span>            : 
+<span class="lineNum">     602 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

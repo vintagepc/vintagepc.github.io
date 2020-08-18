@@ -1,0 +1,327 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/I2CPeripheral.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">MK404/parts</a> - I2CPeripheral.h<span style="font-size: 80%;"> (source / <a href="I2CPeripheral.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">82</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         I2CPeripheral.h - Generalization helper for I2C-based peripherals.
+<span class="lineNum">       3 </span>            :     This header auto-wires the bus and deals with some of the copypasta.
+<span class="lineNum">       4 </span>            :     Currently only supports bit-banged mode as I haven't needed to deal
+<span class="lineNum">       5 </span>            :         with &quot;real&quot; i2c hardware yet.
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            :         This file is part of MK404.
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">      12 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      13 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      14 </span>            :         (at your option) any later version.
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      17 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      18 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      19 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      22 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      23 </span>            :  */
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : #pragma once
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span>            : #include &lt;stdint.h&gt;            // for uint8_t, uint32_t, int32_t, uint16_t
+<span class="lineNum">      29 </span>            : #include &quot;BasePeripheral.h&quot;
+<span class="lineNum">      30 </span>            : #include &lt;avr_twi.h&gt;
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : class I2CPeripheral: public BasePeripheral
+<a name="33"><span class="lineNum">      33 </span>            : {</a>
+<a name="34"><span class="lineNum">      34 </span>            :     protected:</a>
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 :                 I2CPeripheral(uint8_t uiAddress):m_uiDevAddr(uiAddress){};</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :                 ~I2CPeripheral(){};</span>
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            :         // Sets up the IRQs on &quot;avr&quot; for this class. Optional name override IRQNAMES.
+<span class="lineNum">      39 </span>            :         template&lt;class C&gt;
+<span class="lineNum">      40 </span>            :         void _Init(avr_t *avr, C *p, const char** IRQNAMES = nullptr) {
+<span class="lineNum">      41 </span>            :             BasePeripheral::_Init(avr,p, IRQNAMES);
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :                         fprintf(stderr,&quot;WARNING: UNIMPLEMENTED FEATURE - HARDWARE I2C\n&quot;);
+<span class="lineNum">      44 </span>            :             RegisterNotify(C::TX_IN, MAKE_C_CALLBACK(I2CPeripheral,_OnI2CTx&lt;C&gt;), this);
+<span class="lineNum">      45 </span>            :             ConnectFrom(avr_io_getirq(avr,AVR_IOCTL_TWI_GETIRQ(0),TWI_IRQ_OUTPUT), C::TX_IN);
+<span class="lineNum">      46 </span>            :             ConnectTo(C::TX_REPLY,avr_io_getirq(avr,AVR_IOCTL_TWI_GETIRQ(0), TWI_IRQ_INPUT));
+<span class="lineNum">      47 </span>            :         }
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :                 // For bitbanged I2C connections. They are routed through standard TX/REPLY irqs so
+<a name="50"><span class="lineNum">      50 </span>            :                 // your derived device doesn't have to care if it is on &quot;real&quot; I2C</a>
+<span class="lineNum">      51 </span>            :                 template&lt;class C&gt;
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :         void _Init(avr_t *avr, avr_irq_t *irqSDA, avr_irq_t *irqSCL, C *p, const char** IRQNAMES = nullptr) {</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :                         BasePeripheral::_Init(avr,p, IRQNAMES);</span>
+<a name="54"><span class="lineNum">      54 </span><span class="lineNoCov">          0 :                         m_pSCL = irqSCL;</span></a>
+<a name="55"><span class="lineNum">      55 </span><span class="lineNoCov">          0 :                         m_pSDA = irqSDA;</span></a>
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :                         avr_irq_register_notify(irqSCL, MAKE_C_CALLBACK(I2CPeripheral,_OnSCL),this);</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :                         avr_irq_register_notify(irqSDA, MAKE_C_CALLBACK(I2CPeripheral,_OnSDA),this);</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :                 }</span>
+<a name="59"><span class="lineNum">      59 </span>            : </a>
+<span class="lineNum">      60 </span>            :                 // Override these for read and write operations on your device's registers.
+<a name="61"><span class="lineNum">      61 </span><span class="lineNoCov">          0 :                 virtual uint8_t GetRegVal(uint8_t uiAddr){return 0;};</span></a>
+<span class="lineNum">      62 </span>            :                 // Return T if success, F if failure. F results in NACK.
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :                 virtual bool SetRegVal(uint8_t uiAddr, uint32_t uiData){return false;};</span>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : 
+<a name="66"><span class="lineNum">      66 </span>            :     private:</a>
+<span class="lineNum">      67 </span>            :                 typedef union I2CMsg_t {
+<span class="lineNum">      68 </span><span class="lineNoCov">          0 :                         I2CMsg_t(uint32_t uiRaw = 0){ raw = uiRaw; }; // Convenience constructor</span>
+<span class="lineNum">      69 </span>            :                         I2CMsg_t(const uint8_t &amp;uiMsg, const uint8_t &amp;uiAddr, const uint8_t &amp;uiData){ raw = uiMsg&lt;&lt;16 | uiAddr &lt;&lt; 8 | uiData;}
+<span class="lineNum">      70 </span>            :                         uint32_t raw :24;
+<span class="lineNum">      71 </span>            :                         uint8_t bytes[3];
+<span class="lineNum">      72 </span>            :                         struct {
+<span class="lineNum">      73 </span>            :                                 uint8_t data;
+<span class="lineNum">      74 </span>            :                                 uint8_t writeRegAddr;
+<span class="lineNum">      75 </span>            :                                 uint8_t isAddrRead :1; // Write bit on address. IDK if this is used given msgBits.isWrite.
+<span class="lineNum">      76 </span>            :                                 uint8_t address :7;
+<span class="lineNum">      77 </span>            :                         };
+<span class="lineNum">      78 </span>            :                 } I2CMsg_t;
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :                 // I2C transaction handler.
+<span class="lineNum">      81 </span>            :                 template&lt;class C&gt;
+<span class="lineNum">      82 </span>            :                 void _OnI2CTx(avr_irq_t *irq, I2CMsg_t msg)
+<span class="lineNum">      83 </span>            :                 {
+<span class="lineNum">      84 </span>            :                         // TODO - I don't have any real &quot;hardware&quot; i2c items to simulate at the moment.
+<span class="lineNum">      85 </span>            :                 }
+<span class="lineNum">      86 </span>            : 
+<a name="87"><span class="lineNum">      87 </span>            :                 // Called on a read request of uiReg. You don't need to worry about tracking/incrementing the address on multi-reads.</a>
+<span class="lineNum">      88 </span>            :                 //virtual uint8_t ProcessRead(uint8_t uiReg){};
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :                 bool ProcessByte(const uint8_t &amp;value)</span>
+<span class="lineNum">      90 </span>            :                 {
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :                         bool bReturn = false;</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :                         switch (m_state)</span>
+<span class="lineNum">      93 </span>            :                         {
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                                 case State::AddrIn:</span>
+<span class="lineNum">      95 </span>            :                                 {
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                                         msgIn.bytes[2] = value;</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :                                         if (msgIn.address != m_uiDevAddr)</span>
+<span class="lineNum">      98 </span>            :                                         {
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :                                                 m_SCLState = SCLS::Idle;</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :                                                 m_state = State::Idle;</span>
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 :                                                 break;</span>
+<span class="lineNum">     102 </span>            :                                         }
+<span class="lineNum">     103 </span><span class="lineNoCov">          0 :                                         bReturn = true;</span>
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 :                                         if (msgIn.isAddrRead)</span>
+<span class="lineNum">     105 </span>            :                                         {
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :                                                 m_SCLState = SCLS::WaitForWrite; // Wait for next clock</span>
+<span class="lineNum">     107 </span>            :                                         }
+<span class="lineNum">     108 </span>            :                                         else
+<span class="lineNum">     109 </span>            :                                         {
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :                                                 m_state = State::RegIn;</span>
+<span class="lineNum">     111 </span>            :                                         }
+<span class="lineNum">     112 </span>            :                                 }
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :                                 case State::RegIn:</span>
+<span class="lineNum">     115 </span>            :                                 {
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :                                         msgIn.bytes[1] = value;</span>
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :                                         m_state = State::DataIn;</span>
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :                                         bReturn = true;</span>
+<span class="lineNum">     119 </span>            :                                         // TODO- this doesn't handle OOB regs.
+<span class="lineNum">     120 </span>            :                                 }
+<span class="lineNum">     121 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 :                                 case State::DataIn:</span>
+<span class="lineNum">     123 </span>            :                                 {
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :                                         msgIn.bytes[0] = value;</span>
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :                                         bReturn = SetRegVal(msgIn.writeRegAddr++,msgIn.data);</span>
+<span class="lineNum">     126 </span>            :                                 }
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 :                                 default:</span>
+<span class="lineNum">     129 </span><span class="lineNoCov">          0 :                                 break;</span>
+<span class="lineNum">     130 </span>            :                         }
+<span class="lineNum">     131 </span>            :                         //printf(&quot;I2C msg status: Addr: %02x Read: %u raw: %04x\n&quot;, msgIn.address, msgIn.isAddrRead, msgIn.raw);
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :                         return bReturn;</span>
+<a name="133"><span class="lineNum">     133 </span>            :                 }</a>
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :                 void _OnSCL(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     136 </span>            :                 {
+<span class="lineNum">     137 </span>            :                         //if (value) printf(&quot;SCL: %u (%u)\n&quot;, value,m_uiBitCt);
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :                         bool bClockRise = !(irq-&gt;value) &amp;&amp; value;</span>
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :                         bool bClockFall = (irq-&gt;value) &amp;&amp; !value;</span>
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :                         if  (m_SCLState ==SCLS::Idle || (bClockRise==bClockFall))</span>
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :                                 return;</span>
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 :                         switch (m_SCLState)</span>
+<span class="lineNum">     143 </span>            :                         {
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :                                 default:</span>
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 :                                         break;</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :                                 case SCLS::Reading:</span>
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 :                                         if (bClockRise)</span>
+<span class="lineNum">     148 </span>            :                                         {
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :                                                 if (m_uiBitCt == 8) // Byte done, do we ACK or NACK?</span>
+<span class="lineNum">     150 </span>            :                                                 {
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :                                                         if (ProcessByte(m_uiByte))</span>
+<span class="lineNum">     152 </span>            :                                                         {
+<span class="lineNum">     153 </span>            :                                                                 //printf(&quot;ACK\n&quot;);
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :                                                                 avr_raise_irq(m_pSDA,0);</span>
+<span class="lineNum">     155 </span>            :                                                         }
+<span class="lineNum">     156 </span>            :                                                         // else
+<span class="lineNum">     157 </span>            :                                                         //      printf(&quot;NACK\n&quot;);
+<span class="lineNum">     158 </span><span class="lineNoCov">          0 :                                                         m_uiByte = m_uiBitCt = 0;</span>
+<span class="lineNum">     159 </span>            :                                                 }
+<span class="lineNum">     160 </span>            :                                                 else
+<span class="lineNum">     161 </span>            :                                                 {
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 :                                                         m_uiByte &lt;&lt;= 1; // Shift up.</span>
+<span class="lineNum">     163 </span><span class="lineNoCov">          0 :                                                         m_uiByte |= (m_pSDA-&gt;value &amp; 1);</span>
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :                                                         m_uiBitCt++;</span>
+<span class="lineNum">     165 </span>            :                                                 }
+<span class="lineNum">     166 </span>            :                                         }
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 :                                         break;</span>
+<span class="lineNum">     168 </span><span class="lineNoCov">          0 :                                 case SCLS::WaitForWrite:</span>
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :                                         if (bClockFall)</span>
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :                                                 m_SCLState = SCLS::Writing;</span>
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :                                         break;</span>
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 :                                 case SCLS::Writing:</span>
+<span class="lineNum">     173 </span>            :                                         {
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :                                                 if (bClockRise)</span>
+<span class="lineNum">     175 </span>            :                                                 {
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :                                                         if (m_uiBitCt == 0)</span>
+<span class="lineNum">     177 </span>            :                                                         {
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                                                                 m_uiBitCt = 8;</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :                                                                 m_uiByte = GetRegVal(msgIn.writeRegAddr);</span>
+<span class="lineNum">     180 </span>            :                                                                 //printf(&quot;Sending %02x\n&quot;,m_uiByte);
+<span class="lineNum">     181 </span>            :                                                         }
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :                                                         avr_raise_irq(m_pSDA, m_uiByte&gt;&gt;(--m_uiBitCt) &amp;1);</span>
+<span class="lineNum">     183 </span>            :                                                 }
+<span class="lineNum">     184 </span>            :                                                 else
+<span class="lineNum">     185 </span>            :                                                 {
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :                                                         if (m_uiBitCt == 0)</span>
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :                                                                 m_SCLState = SCLS::WaitForACK;</span>
+<span class="lineNum">     188 </span>            :                                                 }
+<span class="lineNum">     189 </span>            :                                         }
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :                                         break;</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :                                 case SCLS::WaitForACK:</span>
+<span class="lineNum">     192 </span>            :                                         {
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                                                 if (bClockRise)</span>
+<span class="lineNum">     194 </span>            :                                                 {
+<span class="lineNum">     195 </span>            :                                                         //printf(&quot;%cACK rec'd\n&quot;,m_pSDA-&gt;value? ' ':'N');
+<span class="lineNum">     196 </span>            :                                                 }
+<span class="lineNum">     197 </span>            :                                                 else
+<span class="lineNum">     198 </span>            :                                                 {
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                                                         m_SCLState = SCLS::Writing; // Back to writing.</span>
+<span class="lineNum">     200 </span>            :                                                 }
+<span class="lineNum">     201 </span>            :                                         }
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 :                                         break;</span>
+<span class="lineNum">     203 </span>            :                         }
+<a name="204"><span class="lineNum">     204 </span>            :                 }</a>
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :                 void _OnSDA(avr_irq_t *irq, uint32_t value)</span>
+<span class="lineNum">     207 </span>            :                 {
+<span class="lineNum">     208 </span><span class="lineNoCov">          0 :                         if (m_pSCL-&gt;value)</span>
+<span class="lineNum">     209 </span>            :                         {
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 :                                 if (value)</span>
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :                                         m_SCLState = SCLS::Idle;</span>
+<span class="lineNum">     212 </span>            :                                 else
+<span class="lineNum">     213 </span>            :                                 {
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :                                         m_SCLState = SCLS::Reading;</span>
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :                                         m_state = State::AddrIn;</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :                                         m_uiBitCt = 0;</span>
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :                                         m_uiByte = 0;</span>
+<span class="lineNum">     218 </span>            :                                 }
+<span class="lineNum">     219 </span>            :                                 //printf(&quot;I2C TX %s\n&quot;,value?&quot;Stop&quot; : &quot;Start&quot;);
+<span class="lineNum">     220 </span>            :                         }
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :                 }</span>
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span>            :                 const uint8_t m_uiDevAddr = 0;
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            :                 avr_irq_t *m_pSCL = nullptr, *m_pSDA = nullptr;
+<span class="lineNum">     226 </span>            :                 uint8_t m_uiByte = 0;
+<span class="lineNum">     227 </span>            : 
+<span class="lineNum">     228 </span>            :                 I2CMsg_t msgIn;
+<span class="lineNum">     229 </span>            : 
+<span class="lineNum">     230 </span>            :                 enum class State
+<span class="lineNum">     231 </span>            :                 {
+<span class="lineNum">     232 </span>            :                         Idle,
+<span class="lineNum">     233 </span>            :                         AddrIn,
+<span class="lineNum">     234 </span>            :                         RegIn,
+<span class="lineNum">     235 </span>            :                         DataIn
+<span class="lineNum">     236 </span>            :                 };
+<span class="lineNum">     237 </span>            : 
+<span class="lineNum">     238 </span>            :                 enum class SCLS
+<span class="lineNum">     239 </span>            :                 {
+<span class="lineNum">     240 </span>            :                         Idle,
+<span class="lineNum">     241 </span>            :                         Reading,
+<span class="lineNum">     242 </span>            :                         Writing,
+<span class="lineNum">     243 </span>            :                         WaitForWrite,
+<span class="lineNum">     244 </span>            :                         WaitForACK
+<span class="lineNum">     245 </span>            :                 };
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span>            :                 SCLS m_SCLState = SCLS::Idle;
+<span class="lineNum">     248 </span>            :                 State m_state = State::Idle;
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span>            :                 uint8_t m_uiBitCt = 0;
+<span class="lineNum">     251 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

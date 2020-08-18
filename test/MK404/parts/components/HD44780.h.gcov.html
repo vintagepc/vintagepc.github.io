@@ -1,0 +1,280 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/components/HD44780.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/components</a> - HD44780.h<span style="font-size: 80%;"> (source / <a href="HD44780.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         HD44780.h
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Original based on simavr hd44780.h (C) 2011 Michel Pollet &lt;buserror@gmail.com&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :     Rewritten for C++ in 2020, VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         This file is part of MK404.
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">      11 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      12 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      13 </span>            :         (at your option) any later version.
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      16 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      17 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      18 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      21 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      22 </span>            :  */
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : /*
+<span class="lineNum">      25 </span>            :  * This &quot;Part&quot; simulates the business end of a HD44780 LCD display
+<span class="lineNum">      26 </span>            :  * It supports from 8x1 to 20x4.
+<span class="lineNum">      27 </span>            :  *
+<span class="lineNum">      28 </span>            :  * It works both in 4 bit and 8 bit modes and supports a &quot;quickie&quot; method
+<span class="lineNum">      29 </span>            :  * of driving that is commonly used on AVR, namely
+<span class="lineNum">      30 </span>            :  * (msb) RW:E:RS:D7:D6:D5:D4 (lsb)
+<span class="lineNum">      31 </span>            :  *
+<span class="lineNum">      32 </span>            :  * + As usual, the &quot;RW&quot; pin is optional if you are willing to wait for the
+<span class="lineNum">      33 </span>            :  *   specific number of cycles as per the datasheet (37uS between operations)
+<span class="lineNum">      34 </span>            :  * + If you decide to use the RW pin, the &quot;busy&quot; flag is supported and will
+<span class="lineNum">      35 </span>            :  *   be automaticly cleared on the second read, to exercisee the code a bit.
+<span class="lineNum">      36 </span>            :  * + Cursor is supported, but not &quot;display shift&quot;
+<span class="lineNum">      37 </span>            :  * + The Character RAM is fully supported and custom characters are rendered.
+<span class="lineNum">      38 </span>            :  *
+<span class="lineNum">      39 </span>            :  * To interface this part, you can use the &quot;INPUT&quot; IRQs and hook them to the
+<span class="lineNum">      40 </span>            :  * simavr instance, if you use the RW pins or read back frim the display, you
+<span class="lineNum">      41 </span>            :  * can hook the data pins /back/ to the AVR too.
+<span class="lineNum">      42 </span>            :  *
+<span class="lineNum">      43 </span>            :  * The &quot;part&quot; also provides various IRQs that are there to be placed in a VCD file
+<span class="lineNum">      44 </span>            :  * to show what is sent, and some of the internal status.
+<span class="lineNum">      45 </span>            :  *
+<span class="lineNum">      46 </span>            :  * This part has been tested extensively through use on the MK404 printer simulator
+<span class="lineNum">      47 </span>            :  * and it works on stock out of the box firmware.
+<span class="lineNum">      48 </span>            :  */
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : #pragma once
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : #include &quot;Scriptable.h&quot;        // for Scriptable
+<span class="lineNum">      53 </span>            : #include &lt;stdint.h&gt;            // for uint8_t, uint16_t, uint32_t
+<span class="lineNum">      54 </span>            : #include &lt;string&gt;              // for string
+<span class="lineNum">      55 </span>            : #include &lt;vector&gt;              // for vector
+<span class="lineNum">      56 </span>            : #include &lt;atomic&gt;
+<span class="lineNum">      57 </span>            : #include &lt;mutex&gt;
+<span class="lineNum">      58 </span>            : #include &quot;BasePeripheral.h&quot;    // for MAKE_C_TIMER_CALLBACK, BasePeripheral
+<span class="lineNum">      59 </span>            : #include &quot;IScriptable.h&quot;       // for ArgType, ArgType::Int, ArgType::String
+<span class="lineNum">      60 </span>            : #include &quot;sim_avr.h&quot;           // for avr_t
+<span class="lineNum">      61 </span>            : #include &quot;sim_avr_types.h&quot;     // for avr_cycle_count_t
+<span class="lineNum">      62 </span>            : #include &quot;sim_cycle_timers.h&quot;  // for avr_cycle_timer_t
+<a name="63"><span class="lineNum">      63 </span>            : #include &quot;sim_irq.h&quot;           // for avr_irq_t</a>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 : class HD44780:public BasePeripheral, public Scriptable</span>
+<span class="lineNum">      66 </span>            : {
+<span class="lineNum">      67 </span>            :         public:
+<span class="lineNum">      68 </span>            :                 #define IRQPAIRS _IRQ(ALL,&quot;7=hd44780.pins&quot;) \
+<span class="lineNum">      69 </span>            :                         _IRQ(RS,&quot;&lt;hd44780.RS&quot;) \
+<span class="lineNum">      70 </span>            :                         _IRQ(RW,&quot;&lt;hd44780.RW&quot;) \
+<span class="lineNum">      71 </span>            :                         _IRQ(E,&quot;&lt;hd44780.E&quot;) \
+<span class="lineNum">      72 </span>            :                         _IRQ(D0,&quot;=hd44780.D0&quot;) \
+<span class="lineNum">      73 </span>            :                         _IRQ(D1,&quot;=hd44780.D1&quot;) \
+<span class="lineNum">      74 </span>            :                         _IRQ(D2,&quot;=hd44780.D2&quot;) \
+<span class="lineNum">      75 </span>            :                         _IRQ(D3,&quot;=hd44780.D3&quot;) \
+<span class="lineNum">      76 </span>            :                         _IRQ(D4,&quot;=hd44780.D4&quot;) \
+<span class="lineNum">      77 </span>            :                         _IRQ(D5,&quot;=hd44780.D5&quot;) \
+<span class="lineNum">      78 </span>            :                         _IRQ(D6,&quot;=hd44780.D6&quot;) \
+<span class="lineNum">      79 </span>            :                         _IRQ(D7,&quot;=hd44780.D7&quot;) \
+<span class="lineNum">      80 </span>            :                         _IRQ(BUSY,&quot;&gt;hd44780.BUSY&quot;) \
+<span class="lineNum">      81 </span>            :                         _IRQ(ADDR,&quot;7&gt;hd44780.ADDR&quot;) \
+<span class="lineNum">      82 </span>            :                         _IRQ(DATA_IN,&quot;8&gt;hd44780.DATA_IN&quot;) \
+<span class="lineNum">      83 </span>            :                         _IRQ(DATA_OUT,&quot;8&gt;hd44780.DATA_OUT&quot;) \
+<span class="lineNum">      84 </span>            :                         _IRQ(BRIGHTNESS_IN,&quot;=hd44780.BRIGHTNESS_IN&quot;) \
+<span class="lineNum">      85 </span>            :             _IRQ(BRIGHTNESS_PWM_IN,&quot;8&lt;hd44780.BRIGHTNESS_PWM_IN&quot;)
+<span class="lineNum">      86 </span>            :                 #include &quot;IRQHelper.h&quot;
+<a name="87"><span class="lineNum">      87 </span>            : </a>
+<span class="lineNum">      88 </span>            :                 // Makes a display with the given dimensions.
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :                 HD44780(uint8_t width = 20, uint8_t height = 4):Scriptable(&quot;LCD&quot;),m_uiHeight(height),m_uiWidth(width)</span>
+<span class="lineNum">      90 </span>            :                 {
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :                         m_lineOffsets[2] += width;</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :                         m_lineOffsets[3] += width;</span>
+<span class="lineNum">      93 </span><span class="lineNoCov">          0 :                         string strBlnk;</span>
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :                         strBlnk.assign(width,' ');</span>
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                         for (int i=0; i&lt;height; i++)</span>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                                 m_vLines.push_back(strBlnk);</span>
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :                         RegisterActionAndMenu(&quot;Desync&quot;,&quot;Simulates data corruption by desyncing the 4-bit mode&quot;,ActDesync);</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :                         RegisterAction(&quot;WaitForText&quot;,&quot;Waits for a given string to appear anywhere on the specified line. A line value of -1 means any line.&quot;,ActWaitForText,{ArgType::String,ArgType::Int});</span>
+<span class="lineNum">     100 </span><span class="lineNoCov">          0 :                 };</span>
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            :                 // Registers IRQs with SimAVR.
+<span class="lineNum">     103 </span>            :                 void Init(avr_t *avr);
+<a name="104"><span class="lineNum">     104 </span>            : </a>
+<a name="105"><span class="lineNum">     105 </span>            :                 // Returns height and width.</a>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :         uint8_t GetWidth() { return m_uiWidth;}</span>
+<span class="lineNum">     107 </span><span class="lineNoCov">          0 :         uint8_t GetHeight() { return m_uiHeight;}</span>
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span>            :     protected:
+<span class="lineNum">     110 </span>            :     // The GL draw accesses these:
+<span class="lineNum">     111 </span>            :                 atomic_uint8_t m_uiHeight = {4};                                // width and height of the LCD
+<span class="lineNum">     112 </span>            :         atomic_uint8_t  m_uiWidth = {20};
+<span class="lineNum">     113 </span>            :         uint8_t  m_vRam[104];
+<span class="lineNum">     114 </span>            :         uint8_t  m_cgRam[64];
+<span class="lineNum">     115 </span>            : 
+<a name="116"><span class="lineNum">     116 </span>            :                 virtual LineStatus ProcessAction(unsigned int iAction, const vector&lt;string&gt; &amp;args) override;</a>
+<span class="lineNum">     117 </span>            : 
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :                 inline void ToggleFlag(uint16_t bit)</span>
+<span class="lineNum">     119 </span>            :                 {
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :                         m_flags ^= (1&lt;&lt;bit);</span>
+<a name="121"><span class="lineNum">     121 </span><span class="lineNoCov">          0 :                 }</span></a>
+<span class="lineNum">     122 </span>            : 
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :                 inline bool SetFlag(uint16_t bit, uint8_t uiVal)</span>
+<span class="lineNum">     124 </span>            :                 {
+<span class="lineNum">     125 </span><span class="lineNoCov">          0 :                         int old = m_flags &amp;  (1 &lt;&lt; bit);</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :                         m_flags = (m_flags &amp; ~(1 &lt;&lt; bit)) | (uiVal ? (1 &lt;&lt; bit) : 0);</span>
+<span class="lineNum">     127 </span><span class="lineNoCov">          0 :                         return old != 0;</span>
+<a name="128"><span class="lineNum">     128 </span>            :                 }</a>
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span><span class="lineNoCov">          0 :                 inline bool GetFlag(uint16_t bit)</span>
+<span class="lineNum">     131 </span>            :                 {
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :                         return (m_flags &amp;  (1 &lt;&lt; bit)) != 0;</span>
+<span class="lineNum">     133 </span>            :                 }
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            :                 enum {
+<span class="lineNum">     137 </span>            :                         HD44780_FLAG_F = 0,         // 1: 5x10 Font, 0: 5x7 Font
+<span class="lineNum">     138 </span>            :                         HD44780_FLAG_N,             // 1: 2/4-lines Display, 0: 1-line Display,
+<span class="lineNum">     139 </span>            :                         HD44780_FLAG_D_L,           // 1: 8-Bit Interface, 0: 4-Bit Interface
+<span class="lineNum">     140 </span>            :                         HD44780_FLAG_R_L,           // 1: Shift right, 0: shift left
+<span class="lineNum">     141 </span>            :                         HD44780_FLAG_S_C,           // 1: Display shift, 0: Cursor move
+<span class="lineNum">     142 </span>            :                         HD44780_FLAG_B,             // 1: Cursor Blink
+<span class="lineNum">     143 </span>            :                         HD44780_FLAG_C,             // 1: Cursor on
+<span class="lineNum">     144 </span>            :                         HD44780_FLAG_D,             // 1: Set Entire Display memory (for clear)
+<span class="lineNum">     145 </span>            :                         HD44780_FLAG_S,             // 1: Follow display shift
+<span class="lineNum">     146 </span>            :                         HD44780_FLAG_I_D,                       // 1: Increment, 0: Decrement
+<span class="lineNum">     147 </span>            : 
+<span class="lineNum">     148 </span>            :                         /*
+<span class="lineNum">     149 </span>            :                         * Internal flags, not HD44780
+<span class="lineNum">     150 </span>            :                         */
+<span class="lineNum">     151 </span>            :                         HD44780_FLAG_LOWNIBBLE,         // 1: 4 bits mode, write/read low nibble
+<span class="lineNum">     152 </span>            :                         HD44780_FLAG_BUSY,                      // 1: Busy between instruction, 0: ready
+<span class="lineNum">     153 </span>            :                         HD44780_FLAG_REENTRANT,         // 1: Do not update pins
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            :                         HD44780_FLAG_DIRTY,                     // 1: needs redisplay...
+<span class="lineNum">     156 </span>            :                 };
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span>            :                 uint8_t m_lineOffsets[4] = {0, 0x40, 0, 0x40};
+<span class="lineNum">     159 </span>            : 
+<span class="lineNum">     160 </span>            :                 mutex m_lock; // Needed for GL thread access to v/cgRAM
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            :         private:
+<span class="lineNum">     163 </span>            :                 enum Actions
+<span class="lineNum">     164 </span>            :                 {
+<span class="lineNum">     165 </span>            :                         ActDesync,
+<span class="lineNum">     166 </span>            :                         ActWaitForText
+<span class="lineNum">     167 </span>            :                 };
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :         void ResetCursor();
+<span class="lineNum">     170 </span>            :         void ClearScreen();
+<span class="lineNum">     171 </span>            : 
+<span class="lineNum">     172 </span>            :         void OnPinChanged(avr_irq_t *irq, uint32_t value);
+<a name="173"><span class="lineNum">     173 </span>            :         avr_cycle_count_t OnEPinChanged(avr_t *avr, avr_cycle_count_t value);</a>
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                 avr_cycle_timer_t m_fcnEPinChanged = MAKE_C_TIMER_CALLBACK(HD44780,OnEPinChanged);</span>
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span>            :         void IncrementCursor();
+<span class="lineNum">     178 </span>            :         void IncrementCGRAMCursor();
+<span class="lineNum">     179 </span>            : 
+<span class="lineNum">     180 </span>            :         uint32_t OnDataReady();
+<span class="lineNum">     181 </span>            :         uint32_t OnCmdReady();
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            :         uint32_t ProcessWrite();
+<span class="lineNum">     184 </span>            :         uint32_t ProcessRead();
+<span class="lineNum">     185 </span>            : 
+<a name="186"><span class="lineNum">     186 </span>            :         avr_cycle_count_t OnBusyTimeout(avr_t *avr, avr_cycle_count_t when);</a>
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :                 avr_cycle_timer_t m_fcnBusy = MAKE_C_TIMER_CALLBACK(HD44780,OnBusyTimeout);</span>
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            :         uint16_t m_uiCursor = 0, m_uiCGCursor = 0;                      // offset in vram
+<span class="lineNum">     191 </span>            :         bool m_bInCGRAM = false;
+<span class="lineNum">     192 </span>            : 
+<span class="lineNum">     193 </span>            :         uint16_t m_uiPinState  = 0;                     // 'actual' LCd data pins (IRQ bit field)
+<span class="lineNum">     194 </span>            :         uint8_t  m_uiDataPins = 0;                      // composite of 4 high bits, or 8 bits
+<span class="lineNum">     195 </span>            :         uint8_t  m_uiReadPins = 0;
+<span class="lineNum">     196 </span>            :         volatile uint16_t m_flags = 0;                          // LCD flags ( HD44780_FLAG_*)
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span>            :                 vector&lt;string&gt; m_vLines;
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span>            :                 uint8_t m_uiLineChg = 0;
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

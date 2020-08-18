@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/components/HC595.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/components</a> - HC595.h<span style="font-size: 80%;"> (source / <a href="HC595.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         HC595.h - a shift register for the MMU.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            :         Original SPI portion Copyright 2008, 2009 Michel Pollet &lt;buserror@gmail.com&gt;
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         Rewritten for C++ and a bitbanged connection in 2020, VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         This file is part of MK404.
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">      11 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      12 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      13 </span>            :         (at your option) any later version.
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      16 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      17 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      18 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      21 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      22 </span>            :  */
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #pragma once
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : #include &lt;stdint.h&gt;          // for uint32_t, uint8_t
+<span class="lineNum">      27 </span>            : #include &quot;BasePeripheral.h&quot;  // for BasePeripheral
+<span class="lineNum">      28 </span>            : #include &quot;sim_avr.h&quot;         // for avr_t
+<span class="lineNum">      29 </span>            : #include &quot;sim_irq.h&quot;         // for avr_irq_t
+<span class="lineNum">      30 </span>            : #include &lt;string&gt;
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : /*
+<span class="lineNum">      33 </span>            :  * this one is quite fun, it simulated a 74HC595 shift register
+<span class="lineNum">      34 </span>            :  * driven by an SPI signal.
+<span class="lineNum">      35 </span>            :  * For the interest of the simulation, they can be chained, but
+<span class="lineNum">      36 </span>            :  * for practicality sake the shift register is kept 32 bits
+<span class="lineNum">      37 </span>            :  * wide so it acts as 4 of them &quot;daisy chained&quot; already.
+<a name="38"><span class="lineNum">      38 </span>            :  */</a>
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 : class HC595: public BasePeripheral</span>
+<span class="lineNum">      41 </span>            : {
+<span class="lineNum">      42 </span>            :         public:
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :                 #define IRQPAIRS \
+<span class="lineNum">      45 </span>            :                         _IRQ(SPI_BYTE_IN,&quot;8&lt;hc959.spi_in&quot;) \
+<span class="lineNum">      46 </span>            :                         _IRQ(SPI_BYTE_OUT,&quot;8&gt;hc959.spi_out&quot;) \
+<span class="lineNum">      47 </span>            :                         _IRQ(IN_LATCH,&quot;32&lt;hc959.latch_in&quot;) \
+<span class="lineNum">      48 </span>            :                         _IRQ(IN_RESET,&quot;&lt;hc959.reset_in&quot;) \
+<span class="lineNum">      49 </span>            :                         _IRQ(IN_CLOCK,&quot;&lt;hc959.clock_in&quot;) \
+<span class="lineNum">      50 </span>            :                         _IRQ(IN_DATA,&quot;&lt;hc959.data_in&quot;) \
+<span class="lineNum">      51 </span>            :                         _IRQ(OUT,&quot;32&gt;hc959.out&quot;) \
+<span class="lineNum">      52 </span>            :                         _IRQ(BIT0       ,&quot;&gt;bit0&quot;) \
+<span class="lineNum">      53 </span>            :                         _IRQ(BIT1       ,&quot;&gt;bit1&quot;) \
+<span class="lineNum">      54 </span>            :                         _IRQ(BIT2       ,&quot;&gt;bit2&quot;) \
+<span class="lineNum">      55 </span>            :                         _IRQ(BIT3       ,&quot;&gt;bit3&quot;) \
+<span class="lineNum">      56 </span>            :                         _IRQ(BIT4       ,&quot;&gt;bit4&quot;) \
+<span class="lineNum">      57 </span>            :                         _IRQ(BIT5       ,&quot;&gt;bit5&quot;) \
+<span class="lineNum">      58 </span>            :                         _IRQ(BIT6       ,&quot;&gt;bit6&quot;) \
+<span class="lineNum">      59 </span>            :                         _IRQ(BIT7       ,&quot;&gt;bit7&quot;) \
+<span class="lineNum">      60 </span>            :                         _IRQ(BIT8       ,&quot;&gt;bit8&quot;) \
+<span class="lineNum">      61 </span>            :                         _IRQ(BIT9       ,&quot;&gt;bit9&quot;) \
+<span class="lineNum">      62 </span>            :                         _IRQ(BIT10      ,&quot;&gt;bit10&quot;) \
+<span class="lineNum">      63 </span>            :                         _IRQ(BIT11      ,&quot;&gt;bit11&quot;) \
+<span class="lineNum">      64 </span>            :                         _IRQ(BIT12      ,&quot;&gt;bit12&quot;) \
+<span class="lineNum">      65 </span>            :                         _IRQ(BIT13      ,&quot;&gt;bit13&quot;) \
+<span class="lineNum">      66 </span>            :                         _IRQ(BIT14      ,&quot;&gt;bit14&quot;) \
+<span class="lineNum">      67 </span>            :                         _IRQ(BIT15      ,&quot;&gt;bit15&quot;) \
+<span class="lineNum">      68 </span>            :                         _IRQ(BIT16      ,&quot;&gt;bit16&quot;) \
+<span class="lineNum">      69 </span>            :                         _IRQ(BIT17      ,&quot;&gt;bit17&quot;) \
+<span class="lineNum">      70 </span>            :                         _IRQ(BIT18      ,&quot;&gt;bit18&quot;) \
+<span class="lineNum">      71 </span>            :                         _IRQ(BIT19      ,&quot;&gt;bit19&quot;) \
+<span class="lineNum">      72 </span>            :                         _IRQ(BIT20      ,&quot;&gt;bit20&quot;) \
+<span class="lineNum">      73 </span>            :                         _IRQ(BIT21      ,&quot;&gt;bit21&quot;) \
+<span class="lineNum">      74 </span>            :                         _IRQ(BIT22      ,&quot;&gt;bit22&quot;) \
+<span class="lineNum">      75 </span>            :                         _IRQ(BIT23      ,&quot;&gt;bit23&quot;) \
+<span class="lineNum">      76 </span>            :                         _IRQ(BIT24      ,&quot;&gt;bit24&quot;) \
+<span class="lineNum">      77 </span>            :                         _IRQ(BIT25      ,&quot;&gt;bit25&quot;) \
+<span class="lineNum">      78 </span>            :                         _IRQ(BIT26      ,&quot;&gt;bit26&quot;) \
+<span class="lineNum">      79 </span>            :                         _IRQ(BIT27      ,&quot;&gt;bit27&quot;) \
+<span class="lineNum">      80 </span>            :                         _IRQ(BIT28      ,&quot;&gt;bit28&quot;) \
+<span class="lineNum">      81 </span>            :                         _IRQ(BIT29      ,&quot;&gt;bit29&quot;) \
+<span class="lineNum">      82 </span>            :                         _IRQ(BIT30      ,&quot;&gt;bit30&quot;) \
+<span class="lineNum">      83 </span>            :                         _IRQ(BIT31      ,&quot;&gt;bit31&quot;)
+<span class="lineNum">      84 </span>            :                 #include &quot;IRQHelper.h&quot;
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :                 // Registers with SimAVR
+<a name="87"><span class="lineNum">      87 </span>            :                 void Init(avr_t *avr);</a>
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :                 std::string GetName(){return &quot;HC595&quot;;}</span>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            :         private:
+<span class="lineNum">      92 </span>            :                 // IRQ handlers.
+<span class="lineNum">      93 </span>            :                 void OnLatchIn(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      94 </span>            :                 void OnClockIn(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      95 </span>            :                 void OnSPIIn(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      96 </span>            :                 void OnDataIn(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      97 </span>            :                 void OnResetIn(avr_irq_t *irq, uint32_t value);
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            :                 uint32_t        m_uiLatch = 0;          // value &quot;on the pins&quot;
+<span class="lineNum">     100 </span>            :                 uint32_t        m_uiValue = 0;          // value shifted in
+<span class="lineNum">     101 </span>            :                 uint8_t         m_uiCurBit =0;
+<span class="lineNum">     102 </span>            :                 //uint8_t               m_uiCurByte = 0;
+<span class="lineNum">     103 </span>            : 
+<span class="lineNum">     104 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

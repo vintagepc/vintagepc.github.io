@@ -1,0 +1,389 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/pinspecs/PinSpec_2560.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/pinspecs</a> - PinSpec_2560.h<span style="font-size: 80%;"> (source / <a href="PinSpec_2560.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         PinSpec_2560.h - Pin translation layer for pins_Einsy.h (arduino pin numbers, ##) to the ATMEL port designator (Px#).
+<span class="lineNum">       3 </span>            :         You will need to add a new layer for other boards if yours does not match this, but it should work for all
+<span class="lineNum">       4 </span>            :         Atmel 2560-derivative boards.
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            :         This has been unceremoniously lifed from the pins_arduino.h file in the Prusa board definition for the Einsy.
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span>            :         This file is part of MK404.
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">      11 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">      12 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      13 </span>            :         (at your option) any later version.
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      16 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      17 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      18 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      21 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      22 </span>            :  */
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : #pragma once
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : #include &quot;PinSpec.h&quot;
+<a name="27"><span class="lineNum">      27 </span>            : #include &quot;PinSpec_Helper.h&quot;</a>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span><span class="lineCov">          5 : class PinSpec_2560 : public PinSpec</span>
+<span class="lineNum">      30 </span>            : {
+<span class="lineNum">      31 </span>            : 
+<a name="32"><span class="lineNum">      32 </span>            : </a>
+<span class="lineNum">      33 </span>            :         public:
+<span class="lineNum">      34 </span><span class="lineCov">          5 :                 PinSpec_2560():PinSpec(DPin2Port,DPin2Mask,DPin2Timer,&quot;atmega2560&quot;){};</span>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            :         private:
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            :                 const unsigned char DPin2Timer[86] = {
+<span class="lineNum">      39 </span>            :                         // TIMERS
+<span class="lineNum">      40 </span>            :                         // -------------------------------------------
+<span class="lineNum">      41 </span>            :                         NOT_ON_TIMER    , // PE 0 ** 0 ** USART0_RX
+<span class="lineNum">      42 </span>            :                         NOT_ON_TIMER    , // PE 1 ** 1 ** USART0_TX
+<span class="lineNum">      43 </span>            :                         TIMER3B , // PE 4 ** 2 ** PWM2
+<span class="lineNum">      44 </span>            :                         TIMER3C , // PE 5 ** 3 ** PWM3
+<span class="lineNum">      45 </span>            :                         TIMER0B , // PG 5 ** 4 ** PWM4
+<span class="lineNum">      46 </span>            :                         TIMER3A , // PE 3 ** 5 ** PWM5
+<span class="lineNum">      47 </span>            :                         TIMER4A , // PH 3 ** 6 ** PWM6
+<span class="lineNum">      48 </span>            :                         TIMER4B , // PH 4 ** 7 ** PWM7
+<span class="lineNum">      49 </span>            :                         TIMER4C , // PH 5 ** 8 ** PWM8
+<span class="lineNum">      50 </span>            :                         TIMER2B , // PH 6 ** 9 ** PWM9
+<span class="lineNum">      51 </span>            :                         TIMER2A , // PB 4 ** 10 ** PWM10
+<span class="lineNum">      52 </span>            :                         TIMER1A , // PB 5 ** 11 ** PWM11
+<span class="lineNum">      53 </span>            :                         TIMER1B , // PB 6 ** 12 ** PWM12
+<span class="lineNum">      54 </span>            :                         TIMER0A , // PB 7 ** 13 ** PWM13
+<span class="lineNum">      55 </span>            :                         NOT_ON_TIMER    , // PJ 1 ** 14 ** USART3_TX
+<span class="lineNum">      56 </span>            :                         NOT_ON_TIMER    , // PJ 0 ** 15 ** USART3_RX
+<span class="lineNum">      57 </span>            :                         NOT_ON_TIMER    , // PH 1 ** 16 ** USART2_TX
+<span class="lineNum">      58 </span>            :                         NOT_ON_TIMER    , // PH 0 ** 17 ** USART2_RX
+<span class="lineNum">      59 </span>            :                         NOT_ON_TIMER    , // PD 3 ** 18 ** USART1_TX
+<span class="lineNum">      60 </span>            :                         NOT_ON_TIMER    , // PD 2 ** 19 ** USART1_RX
+<span class="lineNum">      61 </span>            :                         NOT_ON_TIMER    , // PD 1 ** 20 ** I2C_SDA
+<span class="lineNum">      62 </span>            :                         NOT_ON_TIMER    , // PD 0 ** 21 ** I2C_SCL
+<span class="lineNum">      63 </span>            :                         NOT_ON_TIMER    , // PA 0 ** 22 ** D22
+<span class="lineNum">      64 </span>            :                         NOT_ON_TIMER    , // PA 1 ** 23 ** D23
+<span class="lineNum">      65 </span>            :                         NOT_ON_TIMER    , // PA 2 ** 24 ** D24
+<span class="lineNum">      66 </span>            :                         NOT_ON_TIMER    , // PA 3 ** 25 ** D25
+<span class="lineNum">      67 </span>            :                         NOT_ON_TIMER    , // PA 4 ** 26 ** D26
+<span class="lineNum">      68 </span>            :                         NOT_ON_TIMER    , // PA 5 ** 27 ** D27
+<span class="lineNum">      69 </span>            :                         NOT_ON_TIMER    , // PA 6 ** 28 ** D28
+<span class="lineNum">      70 </span>            :                         NOT_ON_TIMER    , // PA 7 ** 29 ** D29
+<span class="lineNum">      71 </span>            :                         NOT_ON_TIMER    , // PC 7 ** 30 ** D30
+<span class="lineNum">      72 </span>            :                         NOT_ON_TIMER    , // PC 6 ** 31 ** D31
+<span class="lineNum">      73 </span>            :                         NOT_ON_TIMER    , // PC 5 ** 32 ** D32
+<span class="lineNum">      74 </span>            :                         NOT_ON_TIMER    , // PC 4 ** 33 ** D33
+<span class="lineNum">      75 </span>            :                         NOT_ON_TIMER    , // PC 3 ** 34 ** D34
+<span class="lineNum">      76 </span>            :                         NOT_ON_TIMER    , // PC 2 ** 35 ** D35
+<span class="lineNum">      77 </span>            :                         NOT_ON_TIMER    , // PC 1 ** 36 ** D36
+<span class="lineNum">      78 </span>            :                         NOT_ON_TIMER    , // PC 0 ** 37 ** D37
+<span class="lineNum">      79 </span>            :                         NOT_ON_TIMER    , // PD 7 ** 38 ** D38
+<span class="lineNum">      80 </span>            :                         NOT_ON_TIMER    , // PG 2 ** 39 ** D39
+<span class="lineNum">      81 </span>            :                         NOT_ON_TIMER    , // PG 1 ** 40 ** D40
+<span class="lineNum">      82 </span>            :                         NOT_ON_TIMER    , // PG 0 ** 41 ** D41
+<span class="lineNum">      83 </span>            :                         NOT_ON_TIMER    , // PL 7 ** 42 ** D42
+<span class="lineNum">      84 </span>            :                         NOT_ON_TIMER    , // PL 6 ** 43 ** D43
+<span class="lineNum">      85 </span>            :                         TIMER5C , // PL 5 ** 44 ** D44
+<span class="lineNum">      86 </span>            :                         TIMER5B , // PL 4 ** 45 ** D45
+<span class="lineNum">      87 </span>            :                         TIMER5A , // PL 3 ** 46 ** D46
+<span class="lineNum">      88 </span>            :                         NOT_ON_TIMER    , // PL 2 ** 47 ** D47
+<span class="lineNum">      89 </span>            :                         NOT_ON_TIMER    , // PL 1 ** 48 ** D48
+<span class="lineNum">      90 </span>            :                         NOT_ON_TIMER    , // PL 0 ** 49 ** D49
+<span class="lineNum">      91 </span>            :                         NOT_ON_TIMER    , // PB 3 ** 50 ** SPI_MISO
+<span class="lineNum">      92 </span>            :                         NOT_ON_TIMER    , // PB 2 ** 51 ** SPI_MOSI
+<span class="lineNum">      93 </span>            :                         NOT_ON_TIMER    , // PB 1 ** 52 ** SPI_SCK
+<span class="lineNum">      94 </span>            :                         NOT_ON_TIMER    , // PB 0 ** 53 ** SPI_SS
+<span class="lineNum">      95 </span>            :                         NOT_ON_TIMER    , // PF 0 ** 54 ** A0
+<span class="lineNum">      96 </span>            :                         NOT_ON_TIMER    , // PF 1 ** 55 ** A1
+<span class="lineNum">      97 </span>            :                         NOT_ON_TIMER    , // PF 2 ** 56 ** A2
+<span class="lineNum">      98 </span>            :                         NOT_ON_TIMER    , // PF 3 ** 57 ** A3
+<span class="lineNum">      99 </span>            :                         NOT_ON_TIMER    , // PF 4 ** 58 ** A4
+<span class="lineNum">     100 </span>            :                         NOT_ON_TIMER    , // PF 5 ** 59 ** A5
+<span class="lineNum">     101 </span>            :                         NOT_ON_TIMER    , // PF 6 ** 60 ** A6
+<span class="lineNum">     102 </span>            :                         NOT_ON_TIMER    , // PF 7 ** 61 ** A7
+<span class="lineNum">     103 </span>            :                         NOT_ON_TIMER    , // PK 0 ** 62 ** A8
+<span class="lineNum">     104 </span>            :                         NOT_ON_TIMER    , // PK 1 ** 63 ** A9
+<span class="lineNum">     105 </span>            :                         NOT_ON_TIMER    , // PK 2 ** 64 ** A10
+<span class="lineNum">     106 </span>            :                         NOT_ON_TIMER    , // PK 3 ** 65 ** A11
+<span class="lineNum">     107 </span>            :                         NOT_ON_TIMER    , // PK 4 ** 66 ** A12
+<span class="lineNum">     108 </span>            :                         NOT_ON_TIMER    , // PK 5 ** 67 ** A13
+<span class="lineNum">     109 </span>            :                         NOT_ON_TIMER    , // PK 6 ** 68 ** A14
+<span class="lineNum">     110 </span>            :                         NOT_ON_TIMER    , // PK 7 ** 69 ** A15
+<span class="lineNum">     111 </span>            :                         NOT_ON_TIMER    , // PG 4 ** 70 ** D70
+<span class="lineNum">     112 </span>            :                         NOT_ON_TIMER    , // PG 3 ** 71 ** D71
+<span class="lineNum">     113 </span>            :                         NOT_ON_TIMER    , // PJ 2 ** 72 ** D72
+<span class="lineNum">     114 </span>            :                         NOT_ON_TIMER    , // PJ 3 ** 73 ** D73
+<span class="lineNum">     115 </span>            :                         NOT_ON_TIMER    , // PJ 7 ** 74 ** D74
+<span class="lineNum">     116 </span>            :                         NOT_ON_TIMER    , // PJ 4 ** 75 ** D75
+<span class="lineNum">     117 </span>            :                         NOT_ON_TIMER    , // PJ 5 ** 76 ** D76
+<span class="lineNum">     118 </span>            :                         NOT_ON_TIMER    , // PJ 6 ** 77 ** D77
+<span class="lineNum">     119 </span>            :                         NOT_ON_TIMER    , // PE 2 ** 78 ** D78
+<span class="lineNum">     120 </span>            :                         NOT_ON_TIMER    , // PE 6 ** 79 ** D79
+<span class="lineNum">     121 </span>            :                         NOT_ON_TIMER    , // PE 7 ** 80 ** D80
+<span class="lineNum">     122 </span>            :                         NOT_ON_TIMER    , // PD 4 ** 81 ** D81
+<span class="lineNum">     123 </span>            :                         NOT_ON_TIMER    , // PD 5 ** 82 ** D82
+<span class="lineNum">     124 </span>            :                         NOT_ON_TIMER    , // PD 6 ** 83 ** D83
+<span class="lineNum">     125 </span>            :                         NOT_ON_TIMER    , // PH 2 ** 84 ** D84
+<span class="lineNum">     126 </span>            :                         NOT_ON_TIMER    , // PH 7 ** 85 ** D85
+<span class="lineNum">     127 </span>            :                 };
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : 
+<span class="lineNum">     130 </span>            :                 const unsigned char DPin2Mask[86] = {
+<span class="lineNum">     131 </span>            :                         // PIN IN PORT
+<span class="lineNum">     132 </span>            :                         // -------------------------------------------
+<span class="lineNum">     133 </span>            :                         _BV( 0 )        , // PE 0 ** 0 ** USART0_RX
+<span class="lineNum">     134 </span>            :                         _BV( 1 )        , // PE 1 ** 1 ** USART0_TX
+<span class="lineNum">     135 </span>            :                         _BV( 4 )        , // PE 4 ** 2 ** PWM2
+<span class="lineNum">     136 </span>            :                         _BV( 5 )        , // PE 5 ** 3 ** PWM3
+<span class="lineNum">     137 </span>            :                         _BV( 5 )        , // PG 5 ** 4 ** PWM4
+<span class="lineNum">     138 </span>            :                         _BV( 3 )        , // PE 3 ** 5 ** PWM5
+<span class="lineNum">     139 </span>            :                         _BV( 3 )        , // PH 3 ** 6 ** PWM6
+<span class="lineNum">     140 </span>            :                         _BV( 4 )        , // PH 4 ** 7 ** PWM7
+<span class="lineNum">     141 </span>            :                         _BV( 5 )        , // PH 5 ** 8 ** PWM8
+<span class="lineNum">     142 </span>            :                         _BV( 6 )        , // PH 6 ** 9 ** PWM9
+<span class="lineNum">     143 </span>            :                         _BV( 4 )        , // PB 4 ** 10 ** PWM10
+<span class="lineNum">     144 </span>            :                         _BV( 5 )        , // PB 5 ** 11 ** PWM11
+<span class="lineNum">     145 </span>            :                         _BV( 6 )        , // PB 6 ** 12 ** PWM12
+<span class="lineNum">     146 </span>            :                         _BV( 7 )        , // PB 7 ** 13 ** PWM13
+<span class="lineNum">     147 </span>            :                         _BV( 1 )        , // PJ 1 ** 14 ** USART3_TX
+<span class="lineNum">     148 </span>            :                         _BV( 0 )        , // PJ 0 ** 15 ** USART3_RX
+<span class="lineNum">     149 </span>            :                         _BV( 1 )        , // PH 1 ** 16 ** USART2_TX
+<span class="lineNum">     150 </span>            :                         _BV( 0 )        , // PH 0 ** 17 ** USART2_RX
+<span class="lineNum">     151 </span>            :                         _BV( 3 )        , // PD 3 ** 18 ** USART1_TX
+<span class="lineNum">     152 </span>            :                         _BV( 2 )        , // PD 2 ** 19 ** USART1_RX
+<span class="lineNum">     153 </span>            :                         _BV( 1 )        , // PD 1 ** 20 ** I2C_SDA
+<span class="lineNum">     154 </span>            :                         _BV( 0 )        , // PD 0 ** 21 ** I2C_SCL
+<span class="lineNum">     155 </span>            :                         _BV( 0 )        , // PA 0 ** 22 ** D22
+<span class="lineNum">     156 </span>            :                         _BV( 1 )        , // PA 1 ** 23 ** D23
+<span class="lineNum">     157 </span>            :                         _BV( 2 )        , // PA 2 ** 24 ** D24
+<span class="lineNum">     158 </span>            :                         _BV( 3 )        , // PA 3 ** 25 ** D25
+<span class="lineNum">     159 </span>            :                         _BV( 4 )        , // PA 4 ** 26 ** D26
+<span class="lineNum">     160 </span>            :                         _BV( 5 )        , // PA 5 ** 27 ** D27
+<span class="lineNum">     161 </span>            :                         _BV( 6 )        , // PA 6 ** 28 ** D28
+<span class="lineNum">     162 </span>            :                         _BV( 7 )        , // PA 7 ** 29 ** D29
+<span class="lineNum">     163 </span>            :                         _BV( 7 )        , // PC 7 ** 30 ** D30
+<span class="lineNum">     164 </span>            :                         _BV( 6 )        , // PC 6 ** 31 ** D31
+<span class="lineNum">     165 </span>            :                         _BV( 5 )        , // PC 5 ** 32 ** D32
+<span class="lineNum">     166 </span>            :                         _BV( 4 )        , // PC 4 ** 33 ** D33
+<span class="lineNum">     167 </span>            :                         _BV( 3 )        , // PC 3 ** 34 ** D34
+<span class="lineNum">     168 </span>            :                         _BV( 2 )        , // PC 2 ** 35 ** D35
+<span class="lineNum">     169 </span>            :                         _BV( 1 )        , // PC 1 ** 36 ** D36
+<span class="lineNum">     170 </span>            :                         _BV( 0 )        , // PC 0 ** 37 ** D37
+<span class="lineNum">     171 </span>            :                         _BV( 7 )        , // PD 7 ** 38 ** D38
+<span class="lineNum">     172 </span>            :                         _BV( 2 )        , // PG 2 ** 39 ** D39
+<span class="lineNum">     173 </span>            :                         _BV( 1 )        , // PG 1 ** 40 ** D40
+<span class="lineNum">     174 </span>            :                         _BV( 0 )        , // PG 0 ** 41 ** D41
+<span class="lineNum">     175 </span>            :                         _BV( 7 )        , // PL 7 ** 42 ** D42
+<span class="lineNum">     176 </span>            :                         _BV( 6 )        , // PL 6 ** 43 ** D43
+<span class="lineNum">     177 </span>            :                         _BV( 5 )        , // PL 5 ** 44 ** D44
+<span class="lineNum">     178 </span>            :                         _BV( 4 )        , // PL 4 ** 45 ** D45
+<span class="lineNum">     179 </span>            :                         _BV( 3 )        , // PL 3 ** 46 ** D46
+<span class="lineNum">     180 </span>            :                         _BV( 2 )        , // PL 2 ** 47 ** D47
+<span class="lineNum">     181 </span>            :                         _BV( 1 )        , // PL 1 ** 48 ** D48
+<span class="lineNum">     182 </span>            :                         _BV( 0 )        , // PL 0 ** 49 ** D49
+<span class="lineNum">     183 </span>            :                         _BV( 3 )        , // PB 3 ** 50 ** SPI_MISO
+<span class="lineNum">     184 </span>            :                         _BV( 2 )        , // PB 2 ** 51 ** SPI_MOSI
+<span class="lineNum">     185 </span>            :                         _BV( 1 )        , // PB 1 ** 52 ** SPI_SCK
+<span class="lineNum">     186 </span>            :                         _BV( 0 )        , // PB 0 ** 53 ** SPI_SS
+<span class="lineNum">     187 </span>            :                         _BV( 0 )        , // PF 0 ** 54 ** A0
+<span class="lineNum">     188 </span>            :                         _BV( 1 )        , // PF 1 ** 55 ** A1
+<span class="lineNum">     189 </span>            :                         _BV( 2 )        , // PF 2 ** 56 ** A2
+<span class="lineNum">     190 </span>            :                         _BV( 3 )        , // PF 3 ** 57 ** A3
+<span class="lineNum">     191 </span>            :                         _BV( 4 )        , // PF 4 ** 58 ** A4
+<span class="lineNum">     192 </span>            :                         _BV( 5 )        , // PF 5 ** 59 ** A5
+<span class="lineNum">     193 </span>            :                         _BV( 6 )        , // PF 6 ** 60 ** A6
+<span class="lineNum">     194 </span>            :                         _BV( 7 )        , // PF 7 ** 61 ** A7
+<span class="lineNum">     195 </span>            :                         _BV( 0 )        , // PK 0 ** 62 ** A8
+<span class="lineNum">     196 </span>            :                         _BV( 1 )        , // PK 1 ** 63 ** A9
+<span class="lineNum">     197 </span>            :                         _BV( 2 )        , // PK 2 ** 64 ** A10
+<span class="lineNum">     198 </span>            :                         _BV( 3 )        , // PK 3 ** 65 ** A11
+<span class="lineNum">     199 </span>            :                         _BV( 4 )        , // PK 4 ** 66 ** A12
+<span class="lineNum">     200 </span>            :                         _BV( 5 )        , // PK 5 ** 67 ** A13
+<span class="lineNum">     201 </span>            :                         _BV( 6 )        , // PK 6 ** 68 ** A14
+<span class="lineNum">     202 </span>            :                         _BV( 7 )        , // PK 7 ** 69 ** A15
+<span class="lineNum">     203 </span>            :                         _BV( 4 )        , // PG 4 ** 70 ** D70
+<span class="lineNum">     204 </span>            :                         _BV( 3 )        , // PG 3 ** 71 ** D71
+<span class="lineNum">     205 </span>            :                         _BV( 2 )        , // PJ 2 ** 72 ** D72
+<span class="lineNum">     206 </span>            :                         _BV( 3 )        , // PJ 3 ** 73 ** D73
+<span class="lineNum">     207 </span>            :                         _BV( 7 )        , // PJ 7 ** 74 ** D74
+<span class="lineNum">     208 </span>            :                         _BV( 4 )        , // PJ 4 ** 75 ** D75
+<span class="lineNum">     209 </span>            :                         _BV( 5 )        , // PJ 5 ** 76 ** D76
+<span class="lineNum">     210 </span>            :                         _BV( 6 )        , // PJ 6 ** 77 ** D77
+<span class="lineNum">     211 </span>            :                         _BV( 2 )        , // PE 2 ** 78 ** D78
+<span class="lineNum">     212 </span>            :                         _BV( 6 )        , // PE 6 ** 79 ** D79
+<span class="lineNum">     213 </span>            :                         _BV( 7 )        , // PE 7 ** 80 ** D80
+<span class="lineNum">     214 </span>            :                         _BV( 4 )        , // PD 4 ** 81 ** D81
+<span class="lineNum">     215 </span>            :                         _BV( 5 )        , // PD 5 ** 82 ** D82
+<span class="lineNum">     216 </span>            :                         _BV( 6 )        , // PD 6 ** 83 ** D83
+<span class="lineNum">     217 </span>            :                         _BV( 2 )        , // PH 2 ** 84 ** D84
+<span class="lineNum">     218 </span>            :                         _BV( 7 )        , // PH 7 ** 85 ** D85
+<span class="lineNum">     219 </span>            :                 };
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span>            :                 const unsigned char DPin2Port[86] = {
+<span class="lineNum">     222 </span>            :                         // PORTLIST
+<span class="lineNum">     223 </span>            :                         // -------------------------------------------
+<span class="lineNum">     224 </span>            :                         PE      , // PE 0 ** 0 ** USART0_RX
+<span class="lineNum">     225 </span>            :                         PE      , // PE 1 ** 1 ** USART0_TX
+<span class="lineNum">     226 </span>            :                         PE      , // PE 4 ** 2 ** PWM2
+<span class="lineNum">     227 </span>            :                         PE      , // PE 5 ** 3 ** PWM3
+<span class="lineNum">     228 </span>            :                         PG      , // PG 5 ** 4 ** PWM4
+<span class="lineNum">     229 </span>            :                         PE      , // PE 3 ** 5 ** PWM5
+<span class="lineNum">     230 </span>            :                         PH      , // PH 3 ** 6 ** PWM6
+<span class="lineNum">     231 </span>            :                         PH      , // PH 4 ** 7 ** PWM7
+<span class="lineNum">     232 </span>            :                         PH      , // PH 5 ** 8 ** PWM8
+<span class="lineNum">     233 </span>            :                         PH      , // PH 6 ** 9 ** PWM9
+<span class="lineNum">     234 </span>            :                         PB      , // PB 4 ** 10 ** PWM10
+<span class="lineNum">     235 </span>            :                         PB      , // PB 5 ** 11 ** PWM11
+<span class="lineNum">     236 </span>            :                         PB      , // PB 6 ** 12 ** PWM12
+<span class="lineNum">     237 </span>            :                         PB      , // PB 7 ** 13 ** PWM13
+<span class="lineNum">     238 </span>            :                         PJ      , // PJ 1 ** 14 ** USART3_TX
+<span class="lineNum">     239 </span>            :                         PJ      , // PJ 0 ** 15 ** USART3_RX
+<span class="lineNum">     240 </span>            :                         PH      , // PH 1 ** 16 ** USART2_TX
+<span class="lineNum">     241 </span>            :                         PH      , // PH 0 ** 17 ** USART2_RX
+<span class="lineNum">     242 </span>            :                         PD      , // PD 3 ** 18 ** USART1_TX
+<span class="lineNum">     243 </span>            :                         PD      , // PD 2 ** 19 ** USART1_RX
+<span class="lineNum">     244 </span>            :                         PD      , // PD 1 ** 20 ** I2C_SDA
+<span class="lineNum">     245 </span>            :                         PD      , // PD 0 ** 21 ** I2C_SCL
+<span class="lineNum">     246 </span>            :                         PA      , // PA 0 ** 22 ** D22
+<span class="lineNum">     247 </span>            :                         PA      , // PA 1 ** 23 ** D23
+<span class="lineNum">     248 </span>            :                         PA      , // PA 2 ** 24 ** D24
+<span class="lineNum">     249 </span>            :                         PA      , // PA 3 ** 25 ** D25
+<span class="lineNum">     250 </span>            :                         PA      , // PA 4 ** 26 ** D26
+<span class="lineNum">     251 </span>            :                         PA      , // PA 5 ** 27 ** D27
+<span class="lineNum">     252 </span>            :                         PA      , // PA 6 ** 28 ** D28
+<span class="lineNum">     253 </span>            :                         PA      , // PA 7 ** 29 ** D29
+<span class="lineNum">     254 </span>            :                         PC      , // PC 7 ** 30 ** D30
+<span class="lineNum">     255 </span>            :                         PC      , // PC 6 ** 31 ** D31
+<span class="lineNum">     256 </span>            :                         PC      , // PC 5 ** 32 ** D32
+<span class="lineNum">     257 </span>            :                         PC      , // PC 4 ** 33 ** D33
+<span class="lineNum">     258 </span>            :                         PC      , // PC 3 ** 34 ** D34
+<span class="lineNum">     259 </span>            :                         PC      , // PC 2 ** 35 ** D35
+<span class="lineNum">     260 </span>            :                         PC      , // PC 1 ** 36 ** D36
+<span class="lineNum">     261 </span>            :                         PC      , // PC 0 ** 37 ** D37
+<span class="lineNum">     262 </span>            :                         PD      , // PD 7 ** 38 ** D38
+<span class="lineNum">     263 </span>            :                         PG      , // PG 2 ** 39 ** D39
+<span class="lineNum">     264 </span>            :                         PG      , // PG 1 ** 40 ** D40
+<span class="lineNum">     265 </span>            :                         PG      , // PG 0 ** 41 ** D41
+<span class="lineNum">     266 </span>            :                         PL      , // PL 7 ** 42 ** D42
+<span class="lineNum">     267 </span>            :                         PL      , // PL 6 ** 43 ** D43
+<span class="lineNum">     268 </span>            :                         PL      , // PL 5 ** 44 ** D44
+<span class="lineNum">     269 </span>            :                         PL      , // PL 4 ** 45 ** D45
+<span class="lineNum">     270 </span>            :                         PL      , // PL 3 ** 46 ** D46
+<span class="lineNum">     271 </span>            :                         PL      , // PL 2 ** 47 ** D47
+<span class="lineNum">     272 </span>            :                         PL      , // PL 1 ** 48 ** D48
+<span class="lineNum">     273 </span>            :                         PL      , // PL 0 ** 49 ** D49
+<span class="lineNum">     274 </span>            :                         PB      , // PB 3 ** 50 ** SPI_MISO
+<span class="lineNum">     275 </span>            :                         PB      , // PB 2 ** 51 ** SPI_MOSI
+<span class="lineNum">     276 </span>            :                         PB      , // PB 1 ** 52 ** SPI_SCK
+<span class="lineNum">     277 </span>            :                         PB      , // PB 0 ** 53 ** SPI_SS
+<span class="lineNum">     278 </span>            :                         PF      , // PF 0 ** 54 ** A0
+<span class="lineNum">     279 </span>            :                         PF      , // PF 1 ** 55 ** A1
+<span class="lineNum">     280 </span>            :                         PF      , // PF 2 ** 56 ** A2
+<span class="lineNum">     281 </span>            :                         PF      , // PF 3 ** 57 ** A3
+<span class="lineNum">     282 </span>            :                         PF      , // PF 4 ** 58 ** A4
+<span class="lineNum">     283 </span>            :                         PF      , // PF 5 ** 59 ** A5
+<span class="lineNum">     284 </span>            :                         PF      , // PF 6 ** 60 ** A6
+<span class="lineNum">     285 </span>            :                         PF      , // PF 7 ** 61 ** A7
+<span class="lineNum">     286 </span>            :                         PK      , // PK 0 ** 62 ** A8
+<span class="lineNum">     287 </span>            :                         PK      , // PK 1 ** 63 ** A9
+<span class="lineNum">     288 </span>            :                         PK      , // PK 2 ** 64 ** A10
+<span class="lineNum">     289 </span>            :                         PK      , // PK 3 ** 65 ** A11
+<span class="lineNum">     290 </span>            :                         PK      , // PK 4 ** 66 ** A12
+<span class="lineNum">     291 </span>            :                         PK      , // PK 5 ** 67 ** A13
+<span class="lineNum">     292 </span>            :                         PK      , // PK 6 ** 68 ** A14
+<span class="lineNum">     293 </span>            :                         PK      , // PK 7 ** 69 ** A15
+<span class="lineNum">     294 </span>            :                         PG      , // PG 4 ** 70 ** D70
+<span class="lineNum">     295 </span>            :                         PG      , // PG 3 ** 71 ** D71
+<span class="lineNum">     296 </span>            :                         PJ      , // PJ 2 ** 72 ** D72
+<span class="lineNum">     297 </span>            :                         PJ      , // PJ 3 ** 73 ** D73
+<span class="lineNum">     298 </span>            :                         PJ      , // PJ 7 ** 74 ** D74
+<span class="lineNum">     299 </span>            :                         PJ      , // PJ 4 ** 75 ** D75
+<span class="lineNum">     300 </span>            :                         PJ      , // PJ 5 ** 76 ** D76
+<span class="lineNum">     301 </span>            :                         PJ      , // PJ 6 ** 77 ** D77
+<span class="lineNum">     302 </span>            :                         PE      , // PE 2 ** 78 ** D78
+<span class="lineNum">     303 </span>            :                         PE      , // PE 6 ** 79 ** D79
+<span class="lineNum">     304 </span>            :                         PE      , // PE 7 ** 80 ** D80
+<span class="lineNum">     305 </span>            :                         PD      , // PD 4 ** 81 ** D81
+<span class="lineNum">     306 </span>            :                         PD      , // PD 5 ** 82 ** D82
+<span class="lineNum">     307 </span>            :                         PD      , // PD 6 ** 83 ** D83
+<span class="lineNum">     308 </span>            :                         PH      , // PH 2 ** 84 ** D84
+<span class="lineNum">     309 </span>            :                         PH      , // PH 7 ** 85 ** D85
+<span class="lineNum">     310 </span>            :                 };
+<span class="lineNum">     311 </span>            : 
+<span class="lineNum">     312 </span>            : 
+<span class="lineNum">     313 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

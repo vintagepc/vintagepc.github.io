@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/parts/printers/Prusa_MK3S.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/parts/printers</a> - Prusa_MK3S.h<span style="font-size: 80%;"> (source / <a href="Prusa_MK3S.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :         Prusa_MK3S.h - Printer definition for the Prusa MK3S
+<span class="lineNum">       3 </span>            :         Copyright 2020 VintagePC &lt;https://github.com/vintagepc/&gt;
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            :         This file is part of MK404.
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            :         MK404 is free software: you can redistribute it and/or modify
+<span class="lineNum">       8 </span>            :         it under the terms of the GNU General Public License as published by
+<span class="lineNum">       9 </span>            :         the Free Software Foundation, either version 3 of the License, or
+<span class="lineNum">      10 </span>            :         (at your option) any later version.
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            :         MK404 is distributed in the hope that it will be useful,
+<span class="lineNum">      13 </span>            :         but WITHOUT ANY WARRANTY; without even the implied warranty of
+<span class="lineNum">      14 </span>            :         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+<span class="lineNum">      15 </span>            :         GNU General Public License for more details.
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            :         You should have received a copy of the GNU General Public License
+<span class="lineNum">      18 </span>            :         along with MK404.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+<span class="lineNum">      19 </span>            :  */
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : #pragma once
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : #include &lt;stdint.h&gt;         // for uint32_t, uint8_t
+<span class="lineNum">      24 </span>            : #include &lt;atomic&gt;           // for atomic_int
+<span class="lineNum">      25 </span>            : #include &lt;memory&gt;           // for unique_ptr
+<span class="lineNum">      26 </span>            : #include &lt;string&gt;           // for string
+<span class="lineNum">      27 </span>            : #include &lt;utility&gt;          // for pair
+<span class="lineNum">      28 </span>            : #include &quot;EinsyRambo.h&quot;     // for EinsyRambo
+<span class="lineNum">      29 </span>            : #include &quot;Printer.h&quot;        // for Printer, Printer::VisualType
+<span class="lineNum">      30 </span>            : #include &quot;sim_avr.h&quot;        // for avr_t
+<span class="lineNum">      31 </span>            : #include &quot;sim_avr_types.h&quot;  // for avr_io_addr_t
+<span class="lineNum">      32 </span>            : #include &quot;IRSensor.h&quot;
+<span class="lineNum">      33 </span>            : #include &quot;MK3SGL.h&quot;
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : class Prusa_MK3S : public Boards::EinsyRambo, public Printer
+<span class="lineNum">      36 </span>            : {
+<a name="37"><span class="lineNum">      37 </span>            : </a>
+<span class="lineNum">      38 </span>            :         public:
+<a name="39"><span class="lineNum">      39 </span><span class="lineNoCov">          0 :                 Prusa_MK3S():EinsyRambo(),Printer(){};</span></a>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :                 ~Prusa_MK3S(){};</span>
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :                 void Draw() override;
+<span class="lineNum">      44 </span>            :                 virtual void OnKeyPress(unsigned char key, int x, int y) override;
+<span class="lineNum">      45 </span>            :                 void OnMousePress(int button, int action, int x, int y) override;
+<span class="lineNum">      46 </span>            :                 void OnMouseMove(int x,int y) override;
+<span class="lineNum">      47 </span>            :                 void OnVisualTypeSet(string type) override;
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            :                 std::pair&lt;int,int&gt; GetWindowSize() override;
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            :         protected:
+<span class="lineNum">      52 </span>            :                 void SetupHardware() override;
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :                 IRSensor IR{};
+<a name="55"><span class="lineNum">      55 </span>            : </a>
+<span class="lineNum">      56 </span>            :                 virtual void SetupIR(); // Overridden by the MK3 to setup the PAT.
+<a name="57"><span class="lineNum">      57 </span><span class="lineNoCov">          0 :                 inline virtual void ToggleFSensor(){ IR.Toggle(); };</span></a>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                 inline virtual void FSensorJam() {};</span>
+<span class="lineNum">      60 </span>            : 
+<a name="61"><span class="lineNum">      61 </span>            :                 void OnAVRCycle() override;</a>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span><span class="lineNoCov">          0 :                 virtual bool GetHasMMU() {return false;}</span>
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :                 std::unique_ptr&lt;MK3SGL&gt; m_pVis;
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            :         private:
+<span class="lineNum">      68 </span>            :                 void FixSerial(avr_t * avr, avr_io_addr_t addr, uint8_t v);
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            :                 std::atomic_int m_key = {0}, m_mouseBtn = {0};
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span>            :                 unsigned int m_iScheme = 0;
+<span class="lineNum">      73 </span>            :                 uint32_t m_colors[8] = {
+<span class="lineNum">      74 </span>            :                 0x02c5fbff, 0x8d7ff8ff, 0xFFFFFFff, 0x00000055,
+<span class="lineNum">      75 </span>            :                 0x382200ff, 0x000000ff , 0xFF9900ff, 0x00000055};
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            : 
+<span class="lineNum">      78 </span>            : };
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,2105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - MK404/3rdParty/tinyobjloader/tiny_obj_loader.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">MK404/3rdParty/tinyobjloader</a> - tiny_obj_loader.h<span style="font-size: 80%;"> (source / <a href="tiny_obj_loader.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-08-17 23:40:37</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            : The MIT License (MIT)
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : Copyright (c) 2012-2016 Syoyo Fujita and many contributors.
+<span class="lineNum">       5 </span>            : 
+<span class="lineNum">       6 </span>            : Permission is hereby granted, free of charge, to any person obtaining a copy
+<span class="lineNum">       7 </span>            : of this software and associated documentation files (the &quot;Software&quot;), to deal
+<span class="lineNum">       8 </span>            : in the Software without restriction, including without limitation the rights
+<span class="lineNum">       9 </span>            : to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+<span class="lineNum">      10 </span>            : copies of the Software, and to permit persons to whom the Software is
+<span class="lineNum">      11 </span>            : furnished to do so, subject to the following conditions:
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : The above copyright notice and this permission notice shall be included in
+<span class="lineNum">      14 </span>            : all copies or substantial portions of the Software.
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+<span class="lineNum">      17 </span>            : IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+<span class="lineNum">      18 </span>            : FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+<span class="lineNum">      19 </span>            : AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+<span class="lineNum">      20 </span>            : LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+<span class="lineNum">      21 </span>            : OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+<span class="lineNum">      22 </span>            : THE SOFTWARE.
+<span class="lineNum">      23 </span>            : */
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : //
+<span class="lineNum">      26 </span>            : // version 1.0.6 : Add TINYOBJLOADER_USE_DOUBLE option(#124)
+<span class="lineNum">      27 </span>            : // version 1.0.5 : Ignore `Tr` when `d` exists in MTL(#43)
+<span class="lineNum">      28 </span>            : // version 1.0.4 : Support multiple filenames for 'mtllib'(#112)
+<span class="lineNum">      29 </span>            : // version 1.0.3 : Support parsing texture options(#85)
+<span class="lineNum">      30 </span>            : // version 1.0.2 : Improve parsing speed by about a factor of 2 for large
+<span class="lineNum">      31 </span>            : // files(#105)
+<span class="lineNum">      32 </span>            : // version 1.0.1 : Fixes a shape is lost if obj ends with a 'usemtl'(#104)
+<span class="lineNum">      33 </span>            : // version 1.0.0 : Change data structure. Change license from BSD to MIT.
+<span class="lineNum">      34 </span>            : //
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : //
+<span class="lineNum">      37 </span>            : // Use this in *one* .cc
+<span class="lineNum">      38 </span>            : //   #define TINYOBJLOADER_IMPLEMENTATION
+<span class="lineNum">      39 </span>            : //   #include &quot;tiny_obj_loader.h&quot;
+<span class="lineNum">      40 </span>            : //
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : #ifndef TINY_OBJ_LOADER_H_
+<span class="lineNum">      43 </span>            : #define TINY_OBJ_LOADER_H_
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : #include &lt;map&gt;
+<span class="lineNum">      46 </span>            : #include &lt;string&gt;
+<span class="lineNum">      47 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : namespace tinyobj {
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : // https://en.wikipedia.org/wiki/Wavefront_.obj_file says ...
+<span class="lineNum">      52 </span>            : //
+<span class="lineNum">      53 </span>            : //  -blendu on | off                       # set horizontal texture blending
+<span class="lineNum">      54 </span>            : //  (default on)
+<span class="lineNum">      55 </span>            : //  -blendv on | off                       # set vertical texture blending
+<span class="lineNum">      56 </span>            : //  (default on)
+<span class="lineNum">      57 </span>            : //  -boost real_value                      # boost mip-map sharpness
+<span class="lineNum">      58 </span>            : //  -mm base_value gain_value              # modify texture map values (default
+<span class="lineNum">      59 </span>            : //  0 1)
+<span class="lineNum">      60 </span>            : //                                         #     base_value = brightness,
+<span class="lineNum">      61 </span>            : //                                         gain_value = contrast
+<span class="lineNum">      62 </span>            : //  -o u [v [w]]                           # Origin offset             (default
+<span class="lineNum">      63 </span>            : //  0 0 0)
+<span class="lineNum">      64 </span>            : //  -s u [v [w]]                           # Scale                     (default
+<span class="lineNum">      65 </span>            : //  1 1 1)
+<span class="lineNum">      66 </span>            : //  -t u [v [w]]                           # Turbulence                (default
+<span class="lineNum">      67 </span>            : //  0 0 0)
+<span class="lineNum">      68 </span>            : //  -texres resolution                     # texture resolution to create
+<span class="lineNum">      69 </span>            : //  -clamp on | off                        # only render texels in the clamped
+<span class="lineNum">      70 </span>            : //  0-1 range (default off)
+<span class="lineNum">      71 </span>            : //                                         #   When unclamped, textures are
+<span class="lineNum">      72 </span>            : //                                         repeated across a surface,
+<span class="lineNum">      73 </span>            : //                                         #   when clamped, only texels which
+<span class="lineNum">      74 </span>            : //                                         fall within the 0-1
+<span class="lineNum">      75 </span>            : //                                         #   range are rendered.
+<span class="lineNum">      76 </span>            : //  -bm mult_value                         # bump multiplier (for bump maps
+<span class="lineNum">      77 </span>            : //  only)
+<span class="lineNum">      78 </span>            : //
+<span class="lineNum">      79 </span>            : //  -imfchan r | g | b | m | l | z         # specifies which channel of the file
+<span class="lineNum">      80 </span>            : //  is used to
+<span class="lineNum">      81 </span>            : //                                         # create a scalar or bump texture.
+<span class="lineNum">      82 </span>            : //                                         r:red, g:green,
+<span class="lineNum">      83 </span>            : //                                         # b:blue, m:matte, l:luminance,
+<span class="lineNum">      84 </span>            : //                                         z:z-depth..
+<span class="lineNum">      85 </span>            : //                                         # (the default for bump is 'l' and
+<span class="lineNum">      86 </span>            : //                                         for decal is 'm')
+<span class="lineNum">      87 </span>            : //  bump -imfchan r bumpmap.tga            # says to use the red channel of
+<span class="lineNum">      88 </span>            : //  bumpmap.tga as the bumpmap
+<span class="lineNum">      89 </span>            : //
+<span class="lineNum">      90 </span>            : // For reflection maps...
+<span class="lineNum">      91 </span>            : //
+<span class="lineNum">      92 </span>            : //   -type sphere                           # specifies a sphere for a &quot;refl&quot;
+<span class="lineNum">      93 </span>            : //   reflection map
+<span class="lineNum">      94 </span>            : //   -type cube_top    | cube_bottom |      # when using a cube map, the texture
+<span class="lineNum">      95 </span>            : //   file for each
+<span class="lineNum">      96 </span>            : //         cube_front  | cube_back   |      # side of the cube is specified
+<span class="lineNum">      97 </span>            : //         separately
+<span class="lineNum">      98 </span>            : //         cube_left   | cube_right
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : #ifdef TINYOBJLOADER_USE_DOUBLE
+<span class="lineNum">     101 </span>            :   //#pragma message &quot;using double&quot;
+<span class="lineNum">     102 </span>            :   typedef double real_t;
+<span class="lineNum">     103 </span>            : #else
+<span class="lineNum">     104 </span>            :   //#pragma message &quot;using float&quot;
+<span class="lineNum">     105 </span>            :   typedef float real_t;
+<span class="lineNum">     106 </span>            : #endif
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : typedef enum {
+<span class="lineNum">     109 </span>            :   TEXTURE_TYPE_NONE,  // default
+<span class="lineNum">     110 </span>            :   TEXTURE_TYPE_SPHERE,
+<span class="lineNum">     111 </span>            :   TEXTURE_TYPE_CUBE_TOP,
+<span class="lineNum">     112 </span>            :   TEXTURE_TYPE_CUBE_BOTTOM,
+<span class="lineNum">     113 </span>            :   TEXTURE_TYPE_CUBE_FRONT,
+<span class="lineNum">     114 </span>            :   TEXTURE_TYPE_CUBE_BACK,
+<span class="lineNum">     115 </span>            :   TEXTURE_TYPE_CUBE_LEFT,
+<span class="lineNum">     116 </span>            :   TEXTURE_TYPE_CUBE_RIGHT
+<span class="lineNum">     117 </span>            : } texture_type_t;
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span>            : typedef struct {
+<span class="lineNum">     120 </span>            :   texture_type_t type;     // -type (default TEXTURE_TYPE_NONE)
+<span class="lineNum">     121 </span>            :   real_t sharpness;         // -boost (default 1.0?)
+<span class="lineNum">     122 </span>            :   real_t brightness;        // base_value in -mm option (default 0)
+<span class="lineNum">     123 </span>            :   real_t contrast;          // gain_value in -mm option (default 1)
+<span class="lineNum">     124 </span>            :   real_t origin_offset[3];  // -o u [v [w]] (default 0 0 0)
+<span class="lineNum">     125 </span>            :   real_t scale[3];          // -s u [v [w]] (default 1 1 1)
+<span class="lineNum">     126 </span>            :   real_t turbulence[3];     // -t u [v [w]] (default 0 0 0)
+<span class="lineNum">     127 </span>            :   // int   texture_resolution; // -texres resolution (default = ?) TODO
+<span class="lineNum">     128 </span>            :   bool clamp;    // -clamp (default false)
+<span class="lineNum">     129 </span>            :   char imfchan;  // -imfchan (the default for bump is 'l' and for decal is 'm')
+<span class="lineNum">     130 </span>            :   bool blendu;   // -blendu (default on)
+<span class="lineNum">     131 </span>            :   bool blendv;   // -blendv (default on)
+<span class="lineNum">     132 </span>            :   real_t bump_multiplier;  // -bm (for bump maps only, default 1.0)
+<span class="lineNum">     133 </span>            : } texture_option_t;
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            : typedef struct {
+<span class="lineNum">     136 </span>            :   std::string name;
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            :   real_t ambient[3];
+<span class="lineNum">     139 </span>            :   real_t diffuse[3];
+<span class="lineNum">     140 </span>            :   real_t specular[3];
+<span class="lineNum">     141 </span>            :   real_t transmittance[3];
+<span class="lineNum">     142 </span>            :   real_t emission[3];
+<span class="lineNum">     143 </span>            :   real_t shininess;
+<span class="lineNum">     144 </span>            :   real_t ior;       // index of refraction
+<span class="lineNum">     145 </span>            :   real_t dissolve;  // 1 == opaque; 0 == fully transparent
+<span class="lineNum">     146 </span>            :   // illumination model (see http://www.fileformat.info/format/material/)
+<span class="lineNum">     147 </span>            :   int illum;
+<span class="lineNum">     148 </span>            : 
+<span class="lineNum">     149 </span>            :   int dummy;  // Suppress padding warning.
+<span class="lineNum">     150 </span>            : 
+<span class="lineNum">     151 </span>            :   std::string ambient_texname;             // map_Ka
+<span class="lineNum">     152 </span>            :   std::string diffuse_texname;             // map_Kd
+<span class="lineNum">     153 </span>            :   std::string specular_texname;            // map_Ks
+<span class="lineNum">     154 </span>            :   std::string specular_highlight_texname;  // map_Ns
+<span class="lineNum">     155 </span>            :   std::string bump_texname;                // map_bump, bump
+<span class="lineNum">     156 </span>            :   std::string displacement_texname;        // disp
+<span class="lineNum">     157 </span>            :   std::string alpha_texname;               // map_d
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            :   texture_option_t ambient_texopt;
+<span class="lineNum">     160 </span>            :   texture_option_t diffuse_texopt;
+<span class="lineNum">     161 </span>            :   texture_option_t specular_texopt;
+<span class="lineNum">     162 </span>            :   texture_option_t specular_highlight_texopt;
+<span class="lineNum">     163 </span>            :   texture_option_t bump_texopt;
+<span class="lineNum">     164 </span>            :   texture_option_t displacement_texopt;
+<span class="lineNum">     165 </span>            :   texture_option_t alpha_texopt;
+<span class="lineNum">     166 </span>            : 
+<span class="lineNum">     167 </span>            :   // PBR extension
+<span class="lineNum">     168 </span>            :   // http://exocortex.com/blog/extending_wavefront_mtl_to_support_pbr
+<span class="lineNum">     169 </span>            :   real_t roughness;            // [0, 1] default 0
+<span class="lineNum">     170 </span>            :   real_t metallic;             // [0, 1] default 0
+<span class="lineNum">     171 </span>            :   real_t sheen;                // [0, 1] default 0
+<span class="lineNum">     172 </span>            :   real_t clearcoat_thickness;  // [0, 1] default 0
+<span class="lineNum">     173 </span>            :   real_t clearcoat_roughness;  // [0, 1] default 0
+<span class="lineNum">     174 </span>            :   real_t anisotropy;           // aniso. [0, 1] default 0
+<span class="lineNum">     175 </span>            :   real_t anisotropy_rotation;  // anisor. [0, 1] default 0
+<span class="lineNum">     176 </span>            :   real_t pad0;
+<span class="lineNum">     177 </span>            :   real_t pad1;
+<span class="lineNum">     178 </span>            :   std::string roughness_texname;  // map_Pr
+<span class="lineNum">     179 </span>            :   std::string metallic_texname;   // map_Pm
+<span class="lineNum">     180 </span>            :   std::string sheen_texname;      // map_Ps
+<span class="lineNum">     181 </span>            :   std::string emissive_texname;   // map_Ke
+<span class="lineNum">     182 </span>            :   std::string normal_texname;     // norm. For normal mapping.
+<span class="lineNum">     183 </span>            : 
+<span class="lineNum">     184 </span>            :   texture_option_t roughness_texopt;
+<span class="lineNum">     185 </span>            :   texture_option_t metallic_texopt;
+<span class="lineNum">     186 </span>            :   texture_option_t sheen_texopt;
+<span class="lineNum">     187 </span>            :   texture_option_t emissive_texopt;
+<span class="lineNum">     188 </span>            :   texture_option_t normal_texopt;
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span>            :   int pad2;
+<a name="191"><span class="lineNum">     191 </span>            : </a>
+<span class="lineNum">     192 </span>            :   std::map&lt;std::string, std::string&gt; unknown_parameter;
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 : } material_t;</span>
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            : typedef struct {
+<span class="lineNum">     196 </span>            :   std::string name;
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span>            :   std::vector&lt;int&gt; intValues;
+<a name="199"><span class="lineNum">     199 </span>            :   std::vector&lt;real_t&gt; floatValues;</a>
+<span class="lineNum">     200 </span>            :   std::vector&lt;std::string&gt; stringValues;
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 : } tag_t;</span>
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            : // Index struct to support different indices for vtx/normal/texcoord.
+<span class="lineNum">     204 </span>            : // -1 means not used.
+<span class="lineNum">     205 </span>            : typedef struct {
+<span class="lineNum">     206 </span>            :   int vertex_index;
+<span class="lineNum">     207 </span>            :   int normal_index;
+<span class="lineNum">     208 </span>            :   int texcoord_index;
+<span class="lineNum">     209 </span>            : } index_t;
+<span class="lineNum">     210 </span>            : 
+<span class="lineNum">     211 </span>            : typedef struct {
+<span class="lineNum">     212 </span>            :   std::vector&lt;index_t&gt; indices;
+<span class="lineNum">     213 </span>            :   std::vector&lt;unsigned char&gt; num_face_vertices;  // The number of vertices per
+<span class="lineNum">     214 </span>            :                                                  // face. 3 = polygon, 4 = quad,
+<span class="lineNum">     215 </span>            :                                                  // ... Up to 255.
+<a name="216"><span class="lineNum">     216 </span>            :   std::vector&lt;int&gt; material_ids;                 // per-face material ID</a>
+<span class="lineNum">     217 </span>            :   std::vector&lt;tag_t&gt; tags;                       // SubD tag
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 : } mesh_t;</span>
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span>            : typedef struct {
+<a name="221"><span class="lineNum">     221 </span>            :   std::string name;</a>
+<span class="lineNum">     222 </span>            :   mesh_t mesh;
+<span class="lineNum">     223 </span><span class="lineNoCov">          0 : } shape_t;</span>
+<span class="lineNum">     224 </span>            : 
+<span class="lineNum">     225 </span>            : // Vertex attributes
+<span class="lineNum">     226 </span>            : typedef struct {
+<span class="lineNum">     227 </span>            :   std::vector&lt;real_t&gt; vertices;   // 'v'
+<a name="228"><span class="lineNum">     228 </span>            :   std::vector&lt;real_t&gt; normals;    // 'vn'</a>
+<span class="lineNum">     229 </span>            :   std::vector&lt;real_t&gt; texcoords;  // 'vt'
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 : } attrib_t;</span>
+<span class="lineNum">     231 </span>            : 
+<span class="lineNum">     232 </span>            : typedef struct callback_t_ {
+<span class="lineNum">     233 </span>            :   // W is optional and set to 1 if there is no `w` item in `v` line
+<span class="lineNum">     234 </span>            :   void (*vertex_cb)(void *user_data, real_t x, real_t y, real_t z, real_t w);
+<span class="lineNum">     235 </span>            :   void (*normal_cb)(void *user_data, real_t x, real_t y, real_t z);
+<span class="lineNum">     236 </span>            : 
+<span class="lineNum">     237 </span>            :   // y and z are optional and set to 0 if there is no `y` and/or `z` item(s) in
+<span class="lineNum">     238 </span>            :   // `vt` line.
+<span class="lineNum">     239 </span>            :   void (*texcoord_cb)(void *user_data, real_t x, real_t y, real_t z);
+<span class="lineNum">     240 </span>            : 
+<span class="lineNum">     241 </span>            :   // called per 'f' line. num_indices is the number of face indices(e.g. 3 for
+<span class="lineNum">     242 </span>            :   // triangle, 4 for quad)
+<span class="lineNum">     243 </span>            :   // 0 will be passed for undefined index in index_t members.
+<span class="lineNum">     244 </span>            :   void (*index_cb)(void *user_data, index_t *indices, int num_indices);
+<span class="lineNum">     245 </span>            :   // `name` material name, `material_id` = the array index of material_t[]. -1
+<span class="lineNum">     246 </span>            :   // if
+<span class="lineNum">     247 </span>            :   // a material not found in .mtl
+<span class="lineNum">     248 </span>            :   void (*usemtl_cb)(void *user_data, const char *name, int material_id);
+<span class="lineNum">     249 </span>            :   // `materials` = parsed material data.
+<span class="lineNum">     250 </span>            :   void (*mtllib_cb)(void *user_data, const material_t *materials,
+<span class="lineNum">     251 </span>            :                     int num_materials);
+<span class="lineNum">     252 </span>            :   // There may be multiple group names
+<span class="lineNum">     253 </span>            :   void (*group_cb)(void *user_data, const char **names, int num_names);
+<span class="lineNum">     254 </span>            :   void (*object_cb)(void *user_data, const char *name);
+<span class="lineNum">     255 </span>            : 
+<span class="lineNum">     256 </span>            :   callback_t_()
+<span class="lineNum">     257 </span>            :       : vertex_cb(NULL),
+<span class="lineNum">     258 </span>            :         normal_cb(NULL),
+<span class="lineNum">     259 </span>            :         texcoord_cb(NULL),
+<span class="lineNum">     260 </span>            :         index_cb(NULL),
+<span class="lineNum">     261 </span>            :         usemtl_cb(NULL),
+<span class="lineNum">     262 </span>            :         mtllib_cb(NULL),
+<span class="lineNum">     263 </span>            :         group_cb(NULL),
+<span class="lineNum">     264 </span>            :         object_cb(NULL) {}
+<span class="lineNum">     265 </span>            : } callback_t;
+<span class="lineNum">     266 </span>            : 
+<span class="lineNum">     267 </span>            : class MaterialReader {
+<span class="lineNum">     268 </span>            :  public:
+<span class="lineNum">     269 </span>            :   MaterialReader() {}
+<span class="lineNum">     270 </span>            :   virtual ~MaterialReader();
+<span class="lineNum">     271 </span>            : 
+<span class="lineNum">     272 </span>            :   virtual bool operator()(const std::string &amp;matId,
+<span class="lineNum">     273 </span>            :                           std::vector&lt;material_t&gt; *materials,
+<span class="lineNum">     274 </span>            :                           std::map&lt;std::string, int&gt; *matMap,
+<span class="lineNum">     275 </span>            :                           std::string *err) = 0;
+<span class="lineNum">     276 </span>            : };
+<span class="lineNum">     277 </span>            : 
+<span class="lineNum">     278 </span>            : class MaterialFileReader : public MaterialReader {
+<span class="lineNum">     279 </span>            :  public:
+<span class="lineNum">     280 </span>            :   explicit MaterialFileReader(const std::string &amp;mtl_basedir)
+<span class="lineNum">     281 </span>            :       : m_mtlBaseDir(mtl_basedir) {}
+<span class="lineNum">     282 </span>            :   virtual ~MaterialFileReader() {}
+<span class="lineNum">     283 </span>            :   virtual bool operator()(const std::string &amp;matId,
+<span class="lineNum">     284 </span>            :                           std::vector&lt;material_t&gt; *materials,
+<span class="lineNum">     285 </span>            :                           std::map&lt;std::string, int&gt; *matMap, std::string *err);
+<span class="lineNum">     286 </span>            : 
+<span class="lineNum">     287 </span>            :  private:
+<span class="lineNum">     288 </span>            :   std::string m_mtlBaseDir;
+<span class="lineNum">     289 </span>            : };
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span>            : class MaterialStreamReader : public MaterialReader {
+<span class="lineNum">     292 </span>            :  public:
+<span class="lineNum">     293 </span>            :   explicit MaterialStreamReader(std::istream &amp;inStream)
+<span class="lineNum">     294 </span>            :       : m_inStream(inStream) {}
+<span class="lineNum">     295 </span>            :   virtual ~MaterialStreamReader() {}
+<span class="lineNum">     296 </span>            :   virtual bool operator()(const std::string &amp;matId,
+<span class="lineNum">     297 </span>            :                           std::vector&lt;material_t&gt; *materials,
+<span class="lineNum">     298 </span>            :                           std::map&lt;std::string, int&gt; *matMap, std::string *err);
+<span class="lineNum">     299 </span>            : 
+<span class="lineNum">     300 </span>            :  private:
+<span class="lineNum">     301 </span>            :   std::istream &amp;m_inStream;
+<span class="lineNum">     302 </span>            : };
+<span class="lineNum">     303 </span>            : 
+<span class="lineNum">     304 </span>            : /// Loads .obj from a file.
+<span class="lineNum">     305 </span>            : /// 'attrib', 'shapes' and 'materials' will be filled with parsed shape data
+<span class="lineNum">     306 </span>            : /// 'shapes' will be filled with parsed shape data
+<span class="lineNum">     307 </span>            : /// Returns true when loading .obj become success.
+<span class="lineNum">     308 </span>            : /// Returns warning and error message into `err`
+<span class="lineNum">     309 </span>            : /// 'mtl_basedir' is optional, and used for base directory for .mtl file.
+<span class="lineNum">     310 </span>            : /// In default(`NULL'), .mtl file is searched from an application's working
+<span class="lineNum">     311 </span>            : /// directory.
+<span class="lineNum">     312 </span>            : /// 'triangulate' is optional, and used whether triangulate polygon face in .obj
+<span class="lineNum">     313 </span>            : /// or not.
+<span class="lineNum">     314 </span>            : bool LoadObj(attrib_t *attrib, std::vector&lt;shape_t&gt; *shapes,
+<span class="lineNum">     315 </span>            :              std::vector&lt;material_t&gt; *materials, std::string *err,
+<span class="lineNum">     316 </span>            :              const char *filename, const char *mtl_basedir = NULL,
+<span class="lineNum">     317 </span>            :              bool triangulate = true);
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span>            : /// Loads .obj from a file with custom user callback.
+<span class="lineNum">     320 </span>            : /// .mtl is loaded as usual and parsed material_t data will be passed to
+<span class="lineNum">     321 </span>            : /// `callback.mtllib_cb`.
+<span class="lineNum">     322 </span>            : /// Returns true when loading .obj/.mtl become success.
+<span class="lineNum">     323 </span>            : /// Returns warning and error message into `err`
+<span class="lineNum">     324 </span>            : /// See `examples/callback_api/` for how to use this function.
+<span class="lineNum">     325 </span>            : bool LoadObjWithCallback(std::istream &amp;inStream, const callback_t &amp;callback,
+<span class="lineNum">     326 </span>            :                          void *user_data = NULL,
+<span class="lineNum">     327 </span>            :                          MaterialReader *readMatFn = NULL,
+<span class="lineNum">     328 </span>            :                          std::string *err = NULL);
+<span class="lineNum">     329 </span>            : 
+<span class="lineNum">     330 </span>            : /// Loads object from a std::istream, uses GetMtlIStreamFn to retrieve
+<span class="lineNum">     331 </span>            : /// std::istream for materials.
+<span class="lineNum">     332 </span>            : /// Returns true when loading .obj become success.
+<span class="lineNum">     333 </span>            : /// Returns warning and error message into `err`
+<span class="lineNum">     334 </span>            : bool LoadObj(attrib_t *attrib, std::vector&lt;shape_t&gt; *shapes,
+<span class="lineNum">     335 </span>            :              std::vector&lt;material_t&gt; *materials, std::string *err,
+<span class="lineNum">     336 </span>            :              std::istream *inStream, MaterialReader *readMatFn = NULL,
+<span class="lineNum">     337 </span>            :              bool triangulate = true);
+<span class="lineNum">     338 </span>            : 
+<span class="lineNum">     339 </span>            : /// Loads materials into std::map
+<span class="lineNum">     340 </span>            : void LoadMtl(std::map&lt;std::string, int&gt; *material_map,
+<span class="lineNum">     341 </span>            :              std::vector&lt;material_t&gt; *materials, std::istream *inStream,
+<span class="lineNum">     342 </span>            :              std::string *warning);
+<span class="lineNum">     343 </span>            : 
+<span class="lineNum">     344 </span>            : }  // namespace tinyobj
+<span class="lineNum">     345 </span>            : 
+<span class="lineNum">     346 </span>            : #endif  // TINY_OBJ_LOADER_H_
+<span class="lineNum">     347 </span>            : 
+<span class="lineNum">     348 </span>            : #ifdef TINYOBJLOADER_IMPLEMENTATION
+<span class="lineNum">     349 </span>            : #include &lt;cassert&gt;
+<span class="lineNum">     350 </span>            : #include &lt;cctype&gt;
+<span class="lineNum">     351 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">     352 </span>            : #include &lt;cstddef&gt;
+<span class="lineNum">     353 </span>            : #include &lt;cstdlib&gt;
+<span class="lineNum">     354 </span>            : #include &lt;cstring&gt;
+<span class="lineNum">     355 </span>            : #include &lt;utility&gt;
+<span class="lineNum">     356 </span>            : 
+<span class="lineNum">     357 </span>            : #include &lt;fstream&gt;
+<span class="lineNum">     358 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">     359 </span>            : 
+<span class="lineNum">     360 </span>            : namespace tinyobj {
+<span class="lineNum">     361 </span>            : 
+<span class="lineNum">     362 </span>            : MaterialReader::~MaterialReader() {}
+<span class="lineNum">     363 </span>            : 
+<span class="lineNum">     364 </span>            : #define TINYOBJ_SSCANF_BUFFER_SIZE (4096)
+<span class="lineNum">     365 </span>            : 
+<span class="lineNum">     366 </span>            : struct vertex_index {
+<span class="lineNum">     367 </span>            :   int v_idx, vt_idx, vn_idx;
+<span class="lineNum">     368 </span>            :   vertex_index() : v_idx(-1), vt_idx(-1), vn_idx(-1) {}
+<span class="lineNum">     369 </span>            :   explicit vertex_index(int idx) : v_idx(idx), vt_idx(idx), vn_idx(idx) {}
+<span class="lineNum">     370 </span>            :   vertex_index(int vidx, int vtidx, int vnidx)
+<span class="lineNum">     371 </span>            :       : v_idx(vidx), vt_idx(vtidx), vn_idx(vnidx) {}
+<span class="lineNum">     372 </span>            : };
+<span class="lineNum">     373 </span>            : 
+<span class="lineNum">     374 </span>            : struct tag_sizes {
+<span class="lineNum">     375 </span>            :   tag_sizes() : num_ints(0), num_reals(0), num_strings(0) {}
+<span class="lineNum">     376 </span>            :   int num_ints;
+<span class="lineNum">     377 </span>            :   int num_reals;
+<span class="lineNum">     378 </span>            :   int num_strings;
+<span class="lineNum">     379 </span>            : };
+<span class="lineNum">     380 </span>            : 
+<span class="lineNum">     381 </span>            : struct obj_shape {
+<span class="lineNum">     382 </span>            :   std::vector&lt;real_t&gt; v;
+<span class="lineNum">     383 </span>            :   std::vector&lt;real_t&gt; vn;
+<span class="lineNum">     384 </span>            :   std::vector&lt;real_t&gt; vt;
+<span class="lineNum">     385 </span>            : };
+<span class="lineNum">     386 </span>            : 
+<span class="lineNum">     387 </span>            : // See
+<span class="lineNum">     388 </span>            : // http://stackoverflow.com/questions/6089231/getting-std-ifstream-to-handle-lf-cr-and-crlf
+<span class="lineNum">     389 </span>            : static std::istream &amp;safeGetline(std::istream &amp;is, std::string &amp;t) {
+<span class="lineNum">     390 </span>            :   t.clear();
+<span class="lineNum">     391 </span>            : 
+<span class="lineNum">     392 </span>            :   // The characters in the stream are read one-by-one using a std::streambuf.
+<span class="lineNum">     393 </span>            :   // That is faster than reading them one-by-one using the std::istream.
+<span class="lineNum">     394 </span>            :   // Code that uses streambuf this way must be guarded by a sentry object.
+<span class="lineNum">     395 </span>            :   // The sentry object performs various tasks,
+<span class="lineNum">     396 </span>            :   // such as thread synchronization and updating the stream state.
+<span class="lineNum">     397 </span>            : 
+<span class="lineNum">     398 </span>            :   std::istream::sentry se(is, true);
+<span class="lineNum">     399 </span>            :   std::streambuf *sb = is.rdbuf();
+<span class="lineNum">     400 </span>            : 
+<span class="lineNum">     401 </span>            :   for (;;) {
+<span class="lineNum">     402 </span>            :     int c = sb-&gt;sbumpc();
+<span class="lineNum">     403 </span>            :     switch (c) {
+<span class="lineNum">     404 </span>            :       case '\n':
+<span class="lineNum">     405 </span>            :         return is;
+<span class="lineNum">     406 </span>            :       case '\r':
+<span class="lineNum">     407 </span>            :         if (sb-&gt;sgetc() == '\n') sb-&gt;sbumpc();
+<span class="lineNum">     408 </span>            :         return is;
+<span class="lineNum">     409 </span>            :       case EOF:
+<span class="lineNum">     410 </span>            :         // Also handle the case when the last line has no line ending
+<span class="lineNum">     411 </span>            :         if (t.empty()) is.setstate(std::ios::eofbit);
+<span class="lineNum">     412 </span>            :         return is;
+<span class="lineNum">     413 </span>            :       default:
+<span class="lineNum">     414 </span>            :         t += static_cast&lt;char&gt;(c);
+<span class="lineNum">     415 </span>            :     }
+<span class="lineNum">     416 </span>            :   }
+<span class="lineNum">     417 </span>            : }
+<span class="lineNum">     418 </span>            : 
+<span class="lineNum">     419 </span>            : #define IS_SPACE(x) (((x) == ' ') || ((x) == '\t'))
+<span class="lineNum">     420 </span>            : #define IS_DIGIT(x) \
+<span class="lineNum">     421 </span>            :   (static_cast&lt;unsigned int&gt;((x) - '0') &lt; static_cast&lt;unsigned int&gt;(10))
+<span class="lineNum">     422 </span>            : #define IS_NEW_LINE(x) (((x) == '\r') || ((x) == '\n') || ((x) == '\0'))
+<span class="lineNum">     423 </span>            : 
+<span class="lineNum">     424 </span>            : // Make index zero-base, and also support relative index.
+<span class="lineNum">     425 </span>            : static inline int fixIndex(int idx, int n) {
+<span class="lineNum">     426 </span>            :   if (idx &gt; 0) return idx - 1;
+<span class="lineNum">     427 </span>            :   if (idx == 0) return 0;
+<span class="lineNum">     428 </span>            :   return n + idx;  // negative value = relative
+<span class="lineNum">     429 </span>            : }
+<span class="lineNum">     430 </span>            : 
+<span class="lineNum">     431 </span>            : static inline std::string parseString(const char **token) {
+<span class="lineNum">     432 </span>            :   std::string s;
+<span class="lineNum">     433 </span>            :   (*token) += strspn((*token), &quot; \t&quot;);
+<span class="lineNum">     434 </span>            :   size_t e = strcspn((*token), &quot; \t\r&quot;);
+<span class="lineNum">     435 </span>            :   s = std::string((*token), &amp;(*token)[e]);
+<span class="lineNum">     436 </span>            :   (*token) += e;
+<span class="lineNum">     437 </span>            :   return s;
+<span class="lineNum">     438 </span>            : }
+<span class="lineNum">     439 </span>            : 
+<span class="lineNum">     440 </span>            : static inline int parseInt(const char **token) {
+<span class="lineNum">     441 </span>            :   (*token) += strspn((*token), &quot; \t&quot;);
+<span class="lineNum">     442 </span>            :   int i = atoi((*token));
+<span class="lineNum">     443 </span>            :   (*token) += strcspn((*token), &quot; \t\r&quot;);
+<span class="lineNum">     444 </span>            :   return i;
+<span class="lineNum">     445 </span>            : }
+<span class="lineNum">     446 </span>            : 
+<span class="lineNum">     447 </span>            : // Tries to parse a floating point number located at s.
+<span class="lineNum">     448 </span>            : //
+<span class="lineNum">     449 </span>            : // s_end should be a location in the string where reading should absolutely
+<span class="lineNum">     450 </span>            : // stop. For example at the end of the string, to prevent buffer overflows.
+<span class="lineNum">     451 </span>            : //
+<span class="lineNum">     452 </span>            : // Parses the following EBNF grammar:
+<span class="lineNum">     453 </span>            : //   sign    = &quot;+&quot; | &quot;-&quot; ;
+<span class="lineNum">     454 </span>            : //   END     = ? anything not in digit ?
+<span class="lineNum">     455 </span>            : //   digit   = &quot;0&quot; | &quot;1&quot; | &quot;2&quot; | &quot;3&quot; | &quot;4&quot; | &quot;5&quot; | &quot;6&quot; | &quot;7&quot; | &quot;8&quot; | &quot;9&quot; ;
+<span class="lineNum">     456 </span>            : //   integer = [sign] , digit , {digit} ;
+<span class="lineNum">     457 </span>            : //   decimal = integer , [&quot;.&quot; , integer] ;
+<span class="lineNum">     458 </span>            : //   float   = ( decimal , END ) | ( decimal , (&quot;E&quot; | &quot;e&quot;) , integer , END ) ;
+<span class="lineNum">     459 </span>            : //
+<span class="lineNum">     460 </span>            : //  Valid strings are for example:
+<span class="lineNum">     461 </span>            : //   -0  +3.1417e+2  -0.0E-3  1.0324  -1.41   11e2
+<span class="lineNum">     462 </span>            : //
+<span class="lineNum">     463 </span>            : // If the parsing is a success, result is set to the parsed value and true
+<span class="lineNum">     464 </span>            : // is returned.
+<span class="lineNum">     465 </span>            : //
+<span class="lineNum">     466 </span>            : // The function is greedy and will parse until any of the following happens:
+<span class="lineNum">     467 </span>            : //  - a non-conforming character is encountered.
+<span class="lineNum">     468 </span>            : //  - s_end is reached.
+<span class="lineNum">     469 </span>            : //
+<span class="lineNum">     470 </span>            : // The following situations triggers a failure:
+<span class="lineNum">     471 </span>            : //  - s &gt;= s_end.
+<span class="lineNum">     472 </span>            : //  - parse failure.
+<span class="lineNum">     473 </span>            : //
+<span class="lineNum">     474 </span>            : static bool tryParseDouble(const char *s, const char *s_end, double *result) {
+<span class="lineNum">     475 </span>            :   if (s &gt;= s_end) {
+<span class="lineNum">     476 </span>            :     return false;
+<span class="lineNum">     477 </span>            :   }
+<span class="lineNum">     478 </span>            : 
+<span class="lineNum">     479 </span>            :   double mantissa = 0.0;
+<span class="lineNum">     480 </span>            :   // This exponent is base 2 rather than 10.
+<span class="lineNum">     481 </span>            :   // However the exponent we parse is supposed to be one of ten,
+<span class="lineNum">     482 </span>            :   // thus we must take care to convert the exponent/and or the
+<span class="lineNum">     483 </span>            :   // mantissa to a * 2^E, where a is the mantissa and E is the
+<span class="lineNum">     484 </span>            :   // exponent.
+<span class="lineNum">     485 </span>            :   // To get the final double we will use ldexp, it requires the
+<span class="lineNum">     486 </span>            :   // exponent to be in base 2.
+<span class="lineNum">     487 </span>            :   int exponent = 0;
+<span class="lineNum">     488 </span>            : 
+<span class="lineNum">     489 </span>            :   // NOTE: THESE MUST BE DECLARED HERE SINCE WE ARE NOT ALLOWED
+<span class="lineNum">     490 </span>            :   // TO JUMP OVER DEFINITIONS.
+<span class="lineNum">     491 </span>            :   char sign = '+';
+<span class="lineNum">     492 </span>            :   char exp_sign = '+';
+<span class="lineNum">     493 </span>            :   char const *curr = s;
+<span class="lineNum">     494 </span>            : 
+<span class="lineNum">     495 </span>            :   // How many characters were read in a loop.
+<span class="lineNum">     496 </span>            :   int read = 0;
+<span class="lineNum">     497 </span>            :   // Tells whether a loop terminated due to reaching s_end.
+<span class="lineNum">     498 </span>            :   bool end_not_reached = false;
+<span class="lineNum">     499 </span>            : 
+<span class="lineNum">     500 </span>            :   /*
+<span class="lineNum">     501 </span>            :           BEGIN PARSING.
+<span class="lineNum">     502 </span>            :   */
+<span class="lineNum">     503 </span>            : 
+<span class="lineNum">     504 </span>            :   // Find out what sign we've got.
+<span class="lineNum">     505 </span>            :   if (*curr == '+' || *curr == '-') {
+<span class="lineNum">     506 </span>            :     sign = *curr;
+<span class="lineNum">     507 </span>            :     curr++;
+<span class="lineNum">     508 </span>            :   } else if (IS_DIGIT(*curr)) { /* Pass through. */
+<span class="lineNum">     509 </span>            :   } else {
+<span class="lineNum">     510 </span>            :     goto fail;
+<span class="lineNum">     511 </span>            :   }
+<span class="lineNum">     512 </span>            : 
+<span class="lineNum">     513 </span>            :   // Read the integer part.
+<span class="lineNum">     514 </span>            :   end_not_reached = (curr != s_end);
+<span class="lineNum">     515 </span>            :   while (end_not_reached &amp;&amp; IS_DIGIT(*curr)) {
+<span class="lineNum">     516 </span>            :     mantissa *= 10;
+<span class="lineNum">     517 </span>            :     mantissa += static_cast&lt;int&gt;(*curr - 0x30);
+<span class="lineNum">     518 </span>            :     curr++;
+<span class="lineNum">     519 </span>            :     read++;
+<span class="lineNum">     520 </span>            :     end_not_reached = (curr != s_end);
+<span class="lineNum">     521 </span>            :   }
+<span class="lineNum">     522 </span>            : 
+<span class="lineNum">     523 </span>            :   // We must make sure we actually got something.
+<span class="lineNum">     524 </span>            :   if (read == 0) goto fail;
+<span class="lineNum">     525 </span>            :   // We allow numbers of form &quot;#&quot;, &quot;###&quot; etc.
+<span class="lineNum">     526 </span>            :   if (!end_not_reached) goto assemble;
+<span class="lineNum">     527 </span>            : 
+<span class="lineNum">     528 </span>            :   // Read the decimal part.
+<span class="lineNum">     529 </span>            :   if (*curr == '.') {
+<span class="lineNum">     530 </span>            :     curr++;
+<span class="lineNum">     531 </span>            :     read = 1;
+<span class="lineNum">     532 </span>            :     end_not_reached = (curr != s_end);
+<span class="lineNum">     533 </span>            :     while (end_not_reached &amp;&amp; IS_DIGIT(*curr)) {
+<span class="lineNum">     534 </span>            :       static const double pow_lut[] = {
+<span class="lineNum">     535 </span>            :           1.0, 0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001,
+<span class="lineNum">     536 </span>            :       };
+<span class="lineNum">     537 </span>            :       const int lut_entries = sizeof pow_lut / sizeof pow_lut[0];
+<span class="lineNum">     538 </span>            : 
+<span class="lineNum">     539 </span>            :       // NOTE: Don't use powf here, it will absolutely murder precision.
+<span class="lineNum">     540 </span>            :       mantissa += static_cast&lt;int&gt;(*curr - 0x30) *
+<span class="lineNum">     541 </span>            :                   (read &lt; lut_entries ? pow_lut[read] : std::pow(10.0, -read));
+<span class="lineNum">     542 </span>            :       read++;
+<span class="lineNum">     543 </span>            :       curr++;
+<span class="lineNum">     544 </span>            :       end_not_reached = (curr != s_end);
+<span class="lineNum">     545 </span>            :     }
+<span class="lineNum">     546 </span>            :   } else if (*curr == 'e' || *curr == 'E') {
+<span class="lineNum">     547 </span>            :   } else {
+<span class="lineNum">     548 </span>            :     goto assemble;
+<span class="lineNum">     549 </span>            :   }
+<span class="lineNum">     550 </span>            : 
+<span class="lineNum">     551 </span>            :   if (!end_not_reached) goto assemble;
+<span class="lineNum">     552 </span>            : 
+<span class="lineNum">     553 </span>            :   // Read the exponent part.
+<span class="lineNum">     554 </span>            :   if (*curr == 'e' || *curr == 'E') {
+<span class="lineNum">     555 </span>            :     curr++;
+<span class="lineNum">     556 </span>            :     // Figure out if a sign is present and if it is.
+<span class="lineNum">     557 </span>            :     end_not_reached = (curr != s_end);
+<span class="lineNum">     558 </span>            :     if (end_not_reached &amp;&amp; (*curr == '+' || *curr == '-')) {
+<span class="lineNum">     559 </span>            :       exp_sign = *curr;
+<span class="lineNum">     560 </span>            :       curr++;
+<span class="lineNum">     561 </span>            :     } else if (IS_DIGIT(*curr)) { /* Pass through. */
+<span class="lineNum">     562 </span>            :     } else {
+<span class="lineNum">     563 </span>            :       // Empty E is not allowed.
+<span class="lineNum">     564 </span>            :       goto fail;
+<span class="lineNum">     565 </span>            :     }
+<span class="lineNum">     566 </span>            : 
+<span class="lineNum">     567 </span>            :     read = 0;
+<span class="lineNum">     568 </span>            :     end_not_reached = (curr != s_end);
+<span class="lineNum">     569 </span>            :     while (end_not_reached &amp;&amp; IS_DIGIT(*curr)) {
+<span class="lineNum">     570 </span>            :       exponent *= 10;
+<span class="lineNum">     571 </span>            :       exponent += static_cast&lt;int&gt;(*curr - 0x30);
+<span class="lineNum">     572 </span>            :       curr++;
+<span class="lineNum">     573 </span>            :       read++;
+<span class="lineNum">     574 </span>            :       end_not_reached = (curr != s_end);
+<span class="lineNum">     575 </span>            :     }
+<span class="lineNum">     576 </span>            :     exponent *= (exp_sign == '+' ? 1 : -1);
+<span class="lineNum">     577 </span>            :     if (read == 0) goto fail;
+<span class="lineNum">     578 </span>            :   }
+<span class="lineNum">     579 </span>            : 
+<span class="lineNum">     580 </span>            : assemble:
+<span class="lineNum">     581 </span>            :   *result =
+<span class="lineNum">     582 </span>            :       (sign == '+' ? 1 : -1) *
+<span class="lineNum">     583 </span>            :       (exponent ? std::ldexp(mantissa * std::pow(5.0, exponent), exponent) : mantissa);
+<span class="lineNum">     584 </span>            :   return true;
+<span class="lineNum">     585 </span>            : fail:
+<span class="lineNum">     586 </span>            :   return false;
+<span class="lineNum">     587 </span>            : }
+<span class="lineNum">     588 </span>            : 
+<span class="lineNum">     589 </span>            : static inline real_t parseReal(const char **token, double default_value = 0.0) {
+<span class="lineNum">     590 </span>            :   (*token) += strspn((*token), &quot; \t&quot;);
+<span class="lineNum">     591 </span>            :   const char *end = (*token) + strcspn((*token), &quot; \t\r&quot;);
+<span class="lineNum">     592 </span>            :   double val = default_value;
+<span class="lineNum">     593 </span>            :   tryParseDouble((*token), end, &amp;val);
+<span class="lineNum">     594 </span>            :   real_t f = static_cast&lt;real_t&gt;(val);
+<span class="lineNum">     595 </span>            :   (*token) = end;
+<span class="lineNum">     596 </span>            :   return f;
+<span class="lineNum">     597 </span>            : }
+<span class="lineNum">     598 </span>            : 
+<span class="lineNum">     599 </span>            : static inline void parseReal2(real_t *x, real_t *y, const char **token,
+<span class="lineNum">     600 </span>            :                                const double default_x = 0.0,
+<span class="lineNum">     601 </span>            :                                const double default_y = 0.0) {
+<span class="lineNum">     602 </span>            :   (*x) = parseReal(token, default_x);
+<span class="lineNum">     603 </span>            :   (*y) = parseReal(token, default_y);
+<span class="lineNum">     604 </span>            : }
+<span class="lineNum">     605 </span>            : 
+<span class="lineNum">     606 </span>            : static inline void parseReal3(real_t *x, real_t *y, real_t *z, const char **token,
+<span class="lineNum">     607 </span>            :                                const double default_x = 0.0,
+<span class="lineNum">     608 </span>            :                                const double default_y = 0.0,
+<span class="lineNum">     609 </span>            :                                const double default_z = 0.0) {
+<span class="lineNum">     610 </span>            :   (*x) = parseReal(token, default_x);
+<span class="lineNum">     611 </span>            :   (*y) = parseReal(token, default_y);
+<span class="lineNum">     612 </span>            :   (*z) = parseReal(token, default_z);
+<span class="lineNum">     613 </span>            : }
+<span class="lineNum">     614 </span>            : 
+<span class="lineNum">     615 </span>            : static inline void parseV(real_t *x, real_t *y, real_t *z, real_t *w,
+<span class="lineNum">     616 </span>            :                           const char **token, const double default_x = 0.0,
+<span class="lineNum">     617 </span>            :                           const double default_y = 0.0,
+<span class="lineNum">     618 </span>            :                           const double default_z = 0.0,
+<span class="lineNum">     619 </span>            :                           const double default_w = 1.0) {
+<span class="lineNum">     620 </span>            :   (*x) = parseReal(token, default_x);
+<span class="lineNum">     621 </span>            :   (*y) = parseReal(token, default_y);
+<span class="lineNum">     622 </span>            :   (*z) = parseReal(token, default_z);
+<span class="lineNum">     623 </span>            :   (*w) = parseReal(token, default_w);
+<span class="lineNum">     624 </span>            : }
+<span class="lineNum">     625 </span>            : 
+<span class="lineNum">     626 </span>            : static inline bool parseOnOff(const char **token, bool default_value = true) {
+<span class="lineNum">     627 </span>            :   (*token) += strspn((*token), &quot; \t&quot;);
+<span class="lineNum">     628 </span>            :   const char *end = (*token) + strcspn((*token), &quot; \t\r&quot;);
+<span class="lineNum">     629 </span>            : 
+<span class="lineNum">     630 </span>            :   bool ret = default_value;
+<span class="lineNum">     631 </span>            :   if ((0 == strncmp((*token), &quot;on&quot;, 2))) {
+<span class="lineNum">     632 </span>            :     ret = true;
+<span class="lineNum">     633 </span>            :   } else if ((0 == strncmp((*token), &quot;off&quot;, 3))) {
+<span class="lineNum">     634 </span>            :     ret = false;
+<span class="lineNum">     635 </span>            :   }
+<span class="lineNum">     636 </span>            : 
+<span class="lineNum">     637 </span>            :   (*token) = end;
+<span class="lineNum">     638 </span>            :   return ret;
+<span class="lineNum">     639 </span>            : }
+<span class="lineNum">     640 </span>            : 
+<span class="lineNum">     641 </span>            : static inline texture_type_t parseTextureType(
+<span class="lineNum">     642 </span>            :     const char **token, texture_type_t default_value = TEXTURE_TYPE_NONE) {
+<span class="lineNum">     643 </span>            :   (*token) += strspn((*token), &quot; \t&quot;);
+<span class="lineNum">     644 </span>            :   const char *end = (*token) + strcspn((*token), &quot; \t\r&quot;);
+<span class="lineNum">     645 </span>            :   texture_type_t ty = default_value;
+<span class="lineNum">     646 </span>            : 
+<span class="lineNum">     647 </span>            :   if ((0 == strncmp((*token), &quot;cube_top&quot;, strlen(&quot;cube_top&quot;)))) {
+<span class="lineNum">     648 </span>            :     ty = TEXTURE_TYPE_CUBE_TOP;
+<span class="lineNum">     649 </span>            :   } else if ((0 == strncmp((*token), &quot;cube_bottom&quot;, strlen(&quot;cube_bottom&quot;)))) {
+<span class="lineNum">     650 </span>            :     ty = TEXTURE_TYPE_CUBE_BOTTOM;
+<span class="lineNum">     651 </span>            :   } else if ((0 == strncmp((*token), &quot;cube_left&quot;, strlen(&quot;cube_left&quot;)))) {
+<span class="lineNum">     652 </span>            :     ty = TEXTURE_TYPE_CUBE_LEFT;
+<span class="lineNum">     653 </span>            :   } else if ((0 == strncmp((*token), &quot;cube_right&quot;, strlen(&quot;cube_right&quot;)))) {
+<span class="lineNum">     654 </span>            :     ty = TEXTURE_TYPE_CUBE_RIGHT;
+<span class="lineNum">     655 </span>            :   } else if ((0 == strncmp((*token), &quot;cube_front&quot;, strlen(&quot;cube_front&quot;)))) {
+<span class="lineNum">     656 </span>            :     ty = TEXTURE_TYPE_CUBE_FRONT;
+<span class="lineNum">     657 </span>            :   } else if ((0 == strncmp((*token), &quot;cube_back&quot;, strlen(&quot;cube_back&quot;)))) {
+<span class="lineNum">     658 </span>            :     ty = TEXTURE_TYPE_CUBE_BACK;
+<span class="lineNum">     659 </span>            :   } else if ((0 == strncmp((*token), &quot;sphere&quot;, strlen(&quot;sphere&quot;)))) {
+<span class="lineNum">     660 </span>            :     ty = TEXTURE_TYPE_SPHERE;
+<span class="lineNum">     661 </span>            :   }
+<span class="lineNum">     662 </span>            : 
+<span class="lineNum">     663 </span>            :   (*token) = end;
+<span class="lineNum">     664 </span>            :   return ty;
+<span class="lineNum">     665 </span>            : }
+<span class="lineNum">     666 </span>            : 
+<span class="lineNum">     667 </span>            : static tag_sizes parseTagTriple(const char **token) {
+<span class="lineNum">     668 </span>            :   tag_sizes ts;
+<span class="lineNum">     669 </span>            : 
+<span class="lineNum">     670 </span>            :   ts.num_ints = atoi((*token));
+<span class="lineNum">     671 </span>            :   (*token) += strcspn((*token), &quot;/ \t\r&quot;);
+<span class="lineNum">     672 </span>            :   if ((*token)[0] != '/') {
+<span class="lineNum">     673 </span>            :     return ts;
+<span class="lineNum">     674 </span>            :   }
+<span class="lineNum">     675 </span>            :   (*token)++;
+<span class="lineNum">     676 </span>            : 
+<span class="lineNum">     677 </span>            :   ts.num_reals = atoi((*token));
+<span class="lineNum">     678 </span>            :   (*token) += strcspn((*token), &quot;/ \t\r&quot;);
+<span class="lineNum">     679 </span>            :   if ((*token)[0] != '/') {
+<span class="lineNum">     680 </span>            :     return ts;
+<span class="lineNum">     681 </span>            :   }
+<span class="lineNum">     682 </span>            :   (*token)++;
+<span class="lineNum">     683 </span>            : 
+<span class="lineNum">     684 </span>            :   ts.num_strings = atoi((*token));
+<span class="lineNum">     685 </span>            :   (*token) += strcspn((*token), &quot;/ \t\r&quot;) + 1;
+<span class="lineNum">     686 </span>            : 
+<span class="lineNum">     687 </span>            :   return ts;
+<span class="lineNum">     688 </span>            : }
+<span class="lineNum">     689 </span>            : 
+<span class="lineNum">     690 </span>            : // Parse triples with index offsets: i, i/j/k, i//k, i/j
+<span class="lineNum">     691 </span>            : static vertex_index parseTriple(const char **token, int vsize, int vnsize,
+<span class="lineNum">     692 </span>            :                                 int vtsize) {
+<span class="lineNum">     693 </span>            :   vertex_index vi(-1);
+<span class="lineNum">     694 </span>            : 
+<span class="lineNum">     695 </span>            :   vi.v_idx = fixIndex(atoi((*token)), vsize);
+<span class="lineNum">     696 </span>            :   (*token) += strcspn((*token), &quot;/ \t\r&quot;);
+<span class="lineNum">     697 </span>            :   if ((*token)[0] != '/') {
+<span class="lineNum">     698 </span>            :     return vi;
+<span class="lineNum">     699 </span>            :   }
+<span class="lineNum">     700 </span>            :   (*token)++;
+<span class="lineNum">     701 </span>            : 
+<span class="lineNum">     702 </span>            :   // i//k
+<span class="lineNum">     703 </span>            :   if ((*token)[0] == '/') {
+<span class="lineNum">     704 </span>            :     (*token)++;
+<span class="lineNum">     705 </span>            :     vi.vn_idx = fixIndex(atoi((*token)), vnsize);
+<span class="lineNum">     706 </span>            :     (*token) += strcspn((*token), &quot;/ \t\r&quot;);
+<span class="lineNum">     707 </span>            :     return vi;
+<span class="lineNum">     708 </span>            :   }
+<span class="lineNum">     709 </span>            : 
+<span class="lineNum">     710 </span>            :   // i/j/k or i/j
+<span class="lineNum">     711 </span>            :   vi.vt_idx = fixIndex(atoi((*token)), vtsize);
+<span class="lineNum">     712 </span>            :   (*token) += strcspn((*token), &quot;/ \t\r&quot;);
+<span class="lineNum">     713 </span>            :   if ((*token)[0] != '/') {
+<span class="lineNum">     714 </span>            :     return vi;
+<span class="lineNum">     715 </span>            :   }
+<span class="lineNum">     716 </span>            : 
+<span class="lineNum">     717 </span>            :   // i/j/k
+<span class="lineNum">     718 </span>            :   (*token)++;  // skip '/'
+<span class="lineNum">     719 </span>            :   vi.vn_idx = fixIndex(atoi((*token)), vnsize);
+<span class="lineNum">     720 </span>            :   (*token) += strcspn((*token), &quot;/ \t\r&quot;);
+<span class="lineNum">     721 </span>            :   return vi;
+<span class="lineNum">     722 </span>            : }
+<span class="lineNum">     723 </span>            : 
+<span class="lineNum">     724 </span>            : // Parse raw triples: i, i/j/k, i//k, i/j
+<span class="lineNum">     725 </span>            : static vertex_index parseRawTriple(const char **token) {
+<span class="lineNum">     726 </span>            :   vertex_index vi(static_cast&lt;int&gt;(0));  // 0 is an invalid index in OBJ
+<span class="lineNum">     727 </span>            : 
+<span class="lineNum">     728 </span>            :   vi.v_idx = atoi((*token));
+<span class="lineNum">     729 </span>            :   (*token) += strcspn((*token), &quot;/ \t\r&quot;);
+<span class="lineNum">     730 </span>            :   if ((*token)[0] != '/') {
+<span class="lineNum">     731 </span>            :     return vi;
+<span class="lineNum">     732 </span>            :   }
+<span class="lineNum">     733 </span>            :   (*token)++;
+<span class="lineNum">     734 </span>            : 
+<span class="lineNum">     735 </span>            :   // i//k
+<span class="lineNum">     736 </span>            :   if ((*token)[0] == '/') {
+<span class="lineNum">     737 </span>            :     (*token)++;
+<span class="lineNum">     738 </span>            :     vi.vn_idx = atoi((*token));
+<span class="lineNum">     739 </span>            :     (*token) += strcspn((*token), &quot;/ \t\r&quot;);
+<span class="lineNum">     740 </span>            :     return vi;
+<span class="lineNum">     741 </span>            :   }
+<span class="lineNum">     742 </span>            : 
+<span class="lineNum">     743 </span>            :   // i/j/k or i/j
+<span class="lineNum">     744 </span>            :   vi.vt_idx = atoi((*token));
+<span class="lineNum">     745 </span>            :   (*token) += strcspn((*token), &quot;/ \t\r&quot;);
+<span class="lineNum">     746 </span>            :   if ((*token)[0] != '/') {
+<span class="lineNum">     747 </span>            :     return vi;
+<span class="lineNum">     748 </span>            :   }
+<span class="lineNum">     749 </span>            : 
+<span class="lineNum">     750 </span>            :   // i/j/k
+<span class="lineNum">     751 </span>            :   (*token)++;  // skip '/'
+<span class="lineNum">     752 </span>            :   vi.vn_idx = atoi((*token));
+<span class="lineNum">     753 </span>            :   (*token) += strcspn((*token), &quot;/ \t\r&quot;);
+<span class="lineNum">     754 </span>            :   return vi;
+<span class="lineNum">     755 </span>            : }
+<span class="lineNum">     756 </span>            : 
+<span class="lineNum">     757 </span>            : static bool ParseTextureNameAndOption(std::string *texname,
+<span class="lineNum">     758 </span>            :                                       texture_option_t *texopt,
+<span class="lineNum">     759 </span>            :                                       const char *linebuf, const bool is_bump) {
+<span class="lineNum">     760 </span>            :   // @todo { write more robust lexer and parser. }
+<span class="lineNum">     761 </span>            :   bool found_texname = false;
+<span class="lineNum">     762 </span>            :   std::string texture_name;
+<span class="lineNum">     763 </span>            : 
+<span class="lineNum">     764 </span>            :   // Fill with default value for texopt.
+<span class="lineNum">     765 </span>            :   if (is_bump) {
+<span class="lineNum">     766 </span>            :     texopt-&gt;imfchan = 'l';
+<span class="lineNum">     767 </span>            :   } else {
+<span class="lineNum">     768 </span>            :     texopt-&gt;imfchan = 'm';
+<span class="lineNum">     769 </span>            :   }
+<span class="lineNum">     770 </span>            :   texopt-&gt;bump_multiplier = 1.0f;
+<span class="lineNum">     771 </span>            :   texopt-&gt;clamp = false;
+<span class="lineNum">     772 </span>            :   texopt-&gt;blendu = true;
+<span class="lineNum">     773 </span>            :   texopt-&gt;blendv = true;
+<span class="lineNum">     774 </span>            :   texopt-&gt;sharpness = 1.0f;
+<span class="lineNum">     775 </span>            :   texopt-&gt;brightness = 0.0f;
+<span class="lineNum">     776 </span>            :   texopt-&gt;contrast = 1.0f;
+<span class="lineNum">     777 </span>            :   texopt-&gt;origin_offset[0] = 0.0f;
+<span class="lineNum">     778 </span>            :   texopt-&gt;origin_offset[1] = 0.0f;
+<span class="lineNum">     779 </span>            :   texopt-&gt;origin_offset[2] = 0.0f;
+<span class="lineNum">     780 </span>            :   texopt-&gt;scale[0] = 1.0f;
+<span class="lineNum">     781 </span>            :   texopt-&gt;scale[1] = 1.0f;
+<span class="lineNum">     782 </span>            :   texopt-&gt;scale[2] = 1.0f;
+<span class="lineNum">     783 </span>            :   texopt-&gt;turbulence[0] = 0.0f;
+<span class="lineNum">     784 </span>            :   texopt-&gt;turbulence[1] = 0.0f;
+<span class="lineNum">     785 </span>            :   texopt-&gt;turbulence[2] = 0.0f;
+<span class="lineNum">     786 </span>            :   texopt-&gt;type = TEXTURE_TYPE_NONE;
+<span class="lineNum">     787 </span>            : 
+<span class="lineNum">     788 </span>            :   const char *token = linebuf;  // Assume line ends with NULL
+<span class="lineNum">     789 </span>            : 
+<span class="lineNum">     790 </span>            :   while (!IS_NEW_LINE((*token))) {
+<span class="lineNum">     791 </span>            :     if ((0 == strncmp(token, &quot;-blendu&quot;, 7)) &amp;&amp; IS_SPACE((token[7]))) {
+<span class="lineNum">     792 </span>            :       token += 8;
+<span class="lineNum">     793 </span>            :       texopt-&gt;blendu = parseOnOff(&amp;token, /* default */ true);
+<span class="lineNum">     794 </span>            :     } else if ((0 == strncmp(token, &quot;-blendv&quot;, 7)) &amp;&amp; IS_SPACE((token[7]))) {
+<span class="lineNum">     795 </span>            :       token += 8;
+<span class="lineNum">     796 </span>            :       texopt-&gt;blendv = parseOnOff(&amp;token, /* default */ true);
+<span class="lineNum">     797 </span>            :     } else if ((0 == strncmp(token, &quot;-clamp&quot;, 6)) &amp;&amp; IS_SPACE((token[6]))) {
+<span class="lineNum">     798 </span>            :       token += 7;
+<span class="lineNum">     799 </span>            :       texopt-&gt;clamp = parseOnOff(&amp;token, /* default */ true);
+<span class="lineNum">     800 </span>            :     } else if ((0 == strncmp(token, &quot;-boost&quot;, 6)) &amp;&amp; IS_SPACE((token[6]))) {
+<span class="lineNum">     801 </span>            :       token += 7;
+<span class="lineNum">     802 </span>            :       texopt-&gt;sharpness = parseReal(&amp;token, 1.0);
+<span class="lineNum">     803 </span>            :     } else if ((0 == strncmp(token, &quot;-bm&quot;, 3)) &amp;&amp; IS_SPACE((token[3]))) {
+<span class="lineNum">     804 </span>            :       token += 4;
+<span class="lineNum">     805 </span>            :       texopt-&gt;bump_multiplier = parseReal(&amp;token, 1.0);
+<span class="lineNum">     806 </span>            :     } else if ((0 == strncmp(token, &quot;-o&quot;, 2)) &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">     807 </span>            :       token += 3;
+<span class="lineNum">     808 </span>            :       parseReal3(&amp;(texopt-&gt;origin_offset[0]), &amp;(texopt-&gt;origin_offset[1]),
+<span class="lineNum">     809 </span>            :                   &amp;(texopt-&gt;origin_offset[2]), &amp;token);
+<span class="lineNum">     810 </span>            :     } else if ((0 == strncmp(token, &quot;-s&quot;, 2)) &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">     811 </span>            :       token += 3;
+<span class="lineNum">     812 </span>            :       parseReal3(&amp;(texopt-&gt;scale[0]), &amp;(texopt-&gt;scale[1]), &amp;(texopt-&gt;scale[2]),
+<span class="lineNum">     813 </span>            :                   &amp;token, 1.0, 1.0, 1.0);
+<span class="lineNum">     814 </span>            :     } else if ((0 == strncmp(token, &quot;-t&quot;, 2)) &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">     815 </span>            :       token += 3;
+<span class="lineNum">     816 </span>            :       parseReal3(&amp;(texopt-&gt;turbulence[0]), &amp;(texopt-&gt;turbulence[1]),
+<span class="lineNum">     817 </span>            :                   &amp;(texopt-&gt;turbulence[2]), &amp;token);
+<span class="lineNum">     818 </span>            :     } else if ((0 == strncmp(token, &quot;-type&quot;, 5)) &amp;&amp; IS_SPACE((token[5]))) {
+<span class="lineNum">     819 </span>            :       token += 5;
+<span class="lineNum">     820 </span>            :       texopt-&gt;type = parseTextureType((&amp;token), TEXTURE_TYPE_NONE);
+<span class="lineNum">     821 </span>            :     } else if ((0 == strncmp(token, &quot;-imfchan&quot;, 8)) &amp;&amp; IS_SPACE((token[8]))) {
+<span class="lineNum">     822 </span>            :       token += 9;
+<span class="lineNum">     823 </span>            :       token += strspn(token, &quot; \t&quot;);
+<span class="lineNum">     824 </span>            :       const char *end = token + strcspn(token, &quot; \t\r&quot;);
+<span class="lineNum">     825 </span>            :       if ((end - token) == 1) {  // Assume one char for -imfchan
+<span class="lineNum">     826 </span>            :         texopt-&gt;imfchan = (*token);
+<span class="lineNum">     827 </span>            :       }
+<span class="lineNum">     828 </span>            :       token = end;
+<span class="lineNum">     829 </span>            :     } else if ((0 == strncmp(token, &quot;-mm&quot;, 3)) &amp;&amp; IS_SPACE((token[3]))) {
+<span class="lineNum">     830 </span>            :       token += 4;
+<span class="lineNum">     831 </span>            :       parseReal2(&amp;(texopt-&gt;brightness), &amp;(texopt-&gt;contrast), &amp;token, 0.0, 1.0);
+<span class="lineNum">     832 </span>            :     } else {
+<span class="lineNum">     833 </span>            :       // Assume texture filename
+<span class="lineNum">     834 </span>            :       token += strspn(token, &quot; \t&quot;);         // skip space
+<span class="lineNum">     835 </span>            :       size_t len = strcspn(token, &quot; \t\r&quot;);  // untile next space
+<span class="lineNum">     836 </span>            :       texture_name = std::string(token, token + len);
+<span class="lineNum">     837 </span>            :       token += len;
+<span class="lineNum">     838 </span>            : 
+<span class="lineNum">     839 </span>            :       token += strspn(token, &quot; \t&quot;);  // skip space
+<span class="lineNum">     840 </span>            : 
+<span class="lineNum">     841 </span>            :       found_texname = true;
+<span class="lineNum">     842 </span>            :     }
+<span class="lineNum">     843 </span>            :   }
+<span class="lineNum">     844 </span>            : 
+<span class="lineNum">     845 </span>            :   if (found_texname) {
+<span class="lineNum">     846 </span>            :     (*texname) = texture_name;
+<span class="lineNum">     847 </span>            :     return true;
+<span class="lineNum">     848 </span>            :   } else {
+<span class="lineNum">     849 </span>            :     return false;
+<span class="lineNum">     850 </span>            :   }
+<span class="lineNum">     851 </span>            : }
+<span class="lineNum">     852 </span>            : 
+<span class="lineNum">     853 </span>            : static void InitMaterial(material_t *material) {
+<span class="lineNum">     854 </span>            :   material-&gt;name = &quot;&quot;;
+<span class="lineNum">     855 </span>            :   material-&gt;ambient_texname = &quot;&quot;;
+<span class="lineNum">     856 </span>            :   material-&gt;diffuse_texname = &quot;&quot;;
+<span class="lineNum">     857 </span>            :   material-&gt;specular_texname = &quot;&quot;;
+<span class="lineNum">     858 </span>            :   material-&gt;specular_highlight_texname = &quot;&quot;;
+<span class="lineNum">     859 </span>            :   material-&gt;bump_texname = &quot;&quot;;
+<span class="lineNum">     860 </span>            :   material-&gt;displacement_texname = &quot;&quot;;
+<span class="lineNum">     861 </span>            :   material-&gt;alpha_texname = &quot;&quot;;
+<span class="lineNum">     862 </span>            :   for (int i = 0; i &lt; 3; i++) {
+<span class="lineNum">     863 </span>            :     material-&gt;ambient[i] = 0.f;
+<span class="lineNum">     864 </span>            :     material-&gt;diffuse[i] = 0.f;
+<span class="lineNum">     865 </span>            :     material-&gt;specular[i] = 0.f;
+<span class="lineNum">     866 </span>            :     material-&gt;transmittance[i] = 0.f;
+<span class="lineNum">     867 </span>            :     material-&gt;emission[i] = 0.f;
+<span class="lineNum">     868 </span>            :   }
+<span class="lineNum">     869 </span>            :   material-&gt;illum = 0;
+<span class="lineNum">     870 </span>            :   material-&gt;dissolve = 1.f;
+<span class="lineNum">     871 </span>            :   material-&gt;shininess = 1.f;
+<span class="lineNum">     872 </span>            :   material-&gt;ior = 1.f;
+<span class="lineNum">     873 </span>            : 
+<span class="lineNum">     874 </span>            :   material-&gt;roughness = 0.f;
+<span class="lineNum">     875 </span>            :   material-&gt;metallic = 0.f;
+<span class="lineNum">     876 </span>            :   material-&gt;sheen = 0.f;
+<span class="lineNum">     877 </span>            :   material-&gt;clearcoat_thickness = 0.f;
+<span class="lineNum">     878 </span>            :   material-&gt;clearcoat_roughness = 0.f;
+<span class="lineNum">     879 </span>            :   material-&gt;anisotropy_rotation = 0.f;
+<span class="lineNum">     880 </span>            :   material-&gt;anisotropy = 0.f;
+<span class="lineNum">     881 </span>            :   material-&gt;roughness_texname = &quot;&quot;;
+<span class="lineNum">     882 </span>            :   material-&gt;metallic_texname = &quot;&quot;;
+<span class="lineNum">     883 </span>            :   material-&gt;sheen_texname = &quot;&quot;;
+<span class="lineNum">     884 </span>            :   material-&gt;emissive_texname = &quot;&quot;;
+<span class="lineNum">     885 </span>            :   material-&gt;normal_texname = &quot;&quot;;
+<span class="lineNum">     886 </span>            : 
+<span class="lineNum">     887 </span>            :   material-&gt;unknown_parameter.clear();
+<span class="lineNum">     888 </span>            : }
+<span class="lineNum">     889 </span>            : 
+<span class="lineNum">     890 </span>            : static bool exportFaceGroupToShape(
+<span class="lineNum">     891 </span>            :     shape_t *shape, const std::vector&lt;std::vector&lt;vertex_index&gt; &gt; &amp;faceGroup,
+<span class="lineNum">     892 </span>            :     const std::vector&lt;tag_t&gt; &amp;tags, const int material_id,
+<span class="lineNum">     893 </span>            :     const std::string &amp;name, bool triangulate) {
+<span class="lineNum">     894 </span>            :   if (faceGroup.empty()) {
+<span class="lineNum">     895 </span>            :     return false;
+<span class="lineNum">     896 </span>            :   }
+<span class="lineNum">     897 </span>            : 
+<span class="lineNum">     898 </span>            :   // Flatten vertices and indices
+<span class="lineNum">     899 </span>            :   for (size_t i = 0; i &lt; faceGroup.size(); i++) {
+<span class="lineNum">     900 </span>            :     const std::vector&lt;vertex_index&gt; &amp;face = faceGroup[i];
+<span class="lineNum">     901 </span>            : 
+<span class="lineNum">     902 </span>            :     vertex_index i0 = face[0];
+<span class="lineNum">     903 </span>            :     vertex_index i1(-1);
+<span class="lineNum">     904 </span>            :     vertex_index i2 = face[1];
+<span class="lineNum">     905 </span>            : 
+<span class="lineNum">     906 </span>            :     size_t npolys = face.size();
+<span class="lineNum">     907 </span>            : 
+<span class="lineNum">     908 </span>            :     if (triangulate) {
+<span class="lineNum">     909 </span>            :       // Polygon -&gt; triangle fan conversion
+<span class="lineNum">     910 </span>            :       for (size_t k = 2; k &lt; npolys; k++) {
+<span class="lineNum">     911 </span>            :         i1 = i2;
+<span class="lineNum">     912 </span>            :         i2 = face[k];
+<span class="lineNum">     913 </span>            : 
+<span class="lineNum">     914 </span>            :         index_t idx0, idx1, idx2;
+<span class="lineNum">     915 </span>            :         idx0.vertex_index = i0.v_idx;
+<span class="lineNum">     916 </span>            :         idx0.normal_index = i0.vn_idx;
+<span class="lineNum">     917 </span>            :         idx0.texcoord_index = i0.vt_idx;
+<span class="lineNum">     918 </span>            :         idx1.vertex_index = i1.v_idx;
+<span class="lineNum">     919 </span>            :         idx1.normal_index = i1.vn_idx;
+<span class="lineNum">     920 </span>            :         idx1.texcoord_index = i1.vt_idx;
+<span class="lineNum">     921 </span>            :         idx2.vertex_index = i2.v_idx;
+<span class="lineNum">     922 </span>            :         idx2.normal_index = i2.vn_idx;
+<span class="lineNum">     923 </span>            :         idx2.texcoord_index = i2.vt_idx;
+<span class="lineNum">     924 </span>            : 
+<span class="lineNum">     925 </span>            :         shape-&gt;mesh.indices.push_back(idx0);
+<span class="lineNum">     926 </span>            :         shape-&gt;mesh.indices.push_back(idx1);
+<span class="lineNum">     927 </span>            :         shape-&gt;mesh.indices.push_back(idx2);
+<span class="lineNum">     928 </span>            : 
+<span class="lineNum">     929 </span>            :         shape-&gt;mesh.num_face_vertices.push_back(3);
+<span class="lineNum">     930 </span>            :         shape-&gt;mesh.material_ids.push_back(material_id);
+<span class="lineNum">     931 </span>            :       }
+<span class="lineNum">     932 </span>            :     } else {
+<span class="lineNum">     933 </span>            :       for (size_t k = 0; k &lt; npolys; k++) {
+<span class="lineNum">     934 </span>            :         index_t idx;
+<span class="lineNum">     935 </span>            :         idx.vertex_index = face[k].v_idx;
+<span class="lineNum">     936 </span>            :         idx.normal_index = face[k].vn_idx;
+<span class="lineNum">     937 </span>            :         idx.texcoord_index = face[k].vt_idx;
+<span class="lineNum">     938 </span>            :         shape-&gt;mesh.indices.push_back(idx);
+<span class="lineNum">     939 </span>            :       }
+<span class="lineNum">     940 </span>            : 
+<span class="lineNum">     941 </span>            :       shape-&gt;mesh.num_face_vertices.push_back(
+<span class="lineNum">     942 </span>            :           static_cast&lt;unsigned char&gt;(npolys));
+<span class="lineNum">     943 </span>            :       shape-&gt;mesh.material_ids.push_back(material_id);  // per face
+<span class="lineNum">     944 </span>            :     }
+<span class="lineNum">     945 </span>            :   }
+<span class="lineNum">     946 </span>            : 
+<span class="lineNum">     947 </span>            :   shape-&gt;name = name;
+<span class="lineNum">     948 </span>            :   shape-&gt;mesh.tags = tags;
+<span class="lineNum">     949 </span>            : 
+<span class="lineNum">     950 </span>            :   return true;
+<span class="lineNum">     951 </span>            : }
+<span class="lineNum">     952 </span>            : 
+<span class="lineNum">     953 </span>            : // Split a string with specified delimiter character.
+<span class="lineNum">     954 </span>            : // http://stackoverflow.com/questions/236129/split-a-string-in-c
+<span class="lineNum">     955 </span>            : static void SplitString(const std::string &amp;s, char delim,
+<span class="lineNum">     956 </span>            :                         std::vector&lt;std::string&gt; &amp;elems) {
+<span class="lineNum">     957 </span>            :   std::stringstream ss;
+<span class="lineNum">     958 </span>            :   ss.str(s);
+<span class="lineNum">     959 </span>            :   std::string item;
+<span class="lineNum">     960 </span>            :   while (std::getline(ss, item, delim)) {
+<span class="lineNum">     961 </span>            :     elems.push_back(item);
+<span class="lineNum">     962 </span>            :   }
+<span class="lineNum">     963 </span>            : }
+<span class="lineNum">     964 </span>            : 
+<span class="lineNum">     965 </span>            : void LoadMtl(std::map&lt;std::string, int&gt; *material_map,
+<span class="lineNum">     966 </span>            :              std::vector&lt;material_t&gt; *materials, std::istream *inStream,
+<span class="lineNum">     967 </span>            :              std::string *warning) {
+<span class="lineNum">     968 </span>            :   // Create a default material anyway.
+<span class="lineNum">     969 </span>            :   material_t material;
+<span class="lineNum">     970 </span>            :   InitMaterial(&amp;material);
+<span class="lineNum">     971 </span>            : 
+<span class="lineNum">     972 </span>            :   // Issue 43. `d` wins against `Tr` since `Tr` is not in the MTL specification.
+<span class="lineNum">     973 </span>            :   bool has_d = false;
+<span class="lineNum">     974 </span>            :   bool has_tr = false;
+<span class="lineNum">     975 </span>            : 
+<span class="lineNum">     976 </span>            :   std::stringstream ss;
+<span class="lineNum">     977 </span>            : 
+<span class="lineNum">     978 </span>            :   std::string linebuf;
+<span class="lineNum">     979 </span>            :   while (inStream-&gt;peek() != -1) {
+<span class="lineNum">     980 </span>            :     safeGetline(*inStream, linebuf);
+<span class="lineNum">     981 </span>            : 
+<span class="lineNum">     982 </span>            :     // Trim trailing whitespace.
+<span class="lineNum">     983 </span>            :     if (linebuf.size() &gt; 0) {
+<span class="lineNum">     984 </span>            :       linebuf = linebuf.substr(0, linebuf.find_last_not_of(&quot; \t&quot;) + 1);
+<span class="lineNum">     985 </span>            :     }
+<span class="lineNum">     986 </span>            : 
+<span class="lineNum">     987 </span>            :     // Trim newline '\r\n' or '\n'
+<span class="lineNum">     988 </span>            :     if (linebuf.size() &gt; 0) {
+<span class="lineNum">     989 </span>            :       if (linebuf[linebuf.size() - 1] == '\n')
+<span class="lineNum">     990 </span>            :         linebuf.erase(linebuf.size() - 1);
+<span class="lineNum">     991 </span>            :     }
+<span class="lineNum">     992 </span>            :     if (linebuf.size() &gt; 0) {
+<span class="lineNum">     993 </span>            :       if (linebuf[linebuf.size() - 1] == '\r')
+<span class="lineNum">     994 </span>            :         linebuf.erase(linebuf.size() - 1);
+<span class="lineNum">     995 </span>            :     }
+<span class="lineNum">     996 </span>            : 
+<span class="lineNum">     997 </span>            :     // Skip if empty line.
+<span class="lineNum">     998 </span>            :     if (linebuf.empty()) {
+<span class="lineNum">     999 </span>            :       continue;
+<span class="lineNum">    1000 </span>            :     }
+<span class="lineNum">    1001 </span>            : 
+<span class="lineNum">    1002 </span>            :     // Skip leading space.
+<span class="lineNum">    1003 </span>            :     const char *token = linebuf.c_str();
+<span class="lineNum">    1004 </span>            :     token += strspn(token, &quot; \t&quot;);
+<span class="lineNum">    1005 </span>            : 
+<span class="lineNum">    1006 </span>            :     assert(token);
+<span class="lineNum">    1007 </span>            :     if (token[0] == '\0') continue;  // empty line
+<span class="lineNum">    1008 </span>            : 
+<span class="lineNum">    1009 </span>            :     if (token[0] == '#') continue;  // comment line
+<span class="lineNum">    1010 </span>            : 
+<span class="lineNum">    1011 </span>            :     // new mtl
+<span class="lineNum">    1012 </span>            :     if ((0 == strncmp(token, &quot;newmtl&quot;, 6)) &amp;&amp; IS_SPACE((token[6]))) {
+<span class="lineNum">    1013 </span>            :       // flush previous material.
+<span class="lineNum">    1014 </span>            :       if (!material.name.empty()) {
+<span class="lineNum">    1015 </span>            :         material_map-&gt;insert(std::pair&lt;std::string, int&gt;(
+<span class="lineNum">    1016 </span>            :             material.name, static_cast&lt;int&gt;(materials-&gt;size())));
+<span class="lineNum">    1017 </span>            :         materials-&gt;push_back(material);
+<span class="lineNum">    1018 </span>            :       }
+<span class="lineNum">    1019 </span>            : 
+<span class="lineNum">    1020 </span>            :       // initial temporary material
+<span class="lineNum">    1021 </span>            :       InitMaterial(&amp;material);
+<span class="lineNum">    1022 </span>            : 
+<span class="lineNum">    1023 </span>            :       has_d = false;
+<span class="lineNum">    1024 </span>            :       has_tr = false;
+<span class="lineNum">    1025 </span>            : 
+<span class="lineNum">    1026 </span>            :       // set new mtl name
+<span class="lineNum">    1027 </span>            :       char namebuf[TINYOBJ_SSCANF_BUFFER_SIZE];
+<span class="lineNum">    1028 </span>            :       token += 7;
+<span class="lineNum">    1029 </span>            : #ifdef _MSC_VER
+<span class="lineNum">    1030 </span>            :       sscanf_s(token, &quot;%s&quot;, namebuf, (unsigned)_countof(namebuf));
+<span class="lineNum">    1031 </span>            : #else
+<span class="lineNum">    1032 </span>            :       std::sscanf(token, &quot;%s&quot;, namebuf);
+<span class="lineNum">    1033 </span>            : #endif
+<span class="lineNum">    1034 </span>            :       material.name = namebuf;
+<span class="lineNum">    1035 </span>            :       continue;
+<span class="lineNum">    1036 </span>            :     }
+<span class="lineNum">    1037 </span>            : 
+<span class="lineNum">    1038 </span>            :     // ambient
+<span class="lineNum">    1039 </span>            :     if (token[0] == 'K' &amp;&amp; token[1] == 'a' &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">    1040 </span>            :       token += 2;
+<span class="lineNum">    1041 </span>            :       real_t r, g, b;
+<span class="lineNum">    1042 </span>            :       parseReal3(&amp;r, &amp;g, &amp;b, &amp;token);
+<span class="lineNum">    1043 </span>            :       material.ambient[0] = r;
+<span class="lineNum">    1044 </span>            :       material.ambient[1] = g;
+<span class="lineNum">    1045 </span>            :       material.ambient[2] = b;
+<span class="lineNum">    1046 </span>            :       continue;
+<span class="lineNum">    1047 </span>            :     }
+<span class="lineNum">    1048 </span>            : 
+<span class="lineNum">    1049 </span>            :     // diffuse
+<span class="lineNum">    1050 </span>            :     if (token[0] == 'K' &amp;&amp; token[1] == 'd' &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">    1051 </span>            :       token += 2;
+<span class="lineNum">    1052 </span>            :       real_t r, g, b;
+<span class="lineNum">    1053 </span>            :       parseReal3(&amp;r, &amp;g, &amp;b, &amp;token);
+<span class="lineNum">    1054 </span>            :       material.diffuse[0] = r;
+<span class="lineNum">    1055 </span>            :       material.diffuse[1] = g;
+<span class="lineNum">    1056 </span>            :       material.diffuse[2] = b;
+<span class="lineNum">    1057 </span>            :       continue;
+<span class="lineNum">    1058 </span>            :     }
+<span class="lineNum">    1059 </span>            : 
+<span class="lineNum">    1060 </span>            :     // specular
+<span class="lineNum">    1061 </span>            :     if (token[0] == 'K' &amp;&amp; token[1] == 's' &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">    1062 </span>            :       token += 2;
+<span class="lineNum">    1063 </span>            :       real_t r, g, b;
+<span class="lineNum">    1064 </span>            :       parseReal3(&amp;r, &amp;g, &amp;b, &amp;token);
+<span class="lineNum">    1065 </span>            :       material.specular[0] = r;
+<span class="lineNum">    1066 </span>            :       material.specular[1] = g;
+<span class="lineNum">    1067 </span>            :       material.specular[2] = b;
+<span class="lineNum">    1068 </span>            :       continue;
+<span class="lineNum">    1069 </span>            :     }
+<span class="lineNum">    1070 </span>            : 
+<span class="lineNum">    1071 </span>            :     // transmittance
+<span class="lineNum">    1072 </span>            :     if ((token[0] == 'K' &amp;&amp; token[1] == 't' &amp;&amp; IS_SPACE((token[2]))) ||
+<span class="lineNum">    1073 </span>            :         (token[0] == 'T' &amp;&amp; token[1] == 'f' &amp;&amp; IS_SPACE((token[2])))) {
+<span class="lineNum">    1074 </span>            :       token += 2;
+<span class="lineNum">    1075 </span>            :       real_t r, g, b;
+<span class="lineNum">    1076 </span>            :       parseReal3(&amp;r, &amp;g, &amp;b, &amp;token);
+<span class="lineNum">    1077 </span>            :       material.transmittance[0] = r;
+<span class="lineNum">    1078 </span>            :       material.transmittance[1] = g;
+<span class="lineNum">    1079 </span>            :       material.transmittance[2] = b;
+<span class="lineNum">    1080 </span>            :       continue;
+<span class="lineNum">    1081 </span>            :     }
+<span class="lineNum">    1082 </span>            : 
+<span class="lineNum">    1083 </span>            :     // ior(index of refraction)
+<span class="lineNum">    1084 </span>            :     if (token[0] == 'N' &amp;&amp; token[1] == 'i' &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">    1085 </span>            :       token += 2;
+<span class="lineNum">    1086 </span>            :       material.ior = parseReal(&amp;token);
+<span class="lineNum">    1087 </span>            :       continue;
+<span class="lineNum">    1088 </span>            :     }
+<span class="lineNum">    1089 </span>            : 
+<span class="lineNum">    1090 </span>            :     // emission
+<span class="lineNum">    1091 </span>            :     if (token[0] == 'K' &amp;&amp; token[1] == 'e' &amp;&amp; IS_SPACE(token[2])) {
+<span class="lineNum">    1092 </span>            :       token += 2;
+<span class="lineNum">    1093 </span>            :       real_t r, g, b;
+<span class="lineNum">    1094 </span>            :       parseReal3(&amp;r, &amp;g, &amp;b, &amp;token);
+<span class="lineNum">    1095 </span>            :       material.emission[0] = r;
+<span class="lineNum">    1096 </span>            :       material.emission[1] = g;
+<span class="lineNum">    1097 </span>            :       material.emission[2] = b;
+<span class="lineNum">    1098 </span>            :       continue;
+<span class="lineNum">    1099 </span>            :     }
+<span class="lineNum">    1100 </span>            : 
+<span class="lineNum">    1101 </span>            :     // shininess
+<span class="lineNum">    1102 </span>            :     if (token[0] == 'N' &amp;&amp; token[1] == 's' &amp;&amp; IS_SPACE(token[2])) {
+<span class="lineNum">    1103 </span>            :       token += 2;
+<span class="lineNum">    1104 </span>            :       material.shininess = parseReal(&amp;token);
+<span class="lineNum">    1105 </span>            :       continue;
+<span class="lineNum">    1106 </span>            :     }
+<span class="lineNum">    1107 </span>            : 
+<span class="lineNum">    1108 </span>            :     // illum model
+<span class="lineNum">    1109 </span>            :     if (0 == strncmp(token, &quot;illum&quot;, 5) &amp;&amp; IS_SPACE(token[5])) {
+<span class="lineNum">    1110 </span>            :       token += 6;
+<span class="lineNum">    1111 </span>            :       material.illum = parseInt(&amp;token);
+<span class="lineNum">    1112 </span>            :       continue;
+<span class="lineNum">    1113 </span>            :     }
+<span class="lineNum">    1114 </span>            : 
+<span class="lineNum">    1115 </span>            :     // dissolve
+<span class="lineNum">    1116 </span>            :     if ((token[0] == 'd' &amp;&amp; IS_SPACE(token[1]))) {
+<span class="lineNum">    1117 </span>            :       token += 1;
+<span class="lineNum">    1118 </span>            :       material.dissolve = parseReal(&amp;token);
+<span class="lineNum">    1119 </span>            : 
+<span class="lineNum">    1120 </span>            :       if (has_tr) {
+<span class="lineNum">    1121 </span>            :         ss &lt;&lt; &quot;WARN: Both `d` and `Tr` parameters defined for \&quot;&quot;
+<span class="lineNum">    1122 </span>            :            &lt;&lt; material.name &lt;&lt; &quot;\&quot;. Use the value of `d` for dissolve.&quot;
+<span class="lineNum">    1123 </span>            :            &lt;&lt; std::endl;
+<span class="lineNum">    1124 </span>            :       }
+<span class="lineNum">    1125 </span>            :       has_d = true;
+<span class="lineNum">    1126 </span>            :       continue;
+<span class="lineNum">    1127 </span>            :     }
+<span class="lineNum">    1128 </span>            :     if (token[0] == 'T' &amp;&amp; token[1] == 'r' &amp;&amp; IS_SPACE(token[2])) {
+<span class="lineNum">    1129 </span>            :       token += 2;
+<span class="lineNum">    1130 </span>            :       if (has_d) {
+<span class="lineNum">    1131 </span>            :         // `d` wins. Ignore `Tr` value.
+<span class="lineNum">    1132 </span>            :         ss &lt;&lt; &quot;WARN: Both `d` and `Tr` parameters defined for \&quot;&quot;
+<span class="lineNum">    1133 </span>            :            &lt;&lt; material.name &lt;&lt; &quot;\&quot;. Use the value of `d` for dissolve.&quot;
+<span class="lineNum">    1134 </span>            :            &lt;&lt; std::endl;
+<span class="lineNum">    1135 </span>            :       } else {
+<span class="lineNum">    1136 </span>            :         // We invert value of Tr(assume Tr is in range [0, 1])
+<span class="lineNum">    1137 </span>            :         // NOTE: Interpretation of Tr is application(exporter) dependent. For
+<span class="lineNum">    1138 </span>            :         // some application(e.g. 3ds max obj exporter), Tr = d(Issue 43)
+<span class="lineNum">    1139 </span>            :         material.dissolve = 1.0f - parseReal(&amp;token);
+<span class="lineNum">    1140 </span>            :       }
+<span class="lineNum">    1141 </span>            :       has_tr = true;
+<span class="lineNum">    1142 </span>            :       continue;
+<span class="lineNum">    1143 </span>            :     }
+<span class="lineNum">    1144 </span>            : 
+<span class="lineNum">    1145 </span>            :     // PBR: roughness
+<span class="lineNum">    1146 </span>            :     if (token[0] == 'P' &amp;&amp; token[1] == 'r' &amp;&amp; IS_SPACE(token[2])) {
+<span class="lineNum">    1147 </span>            :       token += 2;
+<span class="lineNum">    1148 </span>            :       material.roughness = parseReal(&amp;token);
+<span class="lineNum">    1149 </span>            :       continue;
+<span class="lineNum">    1150 </span>            :     }
+<span class="lineNum">    1151 </span>            : 
+<span class="lineNum">    1152 </span>            :     // PBR: metallic
+<span class="lineNum">    1153 </span>            :     if (token[0] == 'P' &amp;&amp; token[1] == 'm' &amp;&amp; IS_SPACE(token[2])) {
+<span class="lineNum">    1154 </span>            :       token += 2;
+<span class="lineNum">    1155 </span>            :       material.metallic = parseReal(&amp;token);
+<span class="lineNum">    1156 </span>            :       continue;
+<span class="lineNum">    1157 </span>            :     }
+<span class="lineNum">    1158 </span>            : 
+<span class="lineNum">    1159 </span>            :     // PBR: sheen
+<span class="lineNum">    1160 </span>            :     if (token[0] == 'P' &amp;&amp; token[1] == 's' &amp;&amp; IS_SPACE(token[2])) {
+<span class="lineNum">    1161 </span>            :       token += 2;
+<span class="lineNum">    1162 </span>            :       material.sheen = parseReal(&amp;token);
+<span class="lineNum">    1163 </span>            :       continue;
+<span class="lineNum">    1164 </span>            :     }
+<span class="lineNum">    1165 </span>            : 
+<span class="lineNum">    1166 </span>            :     // PBR: clearcoat thickness
+<span class="lineNum">    1167 </span>            :     if (token[0] == 'P' &amp;&amp; token[1] == 'c' &amp;&amp; IS_SPACE(token[2])) {
+<span class="lineNum">    1168 </span>            :       token += 2;
+<span class="lineNum">    1169 </span>            :       material.clearcoat_thickness = parseReal(&amp;token);
+<span class="lineNum">    1170 </span>            :       continue;
+<span class="lineNum">    1171 </span>            :     }
+<span class="lineNum">    1172 </span>            : 
+<span class="lineNum">    1173 </span>            :     // PBR: clearcoat roughness
+<span class="lineNum">    1174 </span>            :     if ((0 == strncmp(token, &quot;Pcr&quot;, 3)) &amp;&amp; IS_SPACE(token[3])) {
+<span class="lineNum">    1175 </span>            :       token += 4;
+<span class="lineNum">    1176 </span>            :       material.clearcoat_roughness = parseReal(&amp;token);
+<span class="lineNum">    1177 </span>            :       continue;
+<span class="lineNum">    1178 </span>            :     }
+<span class="lineNum">    1179 </span>            : 
+<span class="lineNum">    1180 </span>            :     // PBR: anisotropy
+<span class="lineNum">    1181 </span>            :     if ((0 == strncmp(token, &quot;aniso&quot;, 5)) &amp;&amp; IS_SPACE(token[5])) {
+<span class="lineNum">    1182 </span>            :       token += 6;
+<span class="lineNum">    1183 </span>            :       material.anisotropy = parseReal(&amp;token);
+<span class="lineNum">    1184 </span>            :       continue;
+<span class="lineNum">    1185 </span>            :     }
+<span class="lineNum">    1186 </span>            : 
+<span class="lineNum">    1187 </span>            :     // PBR: anisotropy rotation
+<span class="lineNum">    1188 </span>            :     if ((0 == strncmp(token, &quot;anisor&quot;, 6)) &amp;&amp; IS_SPACE(token[6])) {
+<span class="lineNum">    1189 </span>            :       token += 7;
+<span class="lineNum">    1190 </span>            :       material.anisotropy_rotation = parseReal(&amp;token);
+<span class="lineNum">    1191 </span>            :       continue;
+<span class="lineNum">    1192 </span>            :     }
+<span class="lineNum">    1193 </span>            : 
+<span class="lineNum">    1194 </span>            :     // ambient texture
+<span class="lineNum">    1195 </span>            :     if ((0 == strncmp(token, &quot;map_Ka&quot;, 6)) &amp;&amp; IS_SPACE(token[6])) {
+<span class="lineNum">    1196 </span>            :       token += 7;
+<span class="lineNum">    1197 </span>            :       ParseTextureNameAndOption(&amp;(material.ambient_texname),
+<span class="lineNum">    1198 </span>            :                                 &amp;(material.ambient_texopt), token,
+<span class="lineNum">    1199 </span>            :                                 /* is_bump */ false);
+<span class="lineNum">    1200 </span>            :       continue;
+<span class="lineNum">    1201 </span>            :     }
+<span class="lineNum">    1202 </span>            : 
+<span class="lineNum">    1203 </span>            :     // diffuse texture
+<span class="lineNum">    1204 </span>            :     if ((0 == strncmp(token, &quot;map_Kd&quot;, 6)) &amp;&amp; IS_SPACE(token[6])) {
+<span class="lineNum">    1205 </span>            :       token += 7;
+<span class="lineNum">    1206 </span>            :       ParseTextureNameAndOption(&amp;(material.diffuse_texname),
+<span class="lineNum">    1207 </span>            :                                 &amp;(material.diffuse_texopt), token,
+<span class="lineNum">    1208 </span>            :                                 /* is_bump */ false);
+<span class="lineNum">    1209 </span>            :       continue;
+<span class="lineNum">    1210 </span>            :     }
+<span class="lineNum">    1211 </span>            : 
+<span class="lineNum">    1212 </span>            :     // specular texture
+<span class="lineNum">    1213 </span>            :     if ((0 == strncmp(token, &quot;map_Ks&quot;, 6)) &amp;&amp; IS_SPACE(token[6])) {
+<span class="lineNum">    1214 </span>            :       token += 7;
+<span class="lineNum">    1215 </span>            :       ParseTextureNameAndOption(&amp;(material.specular_texname),
+<span class="lineNum">    1216 </span>            :                                 &amp;(material.specular_texopt), token,
+<span class="lineNum">    1217 </span>            :                                 /* is_bump */ false);
+<span class="lineNum">    1218 </span>            :       continue;
+<span class="lineNum">    1219 </span>            :     }
+<span class="lineNum">    1220 </span>            : 
+<span class="lineNum">    1221 </span>            :     // specular highlight texture
+<span class="lineNum">    1222 </span>            :     if ((0 == strncmp(token, &quot;map_Ns&quot;, 6)) &amp;&amp; IS_SPACE(token[6])) {
+<span class="lineNum">    1223 </span>            :       token += 7;
+<span class="lineNum">    1224 </span>            :       ParseTextureNameAndOption(&amp;(material.specular_highlight_texname),
+<span class="lineNum">    1225 </span>            :                                 &amp;(material.specular_highlight_texopt), token,
+<span class="lineNum">    1226 </span>            :                                 /* is_bump */ false);
+<span class="lineNum">    1227 </span>            :       continue;
+<span class="lineNum">    1228 </span>            :     }
+<span class="lineNum">    1229 </span>            : 
+<span class="lineNum">    1230 </span>            :     // bump texture
+<span class="lineNum">    1231 </span>            :     if ((0 == strncmp(token, &quot;map_bump&quot;, 8)) &amp;&amp; IS_SPACE(token[8])) {
+<span class="lineNum">    1232 </span>            :       token += 9;
+<span class="lineNum">    1233 </span>            :       ParseTextureNameAndOption(&amp;(material.bump_texname),
+<span class="lineNum">    1234 </span>            :                                 &amp;(material.bump_texopt), token,
+<span class="lineNum">    1235 </span>            :                                 /* is_bump */ true);
+<span class="lineNum">    1236 </span>            :       continue;
+<span class="lineNum">    1237 </span>            :     }
+<span class="lineNum">    1238 </span>            : 
+<span class="lineNum">    1239 </span>            :     // bump texture
+<span class="lineNum">    1240 </span>            :     if ((0 == strncmp(token, &quot;bump&quot;, 4)) &amp;&amp; IS_SPACE(token[4])) {
+<span class="lineNum">    1241 </span>            :       token += 5;
+<span class="lineNum">    1242 </span>            :       ParseTextureNameAndOption(&amp;(material.bump_texname),
+<span class="lineNum">    1243 </span>            :                                 &amp;(material.bump_texopt), token,
+<span class="lineNum">    1244 </span>            :                                 /* is_bump */ true);
+<span class="lineNum">    1245 </span>            :       continue;
+<span class="lineNum">    1246 </span>            :     }
+<span class="lineNum">    1247 </span>            : 
+<span class="lineNum">    1248 </span>            :     // alpha texture
+<span class="lineNum">    1249 </span>            :     if ((0 == strncmp(token, &quot;map_d&quot;, 5)) &amp;&amp; IS_SPACE(token[5])) {
+<span class="lineNum">    1250 </span>            :       token += 6;
+<span class="lineNum">    1251 </span>            :       material.alpha_texname = token;
+<span class="lineNum">    1252 </span>            :       ParseTextureNameAndOption(&amp;(material.alpha_texname),
+<span class="lineNum">    1253 </span>            :                                 &amp;(material.alpha_texopt), token,
+<span class="lineNum">    1254 </span>            :                                 /* is_bump */ false);
+<span class="lineNum">    1255 </span>            :       continue;
+<span class="lineNum">    1256 </span>            :     }
+<span class="lineNum">    1257 </span>            : 
+<span class="lineNum">    1258 </span>            :     // displacement texture
+<span class="lineNum">    1259 </span>            :     if ((0 == strncmp(token, &quot;disp&quot;, 4)) &amp;&amp; IS_SPACE(token[4])) {
+<span class="lineNum">    1260 </span>            :       token += 5;
+<span class="lineNum">    1261 </span>            :       ParseTextureNameAndOption(&amp;(material.displacement_texname),
+<span class="lineNum">    1262 </span>            :                                 &amp;(material.displacement_texopt), token,
+<span class="lineNum">    1263 </span>            :                                 /* is_bump */ false);
+<span class="lineNum">    1264 </span>            :       continue;
+<span class="lineNum">    1265 </span>            :     }
+<span class="lineNum">    1266 </span>            : 
+<span class="lineNum">    1267 </span>            :     // PBR: roughness texture
+<span class="lineNum">    1268 </span>            :     if ((0 == strncmp(token, &quot;map_Pr&quot;, 6)) &amp;&amp; IS_SPACE(token[6])) {
+<span class="lineNum">    1269 </span>            :       token += 7;
+<span class="lineNum">    1270 </span>            :       ParseTextureNameAndOption(&amp;(material.roughness_texname),
+<span class="lineNum">    1271 </span>            :                                 &amp;(material.roughness_texopt), token,
+<span class="lineNum">    1272 </span>            :                                 /* is_bump */ false);
+<span class="lineNum">    1273 </span>            :       continue;
+<span class="lineNum">    1274 </span>            :     }
+<span class="lineNum">    1275 </span>            : 
+<span class="lineNum">    1276 </span>            :     // PBR: metallic texture
+<span class="lineNum">    1277 </span>            :     if ((0 == strncmp(token, &quot;map_Pm&quot;, 6)) &amp;&amp; IS_SPACE(token[6])) {
+<span class="lineNum">    1278 </span>            :       token += 7;
+<span class="lineNum">    1279 </span>            :       ParseTextureNameAndOption(&amp;(material.metallic_texname),
+<span class="lineNum">    1280 </span>            :                                 &amp;(material.metallic_texopt), token,
+<span class="lineNum">    1281 </span>            :                                 /* is_bump */ false);
+<span class="lineNum">    1282 </span>            :       continue;
+<span class="lineNum">    1283 </span>            :     }
+<span class="lineNum">    1284 </span>            : 
+<span class="lineNum">    1285 </span>            :     // PBR: sheen texture
+<span class="lineNum">    1286 </span>            :     if ((0 == strncmp(token, &quot;map_Ps&quot;, 6)) &amp;&amp; IS_SPACE(token[6])) {
+<span class="lineNum">    1287 </span>            :       token += 7;
+<span class="lineNum">    1288 </span>            :       ParseTextureNameAndOption(&amp;(material.sheen_texname),
+<span class="lineNum">    1289 </span>            :                                 &amp;(material.sheen_texopt), token,
+<span class="lineNum">    1290 </span>            :                                 /* is_bump */ false);
+<span class="lineNum">    1291 </span>            :       continue;
+<span class="lineNum">    1292 </span>            :     }
+<span class="lineNum">    1293 </span>            : 
+<span class="lineNum">    1294 </span>            :     // PBR: emissive texture
+<span class="lineNum">    1295 </span>            :     if ((0 == strncmp(token, &quot;map_Ke&quot;, 6)) &amp;&amp; IS_SPACE(token[6])) {
+<span class="lineNum">    1296 </span>            :       token += 7;
+<span class="lineNum">    1297 </span>            :       ParseTextureNameAndOption(&amp;(material.emissive_texname),
+<span class="lineNum">    1298 </span>            :                                 &amp;(material.emissive_texopt), token,
+<span class="lineNum">    1299 </span>            :                                 /* is_bump */ false);
+<span class="lineNum">    1300 </span>            :       continue;
+<span class="lineNum">    1301 </span>            :     }
+<span class="lineNum">    1302 </span>            : 
+<span class="lineNum">    1303 </span>            :     // PBR: normal map texture
+<span class="lineNum">    1304 </span>            :     if ((0 == strncmp(token, &quot;norm&quot;, 4)) &amp;&amp; IS_SPACE(token[4])) {
+<span class="lineNum">    1305 </span>            :       token += 5;
+<span class="lineNum">    1306 </span>            :       ParseTextureNameAndOption(
+<span class="lineNum">    1307 </span>            :           &amp;(material.normal_texname), &amp;(material.normal_texopt), token,
+<span class="lineNum">    1308 </span>            :           /* is_bump */ false);  // @fixme { is_bump will be true? }
+<span class="lineNum">    1309 </span>            :       continue;
+<span class="lineNum">    1310 </span>            :     }
+<span class="lineNum">    1311 </span>            : 
+<span class="lineNum">    1312 </span>            :     // unknown parameter
+<span class="lineNum">    1313 </span>            :     const char *_space = strchr(token, ' ');
+<span class="lineNum">    1314 </span>            :     if (!_space) {
+<span class="lineNum">    1315 </span>            :       _space = strchr(token, '\t');
+<span class="lineNum">    1316 </span>            :     }
+<span class="lineNum">    1317 </span>            :     if (_space) {
+<span class="lineNum">    1318 </span>            :       std::ptrdiff_t len = _space - token;
+<span class="lineNum">    1319 </span>            :       std::string key(token, static_cast&lt;size_t&gt;(len));
+<span class="lineNum">    1320 </span>            :       std::string value = _space + 1;
+<span class="lineNum">    1321 </span>            :       material.unknown_parameter.insert(
+<span class="lineNum">    1322 </span>            :           std::pair&lt;std::string, std::string&gt;(key, value));
+<span class="lineNum">    1323 </span>            :     }
+<span class="lineNum">    1324 </span>            :   }
+<span class="lineNum">    1325 </span>            :   // flush last material.
+<span class="lineNum">    1326 </span>            :   material_map-&gt;insert(std::pair&lt;std::string, int&gt;(
+<span class="lineNum">    1327 </span>            :       material.name, static_cast&lt;int&gt;(materials-&gt;size())));
+<span class="lineNum">    1328 </span>            :   materials-&gt;push_back(material);
+<span class="lineNum">    1329 </span>            : 
+<span class="lineNum">    1330 </span>            :   if (warning) {
+<span class="lineNum">    1331 </span>            :     (*warning) = ss.str();
+<span class="lineNum">    1332 </span>            :   }
+<span class="lineNum">    1333 </span>            : }
+<span class="lineNum">    1334 </span>            : 
+<span class="lineNum">    1335 </span>            : bool MaterialFileReader::operator()(const std::string &amp;matId,
+<span class="lineNum">    1336 </span>            :                                     std::vector&lt;material_t&gt; *materials,
+<span class="lineNum">    1337 </span>            :                                     std::map&lt;std::string, int&gt; *matMap,
+<span class="lineNum">    1338 </span>            :                                     std::string *err) {
+<span class="lineNum">    1339 </span>            :   std::string filepath;
+<span class="lineNum">    1340 </span>            : 
+<span class="lineNum">    1341 </span>            :   if (!m_mtlBaseDir.empty()) {
+<span class="lineNum">    1342 </span>            :     filepath = std::string(m_mtlBaseDir) + matId;
+<span class="lineNum">    1343 </span>            :   } else {
+<span class="lineNum">    1344 </span>            :     filepath = matId;
+<span class="lineNum">    1345 </span>            :   }
+<span class="lineNum">    1346 </span>            : 
+<span class="lineNum">    1347 </span>            :   std::ifstream matIStream(filepath.c_str());
+<span class="lineNum">    1348 </span>            :   if (!matIStream) {
+<span class="lineNum">    1349 </span>            :     std::stringstream ss;
+<span class="lineNum">    1350 </span>            :     ss &lt;&lt; &quot;WARN: Material file [ &quot; &lt;&lt; filepath &lt;&lt; &quot; ] not found.&quot; &lt;&lt; std::endl;
+<span class="lineNum">    1351 </span>            :     if (err) {
+<span class="lineNum">    1352 </span>            :       (*err) += ss.str();
+<span class="lineNum">    1353 </span>            :     }
+<span class="lineNum">    1354 </span>            :     return false;
+<span class="lineNum">    1355 </span>            :   }
+<span class="lineNum">    1356 </span>            : 
+<span class="lineNum">    1357 </span>            :   std::string warning;
+<span class="lineNum">    1358 </span>            :   LoadMtl(matMap, materials, &amp;matIStream, &amp;warning);
+<span class="lineNum">    1359 </span>            : 
+<span class="lineNum">    1360 </span>            :   if (!warning.empty()) {
+<span class="lineNum">    1361 </span>            :     if (err) {
+<span class="lineNum">    1362 </span>            :       (*err) += warning;
+<span class="lineNum">    1363 </span>            :     }
+<span class="lineNum">    1364 </span>            :   }
+<span class="lineNum">    1365 </span>            : 
+<span class="lineNum">    1366 </span>            :   return true;
+<span class="lineNum">    1367 </span>            : }
+<span class="lineNum">    1368 </span>            : 
+<span class="lineNum">    1369 </span>            : bool MaterialStreamReader::operator()(const std::string &amp;matId,
+<span class="lineNum">    1370 </span>            :                                       std::vector&lt;material_t&gt; *materials,
+<span class="lineNum">    1371 </span>            :                                       std::map&lt;std::string, int&gt; *matMap,
+<span class="lineNum">    1372 </span>            :                                       std::string *err) {
+<span class="lineNum">    1373 </span>            :   (void)matId;
+<span class="lineNum">    1374 </span>            :   if (!m_inStream) {
+<span class="lineNum">    1375 </span>            :     std::stringstream ss;
+<span class="lineNum">    1376 </span>            :     ss &lt;&lt; &quot;WARN: Material stream in error state. &quot; &lt;&lt; std::endl;
+<span class="lineNum">    1377 </span>            :     if (err) {
+<span class="lineNum">    1378 </span>            :       (*err) += ss.str();
+<span class="lineNum">    1379 </span>            :     }
+<span class="lineNum">    1380 </span>            :     return false;
+<span class="lineNum">    1381 </span>            :   }
+<span class="lineNum">    1382 </span>            : 
+<span class="lineNum">    1383 </span>            :   std::string warning;
+<span class="lineNum">    1384 </span>            :   LoadMtl(matMap, materials, &amp;m_inStream, &amp;warning);
+<span class="lineNum">    1385 </span>            : 
+<span class="lineNum">    1386 </span>            :   if (!warning.empty()) {
+<span class="lineNum">    1387 </span>            :     if (err) {
+<span class="lineNum">    1388 </span>            :       (*err) += warning;
+<span class="lineNum">    1389 </span>            :     }
+<span class="lineNum">    1390 </span>            :   }
+<span class="lineNum">    1391 </span>            : 
+<span class="lineNum">    1392 </span>            :   return true;
+<span class="lineNum">    1393 </span>            : }
+<span class="lineNum">    1394 </span>            : 
+<span class="lineNum">    1395 </span>            : bool LoadObj(attrib_t *attrib, std::vector&lt;shape_t&gt; *shapes,
+<span class="lineNum">    1396 </span>            :              std::vector&lt;material_t&gt; *materials, std::string *err,
+<span class="lineNum">    1397 </span>            :              const char *filename, const char *mtl_basedir, bool trianglulate) {
+<span class="lineNum">    1398 </span>            :   attrib-&gt;vertices.clear();
+<span class="lineNum">    1399 </span>            :   attrib-&gt;normals.clear();
+<span class="lineNum">    1400 </span>            :   attrib-&gt;texcoords.clear();
+<span class="lineNum">    1401 </span>            :   shapes-&gt;clear();
+<span class="lineNum">    1402 </span>            : 
+<span class="lineNum">    1403 </span>            :   std::stringstream errss;
+<span class="lineNum">    1404 </span>            : 
+<span class="lineNum">    1405 </span>            :   std::ifstream ifs(filename);
+<span class="lineNum">    1406 </span>            :   if (!ifs) {
+<span class="lineNum">    1407 </span>            :     errss &lt;&lt; &quot;Cannot open file [&quot; &lt;&lt; filename &lt;&lt; &quot;]&quot; &lt;&lt; std::endl;
+<span class="lineNum">    1408 </span>            :     if (err) {
+<span class="lineNum">    1409 </span>            :       (*err) = errss.str();
+<span class="lineNum">    1410 </span>            :     }
+<span class="lineNum">    1411 </span>            :     return false;
+<span class="lineNum">    1412 </span>            :   }
+<span class="lineNum">    1413 </span>            : 
+<span class="lineNum">    1414 </span>            :   std::string baseDir;
+<span class="lineNum">    1415 </span>            :   if (mtl_basedir) {
+<span class="lineNum">    1416 </span>            :     baseDir = mtl_basedir;
+<span class="lineNum">    1417 </span>            :   }
+<span class="lineNum">    1418 </span>            :   MaterialFileReader matFileReader(baseDir);
+<span class="lineNum">    1419 </span>            : 
+<span class="lineNum">    1420 </span>            :   return LoadObj(attrib, shapes, materials, err, &amp;ifs, &amp;matFileReader,
+<span class="lineNum">    1421 </span>            :                  trianglulate);
+<span class="lineNum">    1422 </span>            : }
+<span class="lineNum">    1423 </span>            : 
+<span class="lineNum">    1424 </span>            : bool LoadObj(attrib_t *attrib, std::vector&lt;shape_t&gt; *shapes,
+<span class="lineNum">    1425 </span>            :              std::vector&lt;material_t&gt; *materials, std::string *err,
+<span class="lineNum">    1426 </span>            :              std::istream *inStream, MaterialReader *readMatFn /*= NULL*/,
+<span class="lineNum">    1427 </span>            :              bool triangulate) {
+<span class="lineNum">    1428 </span>            :   std::stringstream errss;
+<span class="lineNum">    1429 </span>            : 
+<span class="lineNum">    1430 </span>            :   std::vector&lt;real_t&gt; v;
+<span class="lineNum">    1431 </span>            :   std::vector&lt;real_t&gt; vn;
+<span class="lineNum">    1432 </span>            :   std::vector&lt;real_t&gt; vt;
+<span class="lineNum">    1433 </span>            :   std::vector&lt;tag_t&gt; tags;
+<span class="lineNum">    1434 </span>            :   std::vector&lt;std::vector&lt;vertex_index&gt; &gt; faceGroup;
+<span class="lineNum">    1435 </span>            :   std::string name;
+<span class="lineNum">    1436 </span>            : 
+<span class="lineNum">    1437 </span>            :   // material
+<span class="lineNum">    1438 </span>            :   std::map&lt;std::string, int&gt; material_map;
+<span class="lineNum">    1439 </span>            :   int material = -1;
+<span class="lineNum">    1440 </span>            : 
+<span class="lineNum">    1441 </span>            :   shape_t shape;
+<span class="lineNum">    1442 </span>            : 
+<span class="lineNum">    1443 </span>            :   std::string linebuf;
+<span class="lineNum">    1444 </span>            :   while (inStream-&gt;peek() != -1) {
+<span class="lineNum">    1445 </span>            :     safeGetline(*inStream, linebuf);
+<span class="lineNum">    1446 </span>            : 
+<span class="lineNum">    1447 </span>            :     // Trim newline '\r\n' or '\n'
+<span class="lineNum">    1448 </span>            :     if (linebuf.size() &gt; 0) {
+<span class="lineNum">    1449 </span>            :       if (linebuf[linebuf.size() - 1] == '\n')
+<span class="lineNum">    1450 </span>            :         linebuf.erase(linebuf.size() - 1);
+<span class="lineNum">    1451 </span>            :     }
+<span class="lineNum">    1452 </span>            :     if (linebuf.size() &gt; 0) {
+<span class="lineNum">    1453 </span>            :       if (linebuf[linebuf.size() - 1] == '\r')
+<span class="lineNum">    1454 </span>            :         linebuf.erase(linebuf.size() - 1);
+<span class="lineNum">    1455 </span>            :     }
+<span class="lineNum">    1456 </span>            : 
+<span class="lineNum">    1457 </span>            :     // Skip if empty line.
+<span class="lineNum">    1458 </span>            :     if (linebuf.empty()) {
+<span class="lineNum">    1459 </span>            :       continue;
+<span class="lineNum">    1460 </span>            :     }
+<span class="lineNum">    1461 </span>            : 
+<span class="lineNum">    1462 </span>            :     // Skip leading space.
+<span class="lineNum">    1463 </span>            :     const char *token = linebuf.c_str();
+<span class="lineNum">    1464 </span>            :     token += strspn(token, &quot; \t&quot;);
+<span class="lineNum">    1465 </span>            : 
+<span class="lineNum">    1466 </span>            :     assert(token);
+<span class="lineNum">    1467 </span>            :     if (token[0] == '\0') continue;  // empty line
+<span class="lineNum">    1468 </span>            : 
+<span class="lineNum">    1469 </span>            :     if (token[0] == '#') continue;  // comment line
+<span class="lineNum">    1470 </span>            : 
+<span class="lineNum">    1471 </span>            :     // vertex
+<span class="lineNum">    1472 </span>            :     if (token[0] == 'v' &amp;&amp; IS_SPACE((token[1]))) {
+<span class="lineNum">    1473 </span>            :       token += 2;
+<span class="lineNum">    1474 </span>            :       real_t x, y, z;
+<span class="lineNum">    1475 </span>            :       parseReal3(&amp;x, &amp;y, &amp;z, &amp;token);
+<span class="lineNum">    1476 </span>            :       v.push_back(x);
+<span class="lineNum">    1477 </span>            :       v.push_back(y);
+<span class="lineNum">    1478 </span>            :       v.push_back(z);
+<span class="lineNum">    1479 </span>            :       continue;
+<span class="lineNum">    1480 </span>            :     }
+<span class="lineNum">    1481 </span>            : 
+<span class="lineNum">    1482 </span>            :     // normal
+<span class="lineNum">    1483 </span>            :     if (token[0] == 'v' &amp;&amp; token[1] == 'n' &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">    1484 </span>            :       token += 3;
+<span class="lineNum">    1485 </span>            :       real_t x, y, z;
+<span class="lineNum">    1486 </span>            :       parseReal3(&amp;x, &amp;y, &amp;z, &amp;token);
+<span class="lineNum">    1487 </span>            :       vn.push_back(x);
+<span class="lineNum">    1488 </span>            :       vn.push_back(y);
+<span class="lineNum">    1489 </span>            :       vn.push_back(z);
+<span class="lineNum">    1490 </span>            :       continue;
+<span class="lineNum">    1491 </span>            :     }
+<span class="lineNum">    1492 </span>            : 
+<span class="lineNum">    1493 </span>            :     // texcoord
+<span class="lineNum">    1494 </span>            :     if (token[0] == 'v' &amp;&amp; token[1] == 't' &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">    1495 </span>            :       token += 3;
+<span class="lineNum">    1496 </span>            :       real_t x, y;
+<span class="lineNum">    1497 </span>            :       parseReal2(&amp;x, &amp;y, &amp;token);
+<span class="lineNum">    1498 </span>            :       vt.push_back(x);
+<span class="lineNum">    1499 </span>            :       vt.push_back(y);
+<span class="lineNum">    1500 </span>            :       continue;
+<span class="lineNum">    1501 </span>            :     }
+<span class="lineNum">    1502 </span>            : 
+<span class="lineNum">    1503 </span>            :     // face
+<span class="lineNum">    1504 </span>            :     if (token[0] == 'f' &amp;&amp; IS_SPACE((token[1]))) {
+<span class="lineNum">    1505 </span>            :       token += 2;
+<span class="lineNum">    1506 </span>            :       token += strspn(token, &quot; \t&quot;);
+<span class="lineNum">    1507 </span>            : 
+<span class="lineNum">    1508 </span>            :       std::vector&lt;vertex_index&gt; face;
+<span class="lineNum">    1509 </span>            :       face.reserve(3);
+<span class="lineNum">    1510 </span>            : 
+<span class="lineNum">    1511 </span>            :       while (!IS_NEW_LINE(token[0])) {
+<span class="lineNum">    1512 </span>            :         vertex_index vi = parseTriple(&amp;token, static_cast&lt;int&gt;(v.size() / 3),
+<span class="lineNum">    1513 </span>            :                                       static_cast&lt;int&gt;(vn.size() / 3),
+<span class="lineNum">    1514 </span>            :                                       static_cast&lt;int&gt;(vt.size() / 2));
+<span class="lineNum">    1515 </span>            :         face.push_back(vi);
+<span class="lineNum">    1516 </span>            :         size_t n = strspn(token, &quot; \t\r&quot;);
+<span class="lineNum">    1517 </span>            :         token += n;
+<span class="lineNum">    1518 </span>            :       }
+<span class="lineNum">    1519 </span>            : 
+<span class="lineNum">    1520 </span>            :       // replace with emplace_back + std::move on C++11
+<span class="lineNum">    1521 </span>            :       faceGroup.push_back(std::vector&lt;vertex_index&gt;());
+<span class="lineNum">    1522 </span>            :       faceGroup[faceGroup.size() - 1].swap(face);
+<span class="lineNum">    1523 </span>            : 
+<span class="lineNum">    1524 </span>            :       continue;
+<span class="lineNum">    1525 </span>            :     }
+<span class="lineNum">    1526 </span>            : 
+<span class="lineNum">    1527 </span>            :     // use mtl
+<span class="lineNum">    1528 </span>            :     if ((0 == strncmp(token, &quot;usemtl&quot;, 6)) &amp;&amp; IS_SPACE((token[6]))) {
+<span class="lineNum">    1529 </span>            :       char namebuf[TINYOBJ_SSCANF_BUFFER_SIZE];
+<span class="lineNum">    1530 </span>            :       token += 7;
+<span class="lineNum">    1531 </span>            : #ifdef _MSC_VER
+<span class="lineNum">    1532 </span>            :       sscanf_s(token, &quot;%s&quot;, namebuf, (unsigned)_countof(namebuf));
+<span class="lineNum">    1533 </span>            : #else
+<span class="lineNum">    1534 </span>            :       std::sscanf(token, &quot;%s&quot;, namebuf);
+<span class="lineNum">    1535 </span>            : #endif
+<span class="lineNum">    1536 </span>            : 
+<span class="lineNum">    1537 </span>            :       int newMaterialId = -1;
+<span class="lineNum">    1538 </span>            :       if (material_map.find(namebuf) != material_map.end()) {
+<span class="lineNum">    1539 </span>            :         newMaterialId = material_map[namebuf];
+<span class="lineNum">    1540 </span>            :       } else {
+<span class="lineNum">    1541 </span>            :         // { error!! material not found }
+<span class="lineNum">    1542 </span>            :       }
+<span class="lineNum">    1543 </span>            : 
+<span class="lineNum">    1544 </span>            :       if (newMaterialId != material) {
+<span class="lineNum">    1545 </span>            :         // Create per-face material. Thus we don't add `shape` to `shapes` at
+<span class="lineNum">    1546 </span>            :         // this time.
+<span class="lineNum">    1547 </span>            :         // just clear `faceGroup` after `exportFaceGroupToShape()` call.
+<span class="lineNum">    1548 </span>            :         exportFaceGroupToShape(&amp;shape, faceGroup, tags, material, name,
+<span class="lineNum">    1549 </span>            :                                triangulate);
+<span class="lineNum">    1550 </span>            :         faceGroup.clear();
+<span class="lineNum">    1551 </span>            :         material = newMaterialId;
+<span class="lineNum">    1552 </span>            :       }
+<span class="lineNum">    1553 </span>            : 
+<span class="lineNum">    1554 </span>            :       continue;
+<span class="lineNum">    1555 </span>            :     }
+<span class="lineNum">    1556 </span>            : 
+<span class="lineNum">    1557 </span>            :     // load mtl
+<span class="lineNum">    1558 </span>            :     if ((0 == strncmp(token, &quot;mtllib&quot;, 6)) &amp;&amp; IS_SPACE((token[6]))) {
+<span class="lineNum">    1559 </span>            :       if (readMatFn) {
+<span class="lineNum">    1560 </span>            :         token += 7;
+<span class="lineNum">    1561 </span>            : 
+<span class="lineNum">    1562 </span>            :         std::vector&lt;std::string&gt; filenames;
+<span class="lineNum">    1563 </span>            :         SplitString(std::string(token), ' ', filenames);
+<span class="lineNum">    1564 </span>            : 
+<span class="lineNum">    1565 </span>            :         if (filenames.empty()) {
+<span class="lineNum">    1566 </span>            :           if (err) {
+<span class="lineNum">    1567 </span>            :             (*err) +=
+<span class="lineNum">    1568 </span>            :                 &quot;WARN: Looks like empty filename for mtllib. Use default &quot;
+<span class="lineNum">    1569 </span>            :                 &quot;material. \n&quot;;
+<span class="lineNum">    1570 </span>            :           }
+<span class="lineNum">    1571 </span>            :         } else {
+<span class="lineNum">    1572 </span>            :           bool found = false;
+<span class="lineNum">    1573 </span>            :           for (size_t s = 0; s &lt; filenames.size(); s++) {
+<span class="lineNum">    1574 </span>            :             std::string err_mtl;
+<span class="lineNum">    1575 </span>            :             bool ok = (*readMatFn)(filenames[s].c_str(), materials,
+<span class="lineNum">    1576 </span>            :                                    &amp;material_map, &amp;err_mtl);
+<span class="lineNum">    1577 </span>            :             if (err &amp;&amp; (!err_mtl.empty())) {
+<span class="lineNum">    1578 </span>            :               (*err) += err_mtl;  // This should be warn message.
+<span class="lineNum">    1579 </span>            :             }
+<span class="lineNum">    1580 </span>            : 
+<span class="lineNum">    1581 </span>            :             if (ok) {
+<span class="lineNum">    1582 </span>            :               found = true;
+<span class="lineNum">    1583 </span>            :               break;
+<span class="lineNum">    1584 </span>            :             }
+<span class="lineNum">    1585 </span>            :           }
+<span class="lineNum">    1586 </span>            : 
+<span class="lineNum">    1587 </span>            :           if (!found) {
+<span class="lineNum">    1588 </span>            :             if (err) {
+<span class="lineNum">    1589 </span>            :               (*err) +=
+<span class="lineNum">    1590 </span>            :                   &quot;WARN: Failed to load material file(s). Use default &quot;
+<span class="lineNum">    1591 </span>            :                   &quot;material.\n&quot;;
+<span class="lineNum">    1592 </span>            :             }
+<span class="lineNum">    1593 </span>            :           }
+<span class="lineNum">    1594 </span>            :         }
+<span class="lineNum">    1595 </span>            :       }
+<span class="lineNum">    1596 </span>            : 
+<span class="lineNum">    1597 </span>            :       continue;
+<span class="lineNum">    1598 </span>            :     }
+<span class="lineNum">    1599 </span>            : 
+<span class="lineNum">    1600 </span>            :     // group name
+<span class="lineNum">    1601 </span>            :     if (token[0] == 'g' &amp;&amp; IS_SPACE((token[1]))) {
+<span class="lineNum">    1602 </span>            :       // flush previous face group.
+<span class="lineNum">    1603 </span>            :       bool ret = exportFaceGroupToShape(&amp;shape, faceGroup, tags, material, name,
+<span class="lineNum">    1604 </span>            :                                         triangulate);
+<span class="lineNum">    1605 </span>            :       if (ret) {
+<span class="lineNum">    1606 </span>            :         shapes-&gt;push_back(shape);
+<span class="lineNum">    1607 </span>            :       }
+<span class="lineNum">    1608 </span>            : 
+<span class="lineNum">    1609 </span>            :       shape = shape_t();
+<span class="lineNum">    1610 </span>            : 
+<span class="lineNum">    1611 </span>            :       // material = -1;
+<span class="lineNum">    1612 </span>            :       faceGroup.clear();
+<span class="lineNum">    1613 </span>            : 
+<span class="lineNum">    1614 </span>            :       std::vector&lt;std::string&gt; names;
+<span class="lineNum">    1615 </span>            :       names.reserve(2);
+<span class="lineNum">    1616 </span>            : 
+<span class="lineNum">    1617 </span>            :       while (!IS_NEW_LINE(token[0])) {
+<span class="lineNum">    1618 </span>            :         std::string str = parseString(&amp;token);
+<span class="lineNum">    1619 </span>            :         names.push_back(str);
+<span class="lineNum">    1620 </span>            :         token += strspn(token, &quot; \t\r&quot;);  // skip tag
+<span class="lineNum">    1621 </span>            :       }
+<span class="lineNum">    1622 </span>            : 
+<span class="lineNum">    1623 </span>            :       assert(names.size() &gt; 0);
+<span class="lineNum">    1624 </span>            : 
+<span class="lineNum">    1625 </span>            :       // names[0] must be 'g', so skip the 0th element.
+<span class="lineNum">    1626 </span>            :       if (names.size() &gt; 1) {
+<span class="lineNum">    1627 </span>            :         name = names[1];
+<span class="lineNum">    1628 </span>            :       } else {
+<span class="lineNum">    1629 </span>            :         name = &quot;&quot;;
+<span class="lineNum">    1630 </span>            :       }
+<span class="lineNum">    1631 </span>            : 
+<span class="lineNum">    1632 </span>            :       continue;
+<span class="lineNum">    1633 </span>            :     }
+<span class="lineNum">    1634 </span>            : 
+<span class="lineNum">    1635 </span>            :     // object name
+<span class="lineNum">    1636 </span>            :     if (token[0] == 'o' &amp;&amp; IS_SPACE((token[1]))) {
+<span class="lineNum">    1637 </span>            :       // flush previous face group.
+<span class="lineNum">    1638 </span>            :       bool ret = exportFaceGroupToShape(&amp;shape, faceGroup, tags, material, name,
+<span class="lineNum">    1639 </span>            :                                         triangulate);
+<span class="lineNum">    1640 </span>            :       if (ret) {
+<span class="lineNum">    1641 </span>            :         shapes-&gt;push_back(shape);
+<span class="lineNum">    1642 </span>            :       }
+<span class="lineNum">    1643 </span>            : 
+<span class="lineNum">    1644 </span>            :       // material = -1;
+<span class="lineNum">    1645 </span>            :       faceGroup.clear();
+<span class="lineNum">    1646 </span>            :       shape = shape_t();
+<span class="lineNum">    1647 </span>            : 
+<span class="lineNum">    1648 </span>            :       // @todo { multiple object name? }
+<span class="lineNum">    1649 </span>            :       char namebuf[TINYOBJ_SSCANF_BUFFER_SIZE];
+<span class="lineNum">    1650 </span>            :       token += 2;
+<span class="lineNum">    1651 </span>            : #ifdef _MSC_VER
+<span class="lineNum">    1652 </span>            :       sscanf_s(token, &quot;%s&quot;, namebuf, (unsigned)_countof(namebuf));
+<span class="lineNum">    1653 </span>            : #else
+<span class="lineNum">    1654 </span>            :       std::sscanf(token, &quot;%s&quot;, namebuf);
+<span class="lineNum">    1655 </span>            : #endif
+<span class="lineNum">    1656 </span>            :       name = std::string(namebuf);
+<span class="lineNum">    1657 </span>            : 
+<span class="lineNum">    1658 </span>            :       continue;
+<span class="lineNum">    1659 </span>            :     }
+<span class="lineNum">    1660 </span>            : 
+<span class="lineNum">    1661 </span>            :     if (token[0] == 't' &amp;&amp; IS_SPACE(token[1])) {
+<span class="lineNum">    1662 </span>            :       tag_t tag;
+<span class="lineNum">    1663 </span>            : 
+<span class="lineNum">    1664 </span>            :       char namebuf[4096];
+<span class="lineNum">    1665 </span>            :       token += 2;
+<span class="lineNum">    1666 </span>            : #ifdef _MSC_VER
+<span class="lineNum">    1667 </span>            :       sscanf_s(token, &quot;%s&quot;, namebuf, (unsigned)_countof(namebuf));
+<span class="lineNum">    1668 </span>            : #else
+<span class="lineNum">    1669 </span>            :       std::sscanf(token, &quot;%s&quot;, namebuf);
+<span class="lineNum">    1670 </span>            : #endif
+<span class="lineNum">    1671 </span>            :       tag.name = std::string(namebuf);
+<span class="lineNum">    1672 </span>            : 
+<span class="lineNum">    1673 </span>            :       token += tag.name.size() + 1;
+<span class="lineNum">    1674 </span>            : 
+<span class="lineNum">    1675 </span>            :       tag_sizes ts = parseTagTriple(&amp;token);
+<span class="lineNum">    1676 </span>            : 
+<span class="lineNum">    1677 </span>            :       tag.intValues.resize(static_cast&lt;size_t&gt;(ts.num_ints));
+<span class="lineNum">    1678 </span>            : 
+<span class="lineNum">    1679 </span>            :       for (size_t i = 0; i &lt; static_cast&lt;size_t&gt;(ts.num_ints); ++i) {
+<span class="lineNum">    1680 </span>            :         tag.intValues[i] = atoi(token);
+<span class="lineNum">    1681 </span>            :         token += strcspn(token, &quot;/ \t\r&quot;) + 1;
+<span class="lineNum">    1682 </span>            :       }
+<span class="lineNum">    1683 </span>            : 
+<span class="lineNum">    1684 </span>            :       tag.floatValues.resize(static_cast&lt;size_t&gt;(ts.num_reals));
+<span class="lineNum">    1685 </span>            :       for (size_t i = 0; i &lt; static_cast&lt;size_t&gt;(ts.num_reals); ++i) {
+<span class="lineNum">    1686 </span>            :         tag.floatValues[i] = parseReal(&amp;token);
+<span class="lineNum">    1687 </span>            :         token += strcspn(token, &quot;/ \t\r&quot;) + 1;
+<span class="lineNum">    1688 </span>            :       }
+<span class="lineNum">    1689 </span>            : 
+<span class="lineNum">    1690 </span>            :       tag.stringValues.resize(static_cast&lt;size_t&gt;(ts.num_strings));
+<span class="lineNum">    1691 </span>            :       for (size_t i = 0; i &lt; static_cast&lt;size_t&gt;(ts.num_strings); ++i) {
+<span class="lineNum">    1692 </span>            :         char stringValueBuffer[4096];
+<span class="lineNum">    1693 </span>            : 
+<span class="lineNum">    1694 </span>            : #ifdef _MSC_VER
+<span class="lineNum">    1695 </span>            :         sscanf_s(token, &quot;%s&quot;, stringValueBuffer,
+<span class="lineNum">    1696 </span>            :                  (unsigned)_countof(stringValueBuffer));
+<span class="lineNum">    1697 </span>            : #else
+<span class="lineNum">    1698 </span>            :         std::sscanf(token, &quot;%s&quot;, stringValueBuffer);
+<span class="lineNum">    1699 </span>            : #endif
+<span class="lineNum">    1700 </span>            :         tag.stringValues[i] = stringValueBuffer;
+<span class="lineNum">    1701 </span>            :         token += tag.stringValues[i].size() + 1;
+<span class="lineNum">    1702 </span>            :       }
+<span class="lineNum">    1703 </span>            : 
+<span class="lineNum">    1704 </span>            :       tags.push_back(tag);
+<span class="lineNum">    1705 </span>            :     }
+<span class="lineNum">    1706 </span>            : 
+<span class="lineNum">    1707 </span>            :     // Ignore unknown command.
+<span class="lineNum">    1708 </span>            :   }
+<span class="lineNum">    1709 </span>            : 
+<span class="lineNum">    1710 </span>            :   bool ret = exportFaceGroupToShape(&amp;shape, faceGroup, tags, material, name,
+<span class="lineNum">    1711 </span>            :                                     triangulate);
+<span class="lineNum">    1712 </span>            :   // exportFaceGroupToShape return false when `usemtl` is called in the last
+<span class="lineNum">    1713 </span>            :   // line.
+<span class="lineNum">    1714 </span>            :   // we also add `shape` to `shapes` when `shape.mesh` has already some
+<span class="lineNum">    1715 </span>            :   // faces(indices)
+<span class="lineNum">    1716 </span>            :   if (ret || shape.mesh.indices.size()) {
+<span class="lineNum">    1717 </span>            :     shapes-&gt;push_back(shape);
+<span class="lineNum">    1718 </span>            :   }
+<span class="lineNum">    1719 </span>            :   faceGroup.clear();  // for safety
+<span class="lineNum">    1720 </span>            : 
+<span class="lineNum">    1721 </span>            :   if (err) {
+<span class="lineNum">    1722 </span>            :     (*err) += errss.str();
+<span class="lineNum">    1723 </span>            :   }
+<span class="lineNum">    1724 </span>            : 
+<span class="lineNum">    1725 </span>            :   attrib-&gt;vertices.swap(v);
+<span class="lineNum">    1726 </span>            :   attrib-&gt;normals.swap(vn);
+<span class="lineNum">    1727 </span>            :   attrib-&gt;texcoords.swap(vt);
+<span class="lineNum">    1728 </span>            : 
+<span class="lineNum">    1729 </span>            :   return true;
+<span class="lineNum">    1730 </span>            : }
+<span class="lineNum">    1731 </span>            : 
+<span class="lineNum">    1732 </span>            : bool LoadObjWithCallback(std::istream &amp;inStream, const callback_t &amp;callback,
+<span class="lineNum">    1733 </span>            :                          void *user_data /*= NULL*/,
+<span class="lineNum">    1734 </span>            :                          MaterialReader *readMatFn /*= NULL*/,
+<span class="lineNum">    1735 </span>            :                          std::string *err /*= NULL*/) {
+<span class="lineNum">    1736 </span>            :   std::stringstream errss;
+<span class="lineNum">    1737 </span>            : 
+<span class="lineNum">    1738 </span>            :   // material
+<span class="lineNum">    1739 </span>            :   std::map&lt;std::string, int&gt; material_map;
+<span class="lineNum">    1740 </span>            :   int material_id = -1;  // -1 = invalid
+<span class="lineNum">    1741 </span>            : 
+<span class="lineNum">    1742 </span>            :   std::vector&lt;index_t&gt; indices;
+<span class="lineNum">    1743 </span>            :   std::vector&lt;material_t&gt; materials;
+<span class="lineNum">    1744 </span>            :   std::vector&lt;std::string&gt; names;
+<span class="lineNum">    1745 </span>            :   names.reserve(2);
+<span class="lineNum">    1746 </span>            :   std::string name;
+<span class="lineNum">    1747 </span>            :   std::vector&lt;const char *&gt; names_out;
+<span class="lineNum">    1748 </span>            : 
+<span class="lineNum">    1749 </span>            :   std::string linebuf;
+<span class="lineNum">    1750 </span>            :   while (inStream.peek() != -1) {
+<span class="lineNum">    1751 </span>            :     safeGetline(inStream, linebuf);
+<span class="lineNum">    1752 </span>            : 
+<span class="lineNum">    1753 </span>            :     // Trim newline '\r\n' or '\n'
+<span class="lineNum">    1754 </span>            :     if (linebuf.size() &gt; 0) {
+<span class="lineNum">    1755 </span>            :       if (linebuf[linebuf.size() - 1] == '\n')
+<span class="lineNum">    1756 </span>            :         linebuf.erase(linebuf.size() - 1);
+<span class="lineNum">    1757 </span>            :     }
+<span class="lineNum">    1758 </span>            :     if (linebuf.size() &gt; 0) {
+<span class="lineNum">    1759 </span>            :       if (linebuf[linebuf.size() - 1] == '\r')
+<span class="lineNum">    1760 </span>            :         linebuf.erase(linebuf.size() - 1);
+<span class="lineNum">    1761 </span>            :     }
+<span class="lineNum">    1762 </span>            : 
+<span class="lineNum">    1763 </span>            :     // Skip if empty line.
+<span class="lineNum">    1764 </span>            :     if (linebuf.empty()) {
+<span class="lineNum">    1765 </span>            :       continue;
+<span class="lineNum">    1766 </span>            :     }
+<span class="lineNum">    1767 </span>            : 
+<span class="lineNum">    1768 </span>            :     // Skip leading space.
+<span class="lineNum">    1769 </span>            :     const char *token = linebuf.c_str();
+<span class="lineNum">    1770 </span>            :     token += strspn(token, &quot; \t&quot;);
+<span class="lineNum">    1771 </span>            : 
+<span class="lineNum">    1772 </span>            :     assert(token);
+<span class="lineNum">    1773 </span>            :     if (token[0] == '\0') continue;  // empty line
+<span class="lineNum">    1774 </span>            : 
+<span class="lineNum">    1775 </span>            :     if (token[0] == '#') continue;  // comment line
+<span class="lineNum">    1776 </span>            : 
+<span class="lineNum">    1777 </span>            :     // vertex
+<span class="lineNum">    1778 </span>            :     if (token[0] == 'v' &amp;&amp; IS_SPACE((token[1]))) {
+<span class="lineNum">    1779 </span>            :       token += 2;
+<span class="lineNum">    1780 </span>            :       real_t x, y, z, w;  // w is optional. default = 1.0
+<span class="lineNum">    1781 </span>            :       parseV(&amp;x, &amp;y, &amp;z, &amp;w, &amp;token);
+<span class="lineNum">    1782 </span>            :       if (callback.vertex_cb) {
+<span class="lineNum">    1783 </span>            :         callback.vertex_cb(user_data, x, y, z, w);
+<span class="lineNum">    1784 </span>            :       }
+<span class="lineNum">    1785 </span>            :       continue;
+<span class="lineNum">    1786 </span>            :     }
+<span class="lineNum">    1787 </span>            : 
+<span class="lineNum">    1788 </span>            :     // normal
+<span class="lineNum">    1789 </span>            :     if (token[0] == 'v' &amp;&amp; token[1] == 'n' &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">    1790 </span>            :       token += 3;
+<span class="lineNum">    1791 </span>            :       real_t x, y, z;
+<span class="lineNum">    1792 </span>            :       parseReal3(&amp;x, &amp;y, &amp;z, &amp;token);
+<span class="lineNum">    1793 </span>            :       if (callback.normal_cb) {
+<span class="lineNum">    1794 </span>            :         callback.normal_cb(user_data, x, y, z);
+<span class="lineNum">    1795 </span>            :       }
+<span class="lineNum">    1796 </span>            :       continue;
+<span class="lineNum">    1797 </span>            :     }
+<span class="lineNum">    1798 </span>            : 
+<span class="lineNum">    1799 </span>            :     // texcoord
+<span class="lineNum">    1800 </span>            :     if (token[0] == 'v' &amp;&amp; token[1] == 't' &amp;&amp; IS_SPACE((token[2]))) {
+<span class="lineNum">    1801 </span>            :       token += 3;
+<span class="lineNum">    1802 </span>            :       real_t x, y, z;  // y and z are optional. default = 0.0
+<span class="lineNum">    1803 </span>            :       parseReal3(&amp;x, &amp;y, &amp;z, &amp;token);
+<span class="lineNum">    1804 </span>            :       if (callback.texcoord_cb) {
+<span class="lineNum">    1805 </span>            :         callback.texcoord_cb(user_data, x, y, z);
+<span class="lineNum">    1806 </span>            :       }
+<span class="lineNum">    1807 </span>            :       continue;
+<span class="lineNum">    1808 </span>            :     }
+<span class="lineNum">    1809 </span>            : 
+<span class="lineNum">    1810 </span>            :     // face
+<span class="lineNum">    1811 </span>            :     if (token[0] == 'f' &amp;&amp; IS_SPACE((token[1]))) {
+<span class="lineNum">    1812 </span>            :       token += 2;
+<span class="lineNum">    1813 </span>            :       token += strspn(token, &quot; \t&quot;);
+<span class="lineNum">    1814 </span>            : 
+<span class="lineNum">    1815 </span>            :       indices.clear();
+<span class="lineNum">    1816 </span>            :       while (!IS_NEW_LINE(token[0])) {
+<span class="lineNum">    1817 </span>            :         vertex_index vi = parseRawTriple(&amp;token);
+<span class="lineNum">    1818 </span>            : 
+<span class="lineNum">    1819 </span>            :         index_t idx;
+<span class="lineNum">    1820 </span>            :         idx.vertex_index = vi.v_idx;
+<span class="lineNum">    1821 </span>            :         idx.normal_index = vi.vn_idx;
+<span class="lineNum">    1822 </span>            :         idx.texcoord_index = vi.vt_idx;
+<span class="lineNum">    1823 </span>            : 
+<span class="lineNum">    1824 </span>            :         indices.push_back(idx);
+<span class="lineNum">    1825 </span>            :         size_t n = strspn(token, &quot; \t\r&quot;);
+<span class="lineNum">    1826 </span>            :         token += n;
+<span class="lineNum">    1827 </span>            :       }
+<span class="lineNum">    1828 </span>            : 
+<span class="lineNum">    1829 </span>            :       if (callback.index_cb &amp;&amp; indices.size() &gt; 0) {
+<span class="lineNum">    1830 </span>            :         callback.index_cb(user_data, &amp;indices.at(0),
+<span class="lineNum">    1831 </span>            :                           static_cast&lt;int&gt;(indices.size()));
+<span class="lineNum">    1832 </span>            :       }
+<span class="lineNum">    1833 </span>            : 
+<span class="lineNum">    1834 </span>            :       continue;
+<span class="lineNum">    1835 </span>            :     }
+<span class="lineNum">    1836 </span>            : 
+<span class="lineNum">    1837 </span>            :     // use mtl
+<span class="lineNum">    1838 </span>            :     if ((0 == strncmp(token, &quot;usemtl&quot;, 6)) &amp;&amp; IS_SPACE((token[6]))) {
+<span class="lineNum">    1839 </span>            :       char namebuf[TINYOBJ_SSCANF_BUFFER_SIZE];
+<span class="lineNum">    1840 </span>            :       token += 7;
+<span class="lineNum">    1841 </span>            : #ifdef _MSC_VER
+<span class="lineNum">    1842 </span>            :       sscanf_s(token, &quot;%s&quot;, namebuf,
+<span class="lineNum">    1843 </span>            :                static_cast&lt;unsigned int&gt;(_countof(namebuf)));
+<span class="lineNum">    1844 </span>            : #else
+<span class="lineNum">    1845 </span>            :       std::sscanf(token, &quot;%s&quot;, namebuf);
+<span class="lineNum">    1846 </span>            : #endif
+<span class="lineNum">    1847 </span>            : 
+<span class="lineNum">    1848 </span>            :       int newMaterialId = -1;
+<span class="lineNum">    1849 </span>            :       if (material_map.find(namebuf) != material_map.end()) {
+<span class="lineNum">    1850 </span>            :         newMaterialId = material_map[namebuf];
+<span class="lineNum">    1851 </span>            :       } else {
+<span class="lineNum">    1852 </span>            :         // { error!! material not found }
+<span class="lineNum">    1853 </span>            :       }
+<span class="lineNum">    1854 </span>            : 
+<span class="lineNum">    1855 </span>            :       if (newMaterialId != material_id) {
+<span class="lineNum">    1856 </span>            :         material_id = newMaterialId;
+<span class="lineNum">    1857 </span>            :       }
+<span class="lineNum">    1858 </span>            : 
+<span class="lineNum">    1859 </span>            :       if (callback.usemtl_cb) {
+<span class="lineNum">    1860 </span>            :         callback.usemtl_cb(user_data, namebuf, material_id);
+<span class="lineNum">    1861 </span>            :       }
+<span class="lineNum">    1862 </span>            : 
+<span class="lineNum">    1863 </span>            :       continue;
+<span class="lineNum">    1864 </span>            :     }
+<span class="lineNum">    1865 </span>            : 
+<span class="lineNum">    1866 </span>            :     // load mtl
+<span class="lineNum">    1867 </span>            :     if ((0 == strncmp(token, &quot;mtllib&quot;, 6)) &amp;&amp; IS_SPACE((token[6]))) {
+<span class="lineNum">    1868 </span>            :       if (readMatFn) {
+<span class="lineNum">    1869 </span>            :         token += 7;
+<span class="lineNum">    1870 </span>            : 
+<span class="lineNum">    1871 </span>            :         std::vector&lt;std::string&gt; filenames;
+<span class="lineNum">    1872 </span>            :         SplitString(std::string(token), ' ', filenames);
+<span class="lineNum">    1873 </span>            : 
+<span class="lineNum">    1874 </span>            :         if (filenames.empty()) {
+<span class="lineNum">    1875 </span>            :           if (err) {
+<span class="lineNum">    1876 </span>            :             (*err) +=
+<span class="lineNum">    1877 </span>            :                 &quot;WARN: Looks like empty filename for mtllib. Use default &quot;
+<span class="lineNum">    1878 </span>            :                 &quot;material. \n&quot;;
+<span class="lineNum">    1879 </span>            :           }
+<span class="lineNum">    1880 </span>            :         } else {
+<span class="lineNum">    1881 </span>            :           bool found = false;
+<span class="lineNum">    1882 </span>            :           for (size_t s = 0; s &lt; filenames.size(); s++) {
+<span class="lineNum">    1883 </span>            :             std::string err_mtl;
+<span class="lineNum">    1884 </span>            :             bool ok = (*readMatFn)(filenames[s].c_str(), &amp;materials,
+<span class="lineNum">    1885 </span>            :                                    &amp;material_map, &amp;err_mtl);
+<span class="lineNum">    1886 </span>            :             if (err &amp;&amp; (!err_mtl.empty())) {
+<span class="lineNum">    1887 </span>            :               (*err) += err_mtl;  // This should be warn message.
+<span class="lineNum">    1888 </span>            :             }
+<span class="lineNum">    1889 </span>            : 
+<span class="lineNum">    1890 </span>            :             if (ok) {
+<span class="lineNum">    1891 </span>            :               found = true;
+<span class="lineNum">    1892 </span>            :               break;
+<span class="lineNum">    1893 </span>            :             }
+<span class="lineNum">    1894 </span>            :           }
+<span class="lineNum">    1895 </span>            : 
+<span class="lineNum">    1896 </span>            :           if (!found) {
+<span class="lineNum">    1897 </span>            :             if (err) {
+<span class="lineNum">    1898 </span>            :               (*err) +=
+<span class="lineNum">    1899 </span>            :                   &quot;WARN: Failed to load material file(s). Use default &quot;
+<span class="lineNum">    1900 </span>            :                   &quot;material.\n&quot;;
+<span class="lineNum">    1901 </span>            :             }
+<span class="lineNum">    1902 </span>            :           } else {
+<span class="lineNum">    1903 </span>            :             if (callback.mtllib_cb) {
+<span class="lineNum">    1904 </span>            :               callback.mtllib_cb(user_data, &amp;materials.at(0),
+<span class="lineNum">    1905 </span>            :                                  static_cast&lt;int&gt;(materials.size()));
+<span class="lineNum">    1906 </span>            :             }
+<span class="lineNum">    1907 </span>            :           }
+<span class="lineNum">    1908 </span>            :         }
+<span class="lineNum">    1909 </span>            :       }
+<span class="lineNum">    1910 </span>            : 
+<span class="lineNum">    1911 </span>            :       continue;
+<span class="lineNum">    1912 </span>            :     }
+<span class="lineNum">    1913 </span>            : 
+<span class="lineNum">    1914 </span>            :     // group name
+<span class="lineNum">    1915 </span>            :     if (token[0] == 'g' &amp;&amp; IS_SPACE((token[1]))) {
+<span class="lineNum">    1916 </span>            :       names.clear();
+<span class="lineNum">    1917 </span>            : 
+<span class="lineNum">    1918 </span>            :       while (!IS_NEW_LINE(token[0])) {
+<span class="lineNum">    1919 </span>            :         std::string str = parseString(&amp;token);
+<span class="lineNum">    1920 </span>            :         names.push_back(str);
+<span class="lineNum">    1921 </span>            :         token += strspn(token, &quot; \t\r&quot;);  // skip tag
+<span class="lineNum">    1922 </span>            :       }
+<span class="lineNum">    1923 </span>            : 
+<span class="lineNum">    1924 </span>            :       assert(names.size() &gt; 0);
+<span class="lineNum">    1925 </span>            : 
+<span class="lineNum">    1926 </span>            :       // names[0] must be 'g', so skip the 0th element.
+<span class="lineNum">    1927 </span>            :       if (names.size() &gt; 1) {
+<span class="lineNum">    1928 </span>            :         name = names[1];
+<span class="lineNum">    1929 </span>            :       } else {
+<span class="lineNum">    1930 </span>            :         name.clear();
+<span class="lineNum">    1931 </span>            :       }
+<span class="lineNum">    1932 </span>            : 
+<span class="lineNum">    1933 </span>            :       if (callback.group_cb) {
+<span class="lineNum">    1934 </span>            :         if (names.size() &gt; 1) {
+<span class="lineNum">    1935 </span>            :           // create const char* array.
+<span class="lineNum">    1936 </span>            :           names_out.resize(names.size() - 1);
+<span class="lineNum">    1937 </span>            :           for (size_t j = 0; j &lt; names_out.size(); j++) {
+<span class="lineNum">    1938 </span>            :             names_out[j] = names[j + 1].c_str();
+<span class="lineNum">    1939 </span>            :           }
+<span class="lineNum">    1940 </span>            :           callback.group_cb(user_data, &amp;names_out.at(0),
+<span class="lineNum">    1941 </span>            :                             static_cast&lt;int&gt;(names_out.size()));
+<span class="lineNum">    1942 </span>            : 
+<span class="lineNum">    1943 </span>            :         } else {
+<span class="lineNum">    1944 </span>            :           callback.group_cb(user_data, NULL, 0);
+<span class="lineNum">    1945 </span>            :         }
+<span class="lineNum">    1946 </span>            :       }
+<span class="lineNum">    1947 </span>            : 
+<span class="lineNum">    1948 </span>            :       continue;
+<span class="lineNum">    1949 </span>            :     }
+<span class="lineNum">    1950 </span>            : 
+<span class="lineNum">    1951 </span>            :     // object name
+<span class="lineNum">    1952 </span>            :     if (token[0] == 'o' &amp;&amp; IS_SPACE((token[1]))) {
+<span class="lineNum">    1953 </span>            :       // @todo { multiple object name? }
+<span class="lineNum">    1954 </span>            :       char namebuf[TINYOBJ_SSCANF_BUFFER_SIZE];
+<span class="lineNum">    1955 </span>            :       token += 2;
+<span class="lineNum">    1956 </span>            : #ifdef _MSC_VER
+<span class="lineNum">    1957 </span>            :       sscanf_s(token, &quot;%s&quot;, namebuf, (unsigned)_countof(namebuf));
+<span class="lineNum">    1958 </span>            : #else
+<span class="lineNum">    1959 </span>            :       std::sscanf(token, &quot;%s&quot;, namebuf);
+<span class="lineNum">    1960 </span>            : #endif
+<span class="lineNum">    1961 </span>            :       std::string object_name = std::string(namebuf);
+<span class="lineNum">    1962 </span>            : 
+<span class="lineNum">    1963 </span>            :       if (callback.object_cb) {
+<span class="lineNum">    1964 </span>            :         callback.object_cb(user_data, object_name.c_str());
+<span class="lineNum">    1965 </span>            :       }
+<span class="lineNum">    1966 </span>            : 
+<span class="lineNum">    1967 </span>            :       continue;
+<span class="lineNum">    1968 </span>            :     }
+<span class="lineNum">    1969 </span>            : 
+<span class="lineNum">    1970 </span>            : #if 0  // @todo
+<span class="lineNum">    1971 </span>            :     if (token[0] == 't' &amp;&amp; IS_SPACE(token[1])) {
+<span class="lineNum">    1972 </span>            :       tag_t tag;
+<span class="lineNum">    1973 </span>            : 
+<span class="lineNum">    1974 </span>            :       char namebuf[4096];
+<span class="lineNum">    1975 </span>            :       token += 2;
+<span class="lineNum">    1976 </span>            : #ifdef _MSC_VER
+<span class="lineNum">    1977 </span>            :       sscanf_s(token, &quot;%s&quot;, namebuf, (unsigned)_countof(namebuf));
+<span class="lineNum">    1978 </span>            : #else
+<span class="lineNum">    1979 </span>            :       std::sscanf(token, &quot;%s&quot;, namebuf);
+<span class="lineNum">    1980 </span>            : #endif
+<span class="lineNum">    1981 </span>            :       tag.name = std::string(namebuf);
+<span class="lineNum">    1982 </span>            : 
+<span class="lineNum">    1983 </span>            :       token += tag.name.size() + 1;
+<span class="lineNum">    1984 </span>            : 
+<span class="lineNum">    1985 </span>            :       tag_sizes ts = parseTagTriple(&amp;token);
+<span class="lineNum">    1986 </span>            : 
+<span class="lineNum">    1987 </span>            :       tag.intValues.resize(static_cast&lt;size_t&gt;(ts.num_ints));
+<span class="lineNum">    1988 </span>            : 
+<span class="lineNum">    1989 </span>            :       for (size_t i = 0; i &lt; static_cast&lt;size_t&gt;(ts.num_ints); ++i) {
+<span class="lineNum">    1990 </span>            :         tag.intValues[i] = atoi(token);
+<span class="lineNum">    1991 </span>            :         token += strcspn(token, &quot;/ \t\r&quot;) + 1;
+<span class="lineNum">    1992 </span>            :       }
+<span class="lineNum">    1993 </span>            : 
+<span class="lineNum">    1994 </span>            :       tag.floatValues.resize(static_cast&lt;size_t&gt;(ts.num_reals));
+<span class="lineNum">    1995 </span>            :       for (size_t i = 0; i &lt; static_cast&lt;size_t&gt;(ts.num_reals); ++i) {
+<span class="lineNum">    1996 </span>            :         tag.floatValues[i] = parseReal(&amp;token);
+<span class="lineNum">    1997 </span>            :         token += strcspn(token, &quot;/ \t\r&quot;) + 1;
+<span class="lineNum">    1998 </span>            :       }
+<span class="lineNum">    1999 </span>            : 
+<span class="lineNum">    2000 </span>            :       tag.stringValues.resize(static_cast&lt;size_t&gt;(ts.num_strings));
+<span class="lineNum">    2001 </span>            :       for (size_t i = 0; i &lt; static_cast&lt;size_t&gt;(ts.num_strings); ++i) {
+<span class="lineNum">    2002 </span>            :         char stringValueBuffer[4096];
+<span class="lineNum">    2003 </span>            : 
+<span class="lineNum">    2004 </span>            : #ifdef _MSC_VER
+<span class="lineNum">    2005 </span>            :         sscanf_s(token, &quot;%s&quot;, stringValueBuffer,
+<span class="lineNum">    2006 </span>            :                  (unsigned)_countof(stringValueBuffer));
+<span class="lineNum">    2007 </span>            : #else
+<span class="lineNum">    2008 </span>            :         std::sscanf(token, &quot;%s&quot;, stringValueBuffer);
+<span class="lineNum">    2009 </span>            : #endif
+<span class="lineNum">    2010 </span>            :         tag.stringValues[i] = stringValueBuffer;
+<span class="lineNum">    2011 </span>            :         token += tag.stringValues[i].size() + 1;
+<span class="lineNum">    2012 </span>            :       }
+<span class="lineNum">    2013 </span>            : 
+<span class="lineNum">    2014 </span>            :       tags.push_back(tag);
+<span class="lineNum">    2015 </span>            :     }
+<span class="lineNum">    2016 </span>            : #endif
+<span class="lineNum">    2017 </span>            : 
+<span class="lineNum">    2018 </span>            :     // Ignore unknown command.
+<span class="lineNum">    2019 </span>            :   }
+<span class="lineNum">    2020 </span>            : 
+<span class="lineNum">    2021 </span>            :   if (err) {
+<span class="lineNum">    2022 </span>            :     (*err) += errss.str();
+<span class="lineNum">    2023 </span>            :   }
+<span class="lineNum">    2024 </span>            : 
+<span class="lineNum">    2025 </span>            :   return true;
+<span class="lineNum">    2026 </span>            : }
+<span class="lineNum">    2027 </span>            : }  // namespace tinyobj
+<span class="lineNum">    2028 </span>            : 
+<span class="lineNum">    2029 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
